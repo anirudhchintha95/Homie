@@ -16,8 +16,6 @@ import RightSideMenu from "./RightSideMenu";
 import useAuth from "../../useAuth";
 import { Link } from "react-router-dom";
 
-const pages = ["Find my homies", "My homies", "About"];
-
 const Navbar = () => {
   const auth = useAuth();
   const [anchorElNav, setAnchorElNav] = useState(null);
