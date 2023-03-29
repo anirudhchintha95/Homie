@@ -1,16 +1,5 @@
 import { model, Schema } from "mongoose";
-
-const GenderSchema = new Schema({
-  value: {
-    type: String,
-    required: true,
-    enum: [
-      "Male",
-      "Female",
-      "Non-Binary",
-    ]
-  },
-});
+import { GENDERS } from "../constants";
 
 const PreferenceSchema = new Schema({
   smoking: {
@@ -39,6 +28,7 @@ const PreferenceSchema = new Schema({
       type: Number,
       default: 0,
     },
+    default: { min: 0, max: 0, exact: 0 },
   },
   age: {
     type: Object,
@@ -50,10 +40,17 @@ const PreferenceSchema = new Schema({
       type: Number,
       default: 0,
     },
+    default: { min: 0, max: 0 },
   },
   gender: {
-    type: [GenderSchema],
-    default: [],
+    type: Array,
+    validate: {
+      validator: function (v) {
+        return v.every((g) => Object.values(GENDERS).includes(g));
+      },
+      message: (props) => `${props.value} does not have valid genders!`,
+    },
+    required: true,
   },
 });
 
@@ -85,12 +82,18 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    homeId: {
-      type: Schema.Types.ObjectId,
-      ref: "Home",
-    },
     dateOfBirth: {
       type: Date,
+      required: true,
+    },
+    gender: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return Object.values(GENDERS).includes(v);
+        },
+        message: (props) => `${props.value} is not a valid gender!`,
+      },
       required: true,
     },
     location: {
@@ -110,9 +113,9 @@ const UserSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    preferencesId: {
+    preferences: {
       type: PreferenceSchema,
-      default: {},
+      required: true,
     },
   },
   {

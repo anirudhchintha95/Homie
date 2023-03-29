@@ -1,7 +1,11 @@
 import { model, Schema } from "mongoose";
 
-var HomeSchema = new Schema(
+const HomeSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     address1: {
       type: String,
       required: true,
@@ -26,6 +30,10 @@ var HomeSchema = new Schema(
       required: true,
       trim: true,
     },
+    listed: {
+      type: Boolean,
+      required: true,
+    },
     rent: {
       type: Number,
       required: true,
@@ -37,7 +45,11 @@ var HomeSchema = new Schema(
   },
   {
     timestamps: true,
-    methods: {},
+    methods: {
+      displayAddress() {
+        return `${this.address1}, ${this.address2}, ${this.city}, ${this.state}, ${this.zip}`;
+      },
+    },
   }
 );
 

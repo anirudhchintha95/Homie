@@ -1,13 +1,31 @@
 import { model, Schema } from "mongoose";
 
-var ConnectionSchema = new Schema(
+// const MessageSchema = new Schema(
+//   {
+//     userId: {
+//       type: Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
+//     },
+//     message: {
+//       type: Schema.Types.String,
+//       required: true,
+//     },
+//   },
+//   {
+//     timestamps: true,
+//     methods: {},
+//   }
+// );
+
+const ConnectionSchema = new Schema(
   {
-    user1: {
+    createdByUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    user2: {
+    createdForUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -16,18 +34,23 @@ var ConnectionSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
-    showUser1Data: {
+    showCreatedByUserData: {
       type: Schema.Types.Boolean,
       default: false,
     },
-    showUser2Data: {
+    showCreatedForUserData: {
       type: Schema.Types.Boolean,
       default: false,
     },
-    blocked: {
-      type: Schema.Types.Boolean,
-      default: false,
+    blockedByUserId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
+    // messages: {
+    //   type: [MessageSchema],
+    //   default: [],
+    // },
   },
   {
     timestamps: true,
