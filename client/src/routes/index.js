@@ -11,15 +11,24 @@ import MyHomies from "./MyHomies";
 import NotFound from "./NotFound";
 import Preferences from "./Preferences";
 import Signup from "./Signup";
+import Home from "./Home";
 
 const Routes = () => {
   return (
     <BrowserRoutes>
       <Route element={<Layout />}>
-        <Route index element={<FindMyHomies />} />
+        <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
+        <Route
+          path="/homies"
+          element={
+            <RequiresAuth>
+              <FindMyHomies />
+            </RequiresAuth>
+          }
+        />
         <Route
           path="/account"
           element={
@@ -36,7 +45,7 @@ const Routes = () => {
             </RequiresAuth>
           }
         />
-         <Route
+        <Route
           path="/preferences"
           element={
             <RequiresAuth>

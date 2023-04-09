@@ -23,7 +23,7 @@ const Navbar = () => {
   const pages = [
     {
       name: "Find my homies",
-      path: "/",
+      path: "/homies",
     },
     auth?.user
       ? {

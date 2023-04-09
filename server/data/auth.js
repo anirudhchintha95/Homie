@@ -1,3 +1,4 @@
+import User from "../models/user.js";
 import { loginValidator } from "../validators/loginValidator.js";
 
 export const login = async (email, password) => {
