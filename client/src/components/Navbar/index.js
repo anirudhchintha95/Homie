@@ -49,7 +49,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <Avatar
