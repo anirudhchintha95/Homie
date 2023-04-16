@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { GENDERS } from "../constants";
+import { GENDERS } from "../constants.js";
 
 const PreferenceSchema = new Schema({
   smoking: {
