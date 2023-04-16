@@ -1,7 +1,7 @@
 import authRoutes from "./auth.js";
 
 const configureRoutes = (app) => {
-    app.use("/auth", authRoutes);
+    app.use("/api", authRoutes);
 
     app.use("*", (req, res) => {
         res.status(404).json({ error: "Not found | at *" });
