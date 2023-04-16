@@ -14,8 +14,8 @@ authRouter.route("/login").post(loginRouteValidator, async (req, res) => {
   }
 });
 
-authRouter.route("/me").get(async (req, res) => {
-  const { email } = req.body;
+authRouter.route("/me").get(loginRouteValidator, async (req, res) => {
+  const { email } = req.currentUser;
   try {
     const userProfile = await userData.getUserProfile(email);
 
