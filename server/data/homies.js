@@ -23,3 +23,32 @@ export const getHomiesFuzzy = async (currentUser) => {
 
   return feed;
 };
+
+// TODO: Needs Pagination
+export const getLinkedHomies = async (currentUser, connectionType, search) => {
+  if (!currentUser) {
+    throw { status: 401, message: "Unauthorised request" };
+  }
+
+  const newValues = validateLinkedHomiesBody({ connectionType, search });
+  connectionType = newValues.connectionType;
+  search = newValues.search;
+
+  let linkedHomies;
+
+  try {
+    linkedHomies = await getLinkedUsersQuery(
+      currentUser,
+      connectionType,
+      search
+    );
+  } catch (error) {
+    throw { status: 400, message: error.toString() };
+  }
+
+  if (!linkedHomies) {
+    throw { status: 400, message: `Could not fetch ${connectionType} homies` };
+  }
+
+  return linkedHomies;
+};
