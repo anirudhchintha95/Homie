@@ -44,11 +44,6 @@ const ConnectionSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
-    blockedByUserId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
     // messages: {
     //   type: [MessageSchema],
     //   default: [],
