@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { CONNECTION_STATUSES } from "../constants.js";
 
 // const MessageSchema = new Schema(
 //   {
@@ -30,9 +31,10 @@ const ConnectionSchema = new Schema(
       ref: "User",
       required: true,
     },
-    matched: {
-      type: Schema.Types.Boolean,
-      default: false,
+    status: {
+      type: Schema.Types.String,
+      enum: Object.values(CONNECTION_STATUSES),
+      default: CONNECTION_STATUSES.FAVORITE,
     },
     showCreatedByUserData: {
       type: Schema.Types.Boolean,
