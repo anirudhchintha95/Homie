@@ -2,15 +2,16 @@ import { Router } from "express";
 import { homiesData } from "../data/index.js";
 
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
+import { formatUserListResponse } from "../utils.js";
 
 const homiesRouter = Router();
 
 homiesRouter.route("/").post(async (req, res) => {
   try {
     const homies = await homiesData.getHomiesFuzzy(req.currentUser);
-    res.json({ homies });
+    res.json({ homies: await formatUserListResponse(req, homies) });
   } catch (error) {
-    return res.status(error.status).json({ error: error.message });
+    return res.status(error.status || 500).json({ error: error.message });
   }
 });
 
@@ -24,9 +25,9 @@ homiesRouter
         connectionType,
         search
       );
-      res.json({ homies });
+      res.json({ homies: await formatUserListResponse(req, homies) });
     } catch (error) {
-      return res.status(error.status).json({ error: error.message });
+      return res.status(error.status || 500).json({ error: error.message });
     }
   });
 

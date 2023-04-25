@@ -273,101 +273,22 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
     {
       $limit: 1,
     },
-  ]);
-};
-
-// May need fixing!
-export const getHomiesSearch = async (currentUser, preferences) => {
-  return User.aggregate([
     {
       $lookup: {
-        from: "connections",
-        let: { userId: "$_id" },
+        from: "images",
         pipeline: [
           {
             $match: {
               $expr: {
-                $or: [
-                  {
-                    $and: [
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { $eq: ["$createdForUserId", currentUser._id] },
-                      { $eq: ["$createdByUserId", "$$userId"] },
-                    ],
-                  },
+                $and: [
+                  { $eq: ["$imageableId", currentUser._id] },
+                  { $eq: ["$imageableType", "User"] },
                 ],
               },
             },
           },
         ],
-        as: "connection",
-      },
-    },
-    {
-      $match: {
-        $or: [
-          { "connection._id": { $exists: false } },
-          {
-            "connection.createdForUserId": currentUser._id,
-            "connection.status": {
-              $eq: CONNECTION_STATUSES.FAVORITE,
-            },
-          },
-        ],
-      },
-    },
-    {
-      $addFields: {
-        age: {
-          $dateDiff: {
-            startDate: "$dateOfBirth",
-            endDate: "$$NOW",
-            unit: "year",
-          },
-        },
-      },
-    },
-    {
-      $match: {
-        $and: [
-          { _id: { $nin: [currentUser._id] } },
-          { "preferences.smoking": preferences.smoking },
-          { "preferences.drinking": preferences.drinking },
-          { "preferences.pets": preferences.pets },
-          {
-            "preferences.rent.exact": {
-              $gte: preferences.rent.exact,
-            },
-          },
-          {
-            "preferences.rent.min": {
-              $gte: preferences.rent.min,
-            },
-          },
-          {
-            "preferences.rent.max": {
-              $lte: preferences.rent.max,
-            },
-          },
-          {
-            $and: [
-              {
-                age: {
-                  $gte: preferences.age.min,
-                },
-              },
-              { age: { lte: preferences.age.max } },
-            ],
-          },
-          {
-            gender: { $in: preferences.genders || [] },
-          },
-        ],
+        as: "images",
       },
     },
   ]);

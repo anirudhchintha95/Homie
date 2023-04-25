@@ -1,9 +1,20 @@
-import { authenticateRequest } from "../middlewares/index.js";
+import {
+  authenticateRequest,
+  validateImageRoutes,
+} from "../middlewares/index.js";
+
 import authRoutes from "./auth.js";
 import homiesRouter from "./homies.js";
+import imagesRouter from "./images.js";
 
 const configureRoutes = (app) => {
   app.use("/api", authRoutes);
+  app.use(
+    "/api/images/:imageableType/:imageableId",
+    authenticateRequest,
+    validateImageRoutes,
+    imagesRouter
+  );
   app.use("/api/homies", authenticateRequest, homiesRouter);
 
   app.use("*", (req, res) => {

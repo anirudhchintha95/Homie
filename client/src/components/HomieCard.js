@@ -125,7 +125,7 @@ const HomieCard = ({
           <CardMedia
             component="img"
             height={isLarge ? "350" : "100"}
-            image={user.avatar || NoImage}
+            image={user.images?.length ? user.images[0] : NoImage}
             alt="user-images"
           />
           {!status || status === CONNECTION_STATUSES.IGNORED ? (
@@ -161,7 +161,7 @@ const HomieCard = ({
         <CardMedia
           component="img"
           height="100"
-          image={user.avatar || NoImage}
+          image={user.images?.length ? user.images[0] : NoImage}
           alt="user-images"
         />
       )}
