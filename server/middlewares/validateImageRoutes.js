@@ -25,6 +25,12 @@ const validateImageRoutes = async (req, res, next) => {
           .send({ message: "Please provide a valid user id!" });
       }
 
+      if (user._id.toString() !== req.currentUser._id.toString()) {
+        return res.status(403).send({
+          message: "You are not authorized to upload images for this user!",
+        });
+      }
+
       req.imageable = { record: user, imageableType, imageableId };
     }
 
@@ -35,6 +41,12 @@ const validateImageRoutes = async (req, res, next) => {
         return res
           .status(400)
           .send({ message: "Please provide a valid home id!" });
+      }
+
+      if (home.userId.toString() !== req.currentUser._id.toString()) {
+        return res.status(403).send({
+          message: "You are not authorized to upload images for this home!",
+        });
       }
 
       req.imageable = { record: home, imageableType, imageableId };
