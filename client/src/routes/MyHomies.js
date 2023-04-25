@@ -58,7 +58,7 @@ const MyHomies = () => {
         >
           <Tabs value={connectionTypeIdx} onChange={handleChange}>
             {connectionTypes.map((type) => (
-              <Tab label={type} />
+              <Tab label={type} key={type} />
             ))}
           </Tabs>
         </Grid>

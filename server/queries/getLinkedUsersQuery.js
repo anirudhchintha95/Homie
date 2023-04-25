@@ -82,6 +82,25 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
   pipeline.push({
     $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
   });
+  pipeline.push({
+    $lookup: {
+      from: "images",
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: ["$imageableId", currentUser._id] },
+                { $eq: ["$imageableType", "User"] },
+              ],
+            },
+          },
+        },
+      ],
+      as: "images",
+    },
+  });
+
   return User.aggregate(pipeline);
 };
 
