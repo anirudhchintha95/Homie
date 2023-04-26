@@ -1,48 +1,96 @@
 import { model, Schema } from "mongoose";
 import { GENDERS } from "../constants.js";
+import * as validations from "../validators/helpers.js";
 
 const PreferenceSchema = new Schema({
   smoking: {
     type: Boolean,
-    default: false,
   },
   drinking: {
     type: Boolean,
-    default: false,
   },
   pets: {
     type: Boolean,
-    default: false,
   },
   rent: {
     type: Object,
-    min: {
-      type: Number,
-      default: 0,
+    validate: {
+      validator: function (v) {
+        if (Object.keys(v).length === 0) return true;
+        const hasMin = typeof v.min === "number";
+        const hasMax = typeof v.max === "number";
+        const hasExact = typeof v.exact === "number";
+
+        if (hasExact) {
+          try {
+            validations.validateNumber(v.exact, "exact rent", {
+              min: 1,
+            });
+          } catch (error) {
+            return false;
+          }
+        }
+
+        if (hasMin) {
+          try {
+            validations.validateNumberRange(v.min, "min rent", {
+              min: 1,
+            });
+          } catch (error) {
+            return false;
+          }
+        }
+        if (hasMax) {
+          try {
+            validations.validateNumberRange(v.max, "max rent", {
+              min: 1,
+            });
+          } catch (error) {
+            return false;
+          }
+        }
+
+        return hasMin && hasMax ? v.min <= v.max : true;
+      },
+      message: () => `Rent range is not valid!`,
     },
-    max: {
-      type: Number,
-      default: 0,
-    },
-    exact: {
-      type: Number,
-      default: 0,
-    },
-    default: { min: 0, max: 0, exact: 0 },
   },
   age: {
     type: Object,
-    min: {
-      type: Number,
-      default: 0,
+    validate: {
+      validator: function (v) {
+        if (Object.keys(v).length === 0) return true;
+        const hasMin = typeof v.min === "number";
+        const hasMax = typeof v.max === "number";
+
+        if (hasMin) {
+          try {
+            validations.validateNumberRange(v.min, "min age", {
+              min: 13,
+              includeMin: true,
+            });
+          } catch (error) {
+            return false;
+          }
+        }
+        if (hasMax) {
+          try {
+            validations.validateNumberRange(v.max, "max age", {
+              min: 13,
+              max: 100,
+              includeMin: true,
+            });
+          } catch (error) {
+            return false;
+          }
+        }
+
+        return hasMin && hasMax ? v.min <= v.max : true;
+      },
+      message: () => `Age range is not valid!`,
     },
-    max: {
-      type: Number,
-      default: 0,
-    },
-    default: { min: 0, max: 0 },
   },
-  gender: {
+  genders: {
     type: Array,
     validate: {
       validator: function (v) {
@@ -50,7 +98,6 @@ const PreferenceSchema = new Schema({
       },
       message: (props) => `${props.value} does not have valid genders!`,
     },
-    required: true,
   },
 });
 
@@ -99,12 +146,10 @@ const UserSchema = new Schema(
     location: {
       city: {
         type: String,
-        required: true,
         trim: true,
       },
       state: {
         type: String,
-        required: true,
         trim: true,
       },
     },
@@ -134,6 +179,12 @@ const UserSchema = new Schema(
     },
   }
 );
+
+UserSchema.index({
+  firstName: "text",
+  lastName: "text",
+  email: "text",
+});
 
 const User = model("User", UserSchema);
 

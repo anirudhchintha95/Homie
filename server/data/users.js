@@ -1,17 +1,16 @@
 import User from "../models/user.js";
-import helpers from "../validators/helpers.js";
+import { isValidEmail, isValidPassword } from "../validators/helpers.js";
 
-const exportedMethods = {
-  async getUserProfile(email) {
-    email = helpers.checkString(email, 'email');
+export const getUserProfile = async (email) => {
+  if (!isValidEmail(email)) throw [400, "Error: Invalid Email"];
 
-    const userProfile = await User.findOne({email: email}).exec();
+  const userProfile = await User.findOne(
+    { email: email },
+    "-encryptedPassword -__v"
+  );
 
-    if(!userProfile) throw [404, 'User not found'];
+  if (!userProfile) throw [404, "User not found"];
 
-    return userProfile;
-  }
-
-}
-
-export default exportedMethods;
+  userProfile._id = userProfile._id.toString();
+  return userProfile._doc;
+};

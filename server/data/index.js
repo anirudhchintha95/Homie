@@ -1,5 +1,4 @@
-import userDataFunctions from "./users.js";
-import authDataFunctions from "./auth.js";
-
-export const userData = userDataFunctions;
-export const authData = authDataFunctions;
+export * as auth from "./auth.js";
+export * as homiesData from "./homies.js";
+export * as userData from "./users.js";
+export * as homeData from "./homes.js";

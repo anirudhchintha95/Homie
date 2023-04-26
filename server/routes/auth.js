@@ -1,28 +1,32 @@
 import { Router } from "express";
-import { userData } from "../data/index.js";
-import { loginRouteValidator } from "../validators/loginValidator.js";
+import User from "../models/user.js";
+import bcrypt from "bcrypt";
 
-const authRouter = Router();
+import { auth } from "../data/index.js";
+import { loginValidator } from "../validators/loginValidator.js";
 
-authRouter.route("/login").post(loginRouteValidator, async (req, res) => {
+const router = Router();
+router.route("/login").post(loginValidator, async (req, res) => {
   try {
     const { email, password } = req.body;
-    const result = await auth.login(email, password);
-    res.json(result);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user.encryptedPassword
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    res.json({ message: "Login successful" });
   } catch (error) {
-    return res.status(error.status).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
-authRouter.route("/me").get(loginRouteValidator, async (req, res) => {
-  const { email } = req.currentUser;
-  try {
-    const userProfile = await userData.getUserProfile(email);
-
-    return res.status(200).json(userProfile);
-  } catch (e) {
-    return res.json(e);
-  }
-});
-
-export default authRouter;
+export default router;
