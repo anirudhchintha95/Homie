@@ -7,6 +7,9 @@ export const getHome = async (userId) => {
   if (!isValidObjectId(userId)) throw [400, "Error: Invaild User Id"];
 
   const home = await Home.findOne({ userId: userId }, "-_id -__v");
-
-  return home._doc;
+  if (home._doc) {
+    return home._doc;
+  } else {
+    return {};
+  }
 };

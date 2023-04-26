@@ -9,8 +9,12 @@ router.route("/").get(protectedAccess, async (req, res) => {
   try {
     const userDetails = await userData.getUserProfile(email);
     const homeDetails = await homeData.getHome(userDetails._id);
-    userDetails["homeInfo"] = homeDetails;
-    return res.status(200).json(userDetails);
+    if (Object.keys(homeDetails).length === 0) {
+      return res.status(200).json(userDetails);
+    } else {
+      userDetails["homeInfo"] = homeDetails;
+      return res.status(200).json(userDetails);
+    }
   } catch (e) {
     return e[0] != 500
       ? res.status(e[0]).json(e[1])
