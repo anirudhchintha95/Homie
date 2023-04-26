@@ -11,3 +11,5 @@ export { default as HomieActions } from "./HomieActions";
 export { default as ChatModal } from "./ChatModal";
 export { default as MessageForm } from "./MessageForm";
 export { default as NameAvatar } from "./NameAvatar";
+export { default as AuthHoc } from "./AuthHoc";
+export { default as PageError } from "./PageError";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes as BrowserRoutes, Outlet, Route } from "react-router-dom";
 
-import { Layout, RequiresAuth } from "../components";
+import { Layout, RequiresAuth, AuthHoc } from "../components";
 
 import About from "./About";
 import Account from "./Account";
@@ -19,8 +19,22 @@ const Routes = () => {
     <BrowserRoutes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/login"
+          element={
+            <AuthHoc>
+              <Login />
+            </AuthHoc>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <AuthHoc>
+              <Signup />
+            </AuthHoc>
+          }
+        />
         <Route path="/about" element={<About />} />
         <Route
           path="/homies"
