@@ -30,7 +30,7 @@ const FindMyHomies = () => {
   }, [fetchHomies]);
 
   return (
-    <Box sx={{ width: "100%" }} marginTop={2}>
+    <Box sx={{ width: "100%" }} marginTop={2} marginBottom={2}>
       <Grid container spacing={2} display="flex" justifyContent="center">
         {loading ? (
           <Grid xs={12} md={8}>

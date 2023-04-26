@@ -4,29 +4,22 @@ import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
+// import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import BlockIcon from "@mui/icons-material/Block";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+// import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import { Box, styled } from "@mui/material";
+import { Box, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 import { NoImage } from "../assets";
-import { getAvatarName, getFullName } from "../utils";
+import { getFullName } from "../utils";
 import { CONNECTION_STATUSES } from "../contants";
 
 import Toast from "./Toast";
 import useHomieInteractions from "../useUserInteractions";
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.main,
-  color: theme.palette.primary.main,
-}));
+import HomieActions from "./HomieActions";
+import NameAvatar from "./NameAvatar";
 
 const HomieCard = ({
   user,
@@ -50,14 +43,6 @@ const HomieCard = ({
   // FAVORITE to null
   // null to IGNORED
 
-  const removeMatchedClick = async () =>
-    handleActionClick("removeMatched", onActionsClick);
-  // MATCHED to IGNORED
-
-  const reportClick = async () => handleActionClick("block", onActionsClick);
-  // <any> to BLOCKED
-  // MAKE SURE EVERY CONNECTION BECOMES BLOCKED(After admin intervention if applicable)
-
   return (
     <Card elevation={4}>
       <Toast
@@ -67,24 +52,17 @@ const HomieCard = ({
         variant="error"
       />
       <CardHeader
-        avatar={
-          <StyledAvatar
-            aria-label="username"
-            sx={
-              !isLarge
-                ? { width: "30px", height: "30px", fontSize: "1.1rem" }
-                : {}
-            }
-          >
-            {getAvatarName(user)}
-          </StyledAvatar>
+        avatar={<NameAvatar user={user} isLarge={isLarge} />}
+        // action={
+        //   <IconButton aria-label="settings">
+        //     <MoreVertIcon />
+        //   </IconButton>
+        // }
+        title={
+          <Link component={RouterLink} to={`/homies/${user._id}`}>
+            {getFullName(user)}
+          </Link>
         }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={getFullName(user)}
         subheader={isLarge ? `${user.gender} | ${user.age} YO` : null}
       />
       {isLarge ? (
@@ -176,69 +154,7 @@ const HomieCard = ({
         <></>
       )}
       <CardActions disableSpacing>
-        {!status || status === CONNECTION_STATUSES.IGNORED ? (
-          <>
-            <Tooltip title="Favorite">
-              <IconButton
-                aria-label="add to favorites"
-                onClick={onFavoriteClick}
-              >
-                <ThumbUpOffAltIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-            {status !== CONNECTION_STATUSES.IGNORED ? (
-              <Tooltip title="Ignore">
-                <IconButton
-                  aria-label="ignore homie"
-                  onClick={removeFavoriteClick}
-                >
-                  <ThumbDownOffAltIcon color="primary" />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <></>
-            )}
-            <Tooltip title="Block">
-              <IconButton aria-label="block" onClick={reportClick}>
-                <BlockIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-          </>
-        ) : status === CONNECTION_STATUSES.FAVORITE ? (
-          <>
-            <Tooltip title="Remove from favorites">
-              <IconButton
-                aria-label="remove from favorites"
-                onClick={removeFavoriteClick}
-              >
-                <ThumbUpAltIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Block">
-              <IconButton aria-label="block" onClick={reportClick}>
-                <BlockIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-          </>
-        ) : status === CONNECTION_STATUSES.MATCHED ? (
-          <>
-            <Tooltip title="Remove from matched">
-              <IconButton
-                aria-label="remove from matched"
-                onClick={removeMatchedClick}
-              >
-                <VerifiedIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Block">
-              <IconButton aria-label="block" onClick={reportClick}>
-                <BlockIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-          </>
-        ) : (
-          <></>
-        )}
+        <HomieActions user={user} variant="small" onChange={onActionsClick} />
       </CardActions>
     </Card>
   );

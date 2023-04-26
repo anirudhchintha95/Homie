@@ -31,4 +31,29 @@ homiesRouter
     }
   });
 
+homiesRouter.route("/:id").get(async (req, res) => {
+  try {
+    let { id } = req.params;
+    const user = await homiesData.getHomie(req.currentUser, id);
+    res.json({ user });
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
+homiesRouter.route("/:id/send-message").post(async (req, res) => {
+  try {
+    let { id } = req.params;
+    let { message } = req.body;
+    const connection = await homiesData.sendMessage(
+      req.currentUser,
+      id,
+      message
+    );
+    res.json({ connection });
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
 export default homiesRouter;

@@ -33,7 +33,7 @@ const useHomieInteractions = ({ user }) => {
         if (!apiFunction) {
           throw new Error("Invalid action");
         }
-        const updatedUser = await apiFunction(user._id);
+        const updatedUser = await apiFunction(user?._id);
         successCallback(updatedUser);
       } catch (e) {
         setError(
@@ -43,7 +43,7 @@ const useHomieInteractions = ({ user }) => {
         setLoading(false);
       }
     },
-    [user._id]
+    [user?._id]
   );
 
   const resetError = useCallback(() => {

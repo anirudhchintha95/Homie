@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes as BrowserRoutes, Route } from "react-router-dom";
+import { Routes as BrowserRoutes, Outlet, Route } from "react-router-dom";
 
 import { Layout, RequiresAuth } from "../components";
 
@@ -12,6 +12,7 @@ import NotFound from "./NotFound";
 import Preferences from "./Preferences";
 import Signup from "./Signup";
 import Home from "./Home";
+import HomieInfo from "./HomieInfo";
 
 const Routes = () => {
   return (
@@ -25,10 +26,13 @@ const Routes = () => {
           path="/homies"
           element={
             <RequiresAuth>
-              <FindMyHomies />
+              <Outlet />
             </RequiresAuth>
           }
-        />
+        >
+          <Route index element={<FindMyHomies />} />
+          <Route path=":id" element={<HomieInfo />} />
+        </Route>
         <Route
           path="/account"
           element={

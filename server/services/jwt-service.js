@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
 
 class JwtService {
-  encypt(data) {
+  static encrypt(data) {
     try {
-      return jwt.sign(data, process.env.JWT_SECRET);
+      return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     } catch (e) {
       console.log(e);
       return;
     }
   }
 
-  async decrypt(token) {
+  static async decrypt(token) {
     return (await jwt.verify(token, "secret")) || {};
   }
 }

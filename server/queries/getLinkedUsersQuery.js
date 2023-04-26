@@ -23,7 +23,7 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
         {
           $match: {
             $expr: {
-              ...(connectionType == CONNECTION_TYPES.MATCHED
+              ...(connectionType === CONNECTION_TYPES.MATCHED
                 ? {
                     $and: [
                       { $eq: ["$status", CONNECTION_STATUSES.MATCHED] },
@@ -31,21 +31,21 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                         $or: [
                           {
                             $and: [
-                              { createdByUserId: currentUser._id },
-                              { createdForUserId: "$$userId" },
+                              { $eq: ["$createdByUserId", currentUser._id] },
+                              { $eq: ["$createdForUserId", "$$userId"] },
                             ],
                           },
                           {
                             $and: [
-                              { createdForUserId: currentUser._id },
-                              { createdByUserId: "$$userId" },
+                              { $eq: ["$createdForUserId", currentUser._id] },
+                              { $eq: ["$createdByUserId", "$$userId"] },
                             ],
                           },
                         ],
                       },
                     ],
                   }
-                : connectionType == CONNECTION_TYPES.FAVORITES
+                : connectionType === CONNECTION_TYPES.FAVORITES
                 ? {
                     $and: [
                       { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },
@@ -53,11 +53,11 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                       { $eq: ["$createdForUserId", "$$userId"] },
                     ],
                   }
-                : connectionType == CONNECTION_TYPES.IGNORED
+                : connectionType === CONNECTION_TYPES.IGNORED
                 ? {
                     $eq: ["$status", CONNECTION_STATUSES.IGNORED],
                   }
-                : connectionType == CONNECTION_TYPES.ADMIRERS
+                : connectionType === CONNECTION_TYPES.ADMIRERS
                 ? {
                     $and: [
                       { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },

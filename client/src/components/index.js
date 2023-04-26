@@ -7,3 +7,7 @@ export { default as HomieCard } from "./HomieCard";
 export { default as SearchInputForm } from "./SearchInputForm";
 export { default as HomieSkeletonCard } from "./HomieSkeletonCard";
 export { default as Toast } from "./Toast";
+export { default as HomieActions } from "./HomieActions";
+export { default as ChatModal } from "./ChatModal";
+export { default as MessageForm } from "./MessageForm";
+export { default as NameAvatar } from "./NameAvatar";

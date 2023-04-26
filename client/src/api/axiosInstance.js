@@ -10,8 +10,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const user = getFromStorage(process.env.REACT_APP_USER_KEY);
-    config.headers["accesstoken"] = user?.accessToken || "";
+    const accesstoken = getFromStorage(process.env.REACT_APP_USER_ACCESS_TOKEN_KEY);
+    config.headers["accesstoken"] = accesstoken || "";
     return config;
   },
   (error) => {
