@@ -78,7 +78,10 @@ const RightSideMenu = () => {
       >
         <MenuItem disabled key="Hi" sx={{ opacity: "1!important" }}>
           <Typography textAlign="center" sx={{ width: "100%" }}>
-            Hi {auth?.user?.firstName} {auth?.user?.lastName}
+            Hi{" "}
+            {auth?.user
+              ? `${auth?.user?.firstName} ${auth?.user?.lastName}`
+              : "Homie"}
           </Typography>
         </MenuItem>
         <Divider />

@@ -25,7 +25,7 @@ const Navbar = () => {
       name: "Find my homies",
       path: "/homies",
     },
-    auth?.user
+    auth?.isLoggedIn
       ? {
           name: "My homies",
           path: "/my-homies",
@@ -155,7 +155,7 @@ const Navbar = () => {
             ))}
           </Box>
 
-          {auth?.user ? <RightSideMenu /> : <></>}
+          {auth?.isLoggedIn ? <RightSideMenu /> : <></>}
         </Toolbar>
       </Container>
     </AppBar>
