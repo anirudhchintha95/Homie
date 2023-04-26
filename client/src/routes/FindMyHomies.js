@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { HomieCard, HomieSkeletonCard } from "../components";
+import { HomieCard, HomieSkeletonCard, PageError } from "../components";
 import { fetchHomiesApi } from "../api/homies";
 
 const FindMyHomies = () => {
@@ -37,7 +37,7 @@ const FindMyHomies = () => {
             <HomieSkeletonCard />
           </Grid>
         ) : error ? (
-          <>Show Error Here</>
+          <PageError onRefresh={fetchHomies}>{error}</PageError>
         ) : (
           homies.map((user) => (
             <Grid xs={12} md={8} key={user._id}>

@@ -7,7 +7,12 @@ import Tab from "@mui/material/Tab";
 import { fetchMyHomiesApi } from "../api/homies";
 import { CONNECTION_TYPES, CONNECTION_TYPES_TO_STATUSES } from "../contants";
 
-import { HomieCard, HomieSkeletonCard, SearchInputForm } from "../components";
+import {
+  HomieCard,
+  HomieSkeletonCard,
+  PageError,
+  SearchInputForm,
+} from "../components";
 
 const connectionTypes = Object.values(CONNECTION_TYPES);
 
@@ -82,7 +87,7 @@ const MyHomies = () => {
           </Grid>
         </Grid>
       ) : error ? (
-        <>Show Error Here</>
+        <PageError onRefresh={fetchMyHomies}>{error}</PageError>
       ) : (
         <Grid container spacing={2}>
           {myHomies.map((user) => (

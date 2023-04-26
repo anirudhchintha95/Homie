@@ -22,7 +22,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import { fetchHomieApi } from "../api/homies";
 import { getFullName } from "../utils";
 
-import { Loader, HomieActions, ChatModal } from "../components";
+import { Loader, HomieActions, ChatModal, PageError } from "../components";
 import { CONNECTION_STATUSES } from "../contants";
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -39,21 +39,22 @@ const HomieInfo = () => {
   const [loading, setLoading] = useState(true);
   const [openChatModal, setOpenChatModal] = useState(false);
 
+  const fetchUser = async (userId) => {
+    try {
+      setLoading(true);
+      const data = await fetchHomieApi(userId);
+      setUser(data);
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || err.message || "Could not fetch user"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchHomieApi(id);
-        setUser(data);
-      } catch (err) {
-        setError(
-          err?.response?.data?.message || err.message || "Could not fetch user"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
+    fetchUser(id);
   }, [id]);
 
   const status = useMemo(() => {
@@ -73,7 +74,7 @@ const HomieInfo = () => {
   return loading ? (
     <Loader />
   ) : error ? (
-    <Box>{error}</Box>
+    <PageError onRefresh={fetchUser}>{error}</PageError>
   ) : (
     <Box>
       <ChatModal
