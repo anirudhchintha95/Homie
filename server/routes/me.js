@@ -4,7 +4,7 @@ import { protectedAccess } from "../middlewares/protectedAccess.js";
 
 const router = Router();
 
-router.route("/").get(async (req, res) => {
+router.route("/").get(protectedAccess, async (req, res) => {
   const email = req.session.user.email;
   try {
     const userDetails = await userData.getUserProfile(email);
