@@ -1,4 +1,7 @@
-import { authenticateRequest } from "../middlewares/index.js";
+import {
+  authenticateRequest,
+  validateImageRoutes,
+} from "../middlewares/index.js";
 
 import authRoutes from "./auth.js";
 import homiesRouter from "./homies.js";
