@@ -48,7 +48,7 @@ const Login = () => {
         if (!hasError) {
             try {
                 // DevLog | Apoorv
-                alert("Logging In");
+                // alert("Logging In");
                 // Login API call
                 const res = await loginApi(emailInput, passwordInput);
                 await auth.signIn(res?.accesstoken, () => {
