@@ -12,6 +12,10 @@ class ImageService {
     );
   }
   static async createImage({ file, imageableType, imageableId }) {
+    if (!file || !imageableType || !imageableId) {
+      throw { status: 400, message: "Missing required fields" };
+    }
+
     let filename = file.key;
 
     if (!ImageService.s3Enabled()) {
@@ -36,6 +40,10 @@ class ImageService {
   static async getPresignedUrl(key) {
     if (!ImageService.s3Enabled()) {
       throw { status: 500, message: "AWS S3 is not configured" };
+    }
+
+    if (!key) {
+      throw { status: 400, message: "Missing key field for getting URL" };
     }
 
     const client = new S3Client({ region: process.env.AWS_S3_REGION });
@@ -63,6 +71,12 @@ class ImageService {
   }
 
   static async getImagesWithUrls(images, baseUrl) {
+    if (!baseUrl) {
+      throw { status: 400, message: "Missing base URL" };
+    }
+
+    if (!images) return [];
+
     if (ImageService.s3Enabled()) {
       return await ImageService.getImagePresignedUrls(images);
     } else {

@@ -5,6 +5,7 @@ import getFuzzyHomiesSearch from "../queries/getFuzzyHomiesSearch.js";
 import getLinkedUsersQuery from "../queries/getLinkedUsersQuery.js";
 
 import { validateLinkedHomiesBody } from "../validators/linkedHomiesValidator.js";
+import { validateId, validateString } from "../validators/helpers.js";
 import getUserDetails from "../queries/getUserDetails.js";
 
 // This is fuzzy search. This needs to be properly tested
@@ -62,13 +63,8 @@ export const sendMessage = async (currentUser, homieId, message) => {
     throw { status: 401, message: "Unauthorised request" };
   }
 
-  if (!homieId) {
-    throw { status: 400, message: "Missing userId" };
-  }
-
-  if (!message) {
-    throw { status: 400, message: "Missing message" };
-  }
+  homieId = validateId(homieId, "homieId");
+  message = validateString(message, "message", { maxLength: 20 });
 
   const homie = await User.findById(homieId);
 
@@ -101,10 +97,7 @@ export const getHomie = async (currentUser, homieId) => {
     throw { status: 401, message: "Unauthorised request" };
   }
 
-  if (!homieId) {
-    throw { status: 400, message: "Missing userId" };
-  }
-
+  homieId = validateId(homieId, "homieId");
   const user = await getUserDetails(currentUser, homieId);
 
   if (!user) {

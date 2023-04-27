@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
   if (!email || !emailRegex.test(email)) return false;
@@ -14,6 +16,37 @@ const checkBoolean = (value) => {
     return true;
   }
   return false;
+};
+
+const validateString = (value, name, opts = {}) => {
+  const { minLength, maxLength } = opts || { minLength: 1 };
+
+  if (!value) {
+    throw { status: 400, message: `${name} is required!` };
+  }
+
+  if (typeof value !== "string") {
+    throw { status: 400, message: `${name} is not a string!` };
+  }
+
+  string = string.trim();
+
+  if (!string) {
+    throw { status: 400, message: `${name} is required!` };
+  }
+
+  if (value.length < minLength) {
+    throw {
+      status: 400,
+      message: `${name} must be at least ${minLength} characters long!`,
+    };
+  }
+  if (maxLength && value.length > maxLength) {
+    throw {
+      status: 400,
+      message: `${name} must be no more than ${maxLength} characters long!`,
+    };
+  }
 };
 
 const validateNumber = (value, name) => {
@@ -53,10 +86,20 @@ const validateNumberRange = (value, name, opts = {}) => {
   }
 };
 
+const validateId = (value, name) => {
+  value = validateString(value, name);
+
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    throw { status: 400, message: `${name} is not a valid id!` };
+  }
+};
+
 export {
   isValidEmail,
   isValidPassword,
   checkBoolean,
   validateNumber,
   validateNumberRange,
+  validateString,
+  validateId,
 };

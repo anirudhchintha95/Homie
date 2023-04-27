@@ -3,6 +3,7 @@ import { homiesData } from "../data/index.js";
 
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
 import { formatUserListResponse } from "../utils.js";
+import { validateId, validateString } from "../validators/helpers.js";
 
 const homiesRouter = Router();
 
@@ -34,6 +35,7 @@ homiesRouter
 homiesRouter.route("/:id").get(async (req, res) => {
   try {
     let { id } = req.params;
+    id = validateId(id, "homieId");
     const user = await homiesData.getHomie(req.currentUser, id);
     res.json({ user });
   } catch (error) {
@@ -45,6 +47,8 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
   try {
     let { id } = req.params;
     let { message } = req.body;
+    id = validateId(id, "homieId");
+    message = validateString(message, "message", { maxLength: 20 });
     const connection = await homiesData.sendMessage(
       req.currentUser,
       id,
