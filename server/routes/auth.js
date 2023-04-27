@@ -2,8 +2,9 @@ import { Router } from "express";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 
-// import { auth } from "../data/index.js";
+import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
+import { signupValidator } from "../validators/signupValidator.js";
 import JwtService from "../services/jwt-service.js";
 
 const router = Router();
@@ -32,6 +33,36 @@ router.route("/login").post(loginValidator, async (req, res) => {
     res.json({ message: "Login successful", accesstoken });
   } catch (error) {
     return res.status(500).json({ error: error.message });
+  }
+});
+
+authRouter.route("/signup").post(signupValidator, async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      dateOfBirth,
+      phone,
+      gender,
+    } = req.body;
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Error: Passwords do not match." });
+    }
+    const result = await auth.signup(
+      firstName,
+      lastName,
+      email,
+      password,
+      dateOfBirth,
+      phone,
+      gender
+    );
+    res.json(result);
+  } catch (error) {
+    return res.status(error.status).json({ error: error.message });
   }
 });
 
