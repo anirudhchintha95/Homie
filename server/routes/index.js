@@ -6,6 +6,7 @@ import {
 import authRoutes from "./auth.js";
 import homiesRouter from "./homies.js";
 import imagesRouter from "./images.js";
+import profileRoutes from "./me.js";
 
 const configureRoutes = (app) => {
   app.use("/api", authRoutes);
@@ -16,6 +17,7 @@ const configureRoutes = (app) => {
     imagesRouter
   );
   app.use("/api/homies", authenticateRequest, homiesRouter);
+  app.use("/api/me", authenticateRequest, profileRoutes);
 
   app.use("*", (req, res) => {
     res.status(404).json({ error: "Not found | at *" });
