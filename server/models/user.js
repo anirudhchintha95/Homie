@@ -1,6 +1,8 @@
 import { model, Schema } from "mongoose";
 import { GENDERS } from "../constants.js";
 import * as validations from "../validators/helpers.js";
+import JwtService from "../services/jwt-service.js";
+import PasswordService from "../services/password-service.js";
 
 const PreferenceSchema = new Schema({
   smoking: {
@@ -160,7 +162,7 @@ const UserSchema = new Schema(
     },
     preferences: {
       type: PreferenceSchema,
-      required: true,
+      //required: true,
     },
   },
   {
@@ -175,6 +177,12 @@ const UserSchema = new Schema(
       },
       fullName() {
         return `${this.firstName} ${this.lastName}`;
+      },
+      generateToken() {
+        return JwtService.encrypt({
+          _id: this._id,
+          email: this.email,
+        });
       },
     },
   }

@@ -81,7 +81,7 @@ const Login = () => {
     return (
         <div>
             <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }}>
-                <Typography variant="h4" align="center" mb={4}>
+                <Typography variant="h4" align="center" mb={4} color="primary">
                     Login
                 </Typography>
                 <Paper component="form" onSubmit={login} sx={{ p: 2 }}>
