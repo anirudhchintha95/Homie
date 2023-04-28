@@ -115,19 +115,21 @@ const Login = () => {
                             />
                         </Grid>
                     </Grid>
-                    <SubmitButton loading={loading}>Login</SubmitButton>
+                    <SubmitButton loading={loading} fullWidth>Login</SubmitButton>
                     {error && (
                         <Box mt={2} textAlign="center">
                             <Typography color="error">{error}</Typography>
                         </Box>
                     )}
-                    <Box mt={2} textAlign="center">
+                    <Typography mt={2} textAlign="center">Click below to signup:</Typography>
+                    <Box textAlign="center">
                         <Button
                             variant="contained"
                             component={Link}
                             to="/signup"
                             sx={{ mt: 2 }}
                             color="secondary"
+                            fullWidth
                         >
                             Signup
                         </Button>
