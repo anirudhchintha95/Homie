@@ -1,6 +1,8 @@
+import { validateEmail, validatePassword } from "../helpers";
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Button, Grid, TextField, Box, Paper, Typography } from "@mui/material";
+import { SubmitButton } from "../components";
 
 import useAuth from "../useAuth";
 import { loginApi } from "../api/auth";
@@ -13,6 +15,8 @@ const Login = () => {
 
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const login = async (e) => {
         e.preventDefault();
@@ -23,30 +27,24 @@ const Login = () => {
         setEmailError("");
         setPasswordError("");
 
-        if (!emailInput) {
+        const emailValidation = validateEmail(emailInput);
+        const passwordValidation = validatePassword(passwordInput);
+
+        if (!emailValidation.isValid) {
             hasError = true;
-            setEmailError("Email is required.");
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
-            hasError = true;
-            setEmailError("Invalid email format.");
+            setEmailError(emailValidation.error);
+            return;
         }
 
-        if (!passwordInput) {
+        if (!passwordValidation.isValid) {
             hasError = true;
-            setPasswordError("Password is required.");
-        } else if (
-            !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-                passwordInput
-            )
-        ) {
-            hasError = true;
-            setPasswordError(
-                "Password must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character."
-            );
+            setPasswordError(passwordValidation.error);
+            return;
         }
 
         if (!hasError) {
             try {
+                setLoading(true);
                 // DevLog | Apoorv
                 // alert("Logging In");
                 // Login API call
@@ -64,6 +62,10 @@ const Login = () => {
                 });
             } catch (e) {
                 console.error(e);
+                // setError(e.message);
+                setError("Invalid Credentials");
+            } finally {
+                setLoading(false);
             }
         }
     };
@@ -113,15 +115,19 @@ const Login = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Button type="submit" variant="contained" fullWidth>
-                        Login
-                    </Button>
+                    <SubmitButton loading={loading}>Login</SubmitButton>
+                    {error && (
+                        <Box mt={2} textAlign="center">
+                            <Typography color="error">{error}</Typography>
+                        </Box>
+                    )}
                     <Box mt={2} textAlign="center">
                         <Button
-                            variant="text"
+                            variant="contained"
                             component={Link}
                             to="/signup"
                             sx={{ mt: 2 }}
+                            color="secondary"
                         >
                             Signup
                         </Button>
