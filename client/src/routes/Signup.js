@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { Alert, Button, Select, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import useAuth from "../useAuth";
-import { loginApi, sigunpApi } from "../api/auth";
+import { sigunpApi } from "../api/auth";
 
-const genderOptions = [
-  { value: "Male", label: "MALE" },
-  { value: "Female", label: "FEMALE" },
-  { value: "Non-Binary", label: "NON-BINARY" },
-];
 const Signup = () => {
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { from } = location.state || { from: { pathname: "/" } };
+
   const [error, setError] = useState();
   const [firstName, setFirstName] = useState({
     error: false,
@@ -128,16 +129,19 @@ const Signup = () => {
         phoneNumber.value,
         gender.value
       );
-      console.log(res);
-      // console.log(
-      //   firstName.value,
-      //   lastName.value,
-      //   email.value,
-      //   password.value,
-      //   dob.value,
-      //   phoneNumber.value,
-      //   gender.value
-      // );
+      //console.log(res);
+
+      await auth.signIn(res?.accesstoken, () => {
+        // Send them back to the page they tried to visit when they were
+        // redirected to the login page. Use { replace: true } so we don't create
+        // another entry in the history stack for the login page.  This means that
+        // when they get to the protected page and click the back button, they
+        // won't end up back on the login page, which is also really nice for the
+        // user experience.
+        navigate(from || "/", {
+          replace: true,
+        });
+      });
     } catch (error) {
       setError(
         error?.response?.data?.error ||

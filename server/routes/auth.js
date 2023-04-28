@@ -16,19 +16,13 @@ router.route("/login").post(loginValidator, async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      user.encryptedPassword
-    );
+    const isPasswordCorrect = await user.verifyPassword(password);
 
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const accesstoken = JwtService.encrypt({
-      _id: user._id,
-      email: user.email,
-    });
+    const accesstoken = user.generateToken();
 
     res.json({ message: "Login successful", accesstoken });
   } catch (error) {
@@ -36,22 +30,12 @@ router.route("/login").post(loginValidator, async (req, res) => {
   }
 });
 
-authRouter.route("/signup").post(signupValidator, async (req, res) => {
+router.route("/signup").post(signupValidator, async (req, res) => {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      dateOfBirth,
-      phone,
-      gender,
-    } = req.body;
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: "Error: Passwords do not match." });
-    }
-    const result = await auth.signup(
+    const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
+      req.body;
+
+    const user = await auth.signup(
       firstName,
       lastName,
       email,
@@ -60,9 +44,11 @@ authRouter.route("/signup").post(signupValidator, async (req, res) => {
       phone,
       gender
     );
-    res.json(result);
+
+    const accesstoken = user.generateToken();
+    res.json({ accesstoken });
   } catch (error) {
-    return res.status(error.status).json({ error: error.message });
+    return res.status(error.status||500).json({ error: error.message });
   }
 });
 

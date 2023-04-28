@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import PasswordService from "../services/password-service.js";
 import { loginValidator } from "../validators/loginValidator.js";
 import { signupValidator } from "../validators/signupValidator.js";
 
@@ -16,10 +17,10 @@ export const signup = async (
   phone,
   gender
 ) => {
-  signupValidator(email, password);
+  //signupValidator(email, password);
   try {
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const user1 = await User.create({
+    const encryptedPassword = await new PasswordService(password).encrypt();
+    const user = await User.create({
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -28,7 +29,9 @@ export const signup = async (
       phone: phone,
       gender: gender,
     });
+
+    return user;
   } catch (error) {
-    throw error.toString();
+    throw { status: 400, message: error.toString() };
   }
 };

@@ -20,7 +20,7 @@ export const signupValidator = (req, res, next) => {
     if (error.status === 400) {
       return res.status(error.status).json({ error: error.message });
     } else {
-      return res.status(error.status).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 };
