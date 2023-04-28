@@ -129,6 +129,8 @@ const Signup = () => {
       });
       return;
     }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -203,6 +205,7 @@ const Signup = () => {
                 });
               }}
               error={firstName.error}
+              helperText={firstName.error}
               fullWidth
             />
           </Grid>
