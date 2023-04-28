@@ -228,7 +228,7 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
           {
             "connection.createdForUserId": currentUser._id,
             "connection.status": {
-              $eq: CONNECTION_STATUSES.FAVORITE,
+              $in: [CONNECTION_STATUSES.FAVORITE, CONNECTION_STATUSES.IGNORED],
             },
           },
         ],

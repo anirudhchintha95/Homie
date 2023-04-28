@@ -3,7 +3,7 @@ import {
   addUserAsFavoriteApi,
   removeUserAsFavoriteApi,
   removeMatchedUserApi,
-  reportUserApi,
+  blockUserApi,
 } from "./api/homies";
 
 const getActionApiFunction = (action) => {
@@ -14,8 +14,8 @@ const getActionApiFunction = (action) => {
       return removeUserAsFavoriteApi;
     case "removeMatched":
       return removeMatchedUserApi;
-    case "report":
-      return reportUserApi;
+    case "block":
+      return blockUserApi;
     default:
       return;
   }

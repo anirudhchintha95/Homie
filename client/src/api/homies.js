@@ -39,8 +39,8 @@ export const removeMatchedUserApi = async (userId) => {
   return response?.data?.user || {};
 };
 
-export const reportUserApi = async (userId) => {
-  const response = await axiosInstance.post(`/homies/${userId}/report`);
+export const blockUserApi = async (userId) => {
+  const response = await axiosInstance.post(`/homies/${userId}/block`);
 
   return response?.data?.user || {};
 };

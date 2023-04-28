@@ -68,7 +68,9 @@ const HomieInfo = () => {
 
     if (
       user.connection.createdById === user._id &&
-      user.connection.status === CONNECTION_STATUSES.FAVORITE
+      [CONNECTION_STATUSES.FAVORITE, CONNECTION_STATUSES.IGNORED].includes(
+        user.connection.status
+      )
     ) {
       return;
     }

@@ -40,7 +40,7 @@ const HomieActions = ({
     handleActionClick("removeMatched", onChange);
   // MATCHED to IGNORED
 
-  const reportClick = async () => handleActionClick("report", onChange);
+  const blockClick = async () => handleActionClick("block", onChange);
 
   const status = useMemo(() => {
     if (!user) return;
@@ -73,9 +73,9 @@ const HomieActions = ({
     }
 
     actions.push({
-      title: "Report",
+      title: "Block",
       Icon: BlockIcon,
-      onClick: reportClick,
+      onClick: blockClick,
     });
   } else if (status === CONNECTION_STATUSES.FAVORITE) {
     actions.push({
@@ -84,9 +84,9 @@ const HomieActions = ({
       onClick: removeFavoriteClick,
     });
     actions.push({
-      title: "Report",
+      title: "Block",
       Icon: BlockIcon,
-      onClick: reportClick,
+      onClick: blockClick,
     });
   } else if (status === CONNECTION_STATUSES.MATCHED) {
     actions.push({
@@ -95,9 +95,9 @@ const HomieActions = ({
       onClick: removeMatchedClick,
     });
     actions.push({
-      title: "Report",
+      title: "Block",
       Icon: BlockIcon,
-      onClick: reportClick,
+      onClick: blockClick,
     });
   }
 
