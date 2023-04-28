@@ -17,7 +17,7 @@ const configureRoutes = (app) => {
     imagesRouter
   );
   app.use("/api/homies", authenticateRequest, homiesRouter);
-  app.use("/me", profileRoutes);
+  app.use("/api/me", authenticateRequest, profileRoutes);
 
   app.use("*", (req, res) => {
     res.status(404).json({ error: "Not found | at *" });
