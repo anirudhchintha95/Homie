@@ -63,7 +63,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Oswald', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -94,4 +94,35 @@ code {
   -moz-animation: flickerAnimation 2s infinite;
   -o-animation: flickerAnimation 2s infinite;
   animation: flickerAnimation 2s infinite;
+}
+
+.react-datepicker-popper {
+  z-index: 2!important;
+}
+
+.react-datepicker {
+  opacity: 1;
+  z-index: 2;
+  font-family: 'Oswald', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+}
+
+.react-datepicker__day--keyboard-selected, .react-datepicker__day--selected {
+  background-color: #3E6765!important;
+  color: white!important;
+}
+
+.react-datepicker__header {
+  background-color: #D9E2D5!important;
+}
+
+.react-datepicker__day-name {
+  color: #3E6765!important;
+  font-weight: bold;
+}
+
+.react-datepicker__current-month {
+  color: #3E6765!important;
+  text-decoration: underline;
 }
