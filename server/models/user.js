@@ -2,6 +2,7 @@ import { model, Schema } from "mongoose";
 import { GENDERS } from "../constants.js";
 import * as validations from "../validators/helpers.js";
 import JwtService from "../services/jwt-service.js";
+import PasswordService from "../services/password-service.js";
 
 const PreferenceSchema = new Schema({
   smoking: {

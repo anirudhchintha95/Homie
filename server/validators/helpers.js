@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -29,9 +29,9 @@ const validateString = (value, name, opts = {}) => {
     throw { status: 400, message: `${name} is not a string!` };
   }
 
-  string = string.trim();
+  value = value.trim();
 
-  if (!string) {
+  if (!value) {
     throw { status: 400, message: `${name} is required!` };
   }
 
@@ -47,6 +47,7 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
+  return value;
 };
 
 const validateNumber = (value, name) => {
@@ -89,9 +90,11 @@ const validateNumberRange = (value, name, opts = {}) => {
 const validateId = (value, name) => {
   value = validateString(value, name);
 
-  if (!mongoose.Types.ObjectId.isValid(value)) {
+  if (!isValidObjectId(value)) {
     throw { status: 400, message: `${name} is not a valid id!` };
   }
+
+  return value;
 };
 
 export {

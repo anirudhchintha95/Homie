@@ -70,7 +70,7 @@ const buildScoreColumns = (preference) => {
         then: {
           // If exact rent is not set by the other user, then we check if the rent range is within the preference range
           $cond: {
-            cond: {
+            $cond: {
               if: {
                 $or: [
                   { $eq: [{ $ifNull: ["$preferences.rent.min", null] }, null] },
@@ -144,9 +144,9 @@ const buildScoreColumns = (preference) => {
             },
           },
         },
+        then: 1,
+        else: 0,
       },
-      then: 1,
-      else: 0,
     };
   } else {
     newColumns.rentScore = 1;

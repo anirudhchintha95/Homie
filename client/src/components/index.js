@@ -13,3 +13,4 @@ export { default as MessageForm } from "./MessageForm";
 export { default as NameAvatar } from "./NameAvatar";
 export { default as AuthHoc } from "./AuthHoc";
 export { default as PageError } from "./PageError";
+export { default as SubmitButton } from "./SubmitButton";

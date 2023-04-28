@@ -1,11 +1,9 @@
 import { Router } from "express";
 import User from "../models/user.js";
-import bcrypt from "bcrypt";
 
 import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
 import { signupValidator } from "../validators/signupValidator.js";
-import JwtService from "../services/jwt-service.js";
 
 const router = Router();
 router.route("/login").post(loginValidator, async (req, res) => {
@@ -48,7 +46,7 @@ router.route("/signup").post(signupValidator, async (req, res) => {
     const accesstoken = user.generateToken();
     res.json({ accesstoken });
   } catch (error) {
-    return res.status(error.status||500).json({ error: error.message });
+    return res.status(error.status || 500).json({ error: error.message });
   }
 });
 
