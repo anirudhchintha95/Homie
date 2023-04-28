@@ -74,12 +74,9 @@ export const sendMessage = async (currentUser, homieId, message) => {
 
   const connection = await Connection.findByUserIds(homie._id, currentUser._id);
 
-  if (
-    !connection ||
-    (connection.status === CONNECTION_STATUSES.FAVORITE &&
-      connection.createdForUserId.toString() === currentUser._id.toString())
-  ) {
-    throw { status: 400, message: "Connection not found" };
+  // Only matched connections can send messages to each other
+  if (connection?.status !== CONNECTION_STATUSES.MATCHED) {
+    throw { status: 400, message: "Connection not active" };
   }
 
   connection.messages.push({
