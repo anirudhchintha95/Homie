@@ -10,15 +10,18 @@ import Login from "./Login";
 import MyHomies from "./MyHomies";
 import NotFound from "./NotFound";
 import Preferences from "./Preferences";
+import CreatePreferences from "./CreatePreferences";
 import Signup from "./Signup";
 import Home from "./Home";
 import HomieInfo from "./HomieInfo";
+import Redirector from "./Redirector";
 
 const Routes = () => {
   return (
     <BrowserRoutes>
       <Route element={<Layout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Redirector />} />
+        <Route path="/home" element={<Home />} />
         <Route
           path="/login"
           element={
@@ -68,6 +71,14 @@ const Routes = () => {
           element={
             <RequiresAuth>
               <Preferences />
+            </RequiresAuth>
+          }
+        />
+        <Route
+          path="/create-preferences"
+          element={
+            <RequiresAuth>
+              <CreatePreferences />
             </RequiresAuth>
           }
         />

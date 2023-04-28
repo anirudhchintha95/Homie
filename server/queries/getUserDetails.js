@@ -47,13 +47,6 @@ const getUserDetails = async (currentUser, homieId) => {
               },
             },
           },
-          {
-            $project: {
-              _id: 1,
-              status: 1,
-              messages: 1,
-            },
-          },
         ],
         as: "connection",
       },

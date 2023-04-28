@@ -97,9 +97,10 @@ const generateUser = async () => {
     gender: firstName.gender,
     email: `${firstName.value.toLowerCase()}.${lastName.toLowerCase()}@gmail.com`,
     phone: generatePhoneNumber(),
-    encryptedPassword: await new PasswordService("password").encrypt(),
+    encryptedPassword: await new PasswordService("Password@123").encrypt(),
     dateOfBirth: new Date(
-      Date.now() - Math.floor(Math.random() * 60 * 60 * 24 * 365 * 67 * 1000)
+      Date.now(new Date(Date.now() - 60 * 60 * 24 * 365 * 13 * 1000)) -
+        Math.floor(Math.random() * 60 * 60 * 24 * 365 * 80 * 1000)
     ),
     role: "user",
     location: {

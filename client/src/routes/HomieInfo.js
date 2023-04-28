@@ -190,7 +190,7 @@ const HomieInfo = () => {
           ) : (
             <></>
           )}
-          {status === CONNECTION_STATUSES.MATCHED && (
+          {status === CONNECTION_STATUSES.MATCHED ? (
             <Button
               variant="outlined"
               startIcon={
@@ -208,6 +208,8 @@ const HomieInfo = () => {
                 ? "Hide my contact info"
                 : "Show my contact info"}
             </Button>
+          ) : (
+            <></>
           )}
         </Box>
         <Divider sx={{ width: "100%" }} />

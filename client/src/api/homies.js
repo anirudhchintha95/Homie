@@ -52,3 +52,11 @@ export const sendMessageApi = async (userId, message) => {
 
   return response?.data?.connection || {};
 };
+
+export const toggleContactInfoApi = async (userId) => {
+  const response = await axiosInstance.patch(
+    `/homies/${userId}/toggle-contact-info`
+  );
+
+  return response?.data?.user || {};
+};

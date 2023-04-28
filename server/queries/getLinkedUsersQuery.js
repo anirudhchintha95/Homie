@@ -55,7 +55,11 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                   }
                 : connectionType === CONNECTION_TYPES.IGNORED
                 ? {
-                    $eq: ["$status", CONNECTION_STATUSES.IGNORED],
+                    $and: [
+                      { $eq: ["$status", CONNECTION_STATUSES.IGNORED] },
+                      { $eq: ["$createdByUserId", currentUser._id] },
+                      { $eq: ["$createdForUserId", "$$userId"] },
+                    ],
                   }
                 : connectionType === CONNECTION_TYPES.ADMIRERS
                 ? {
