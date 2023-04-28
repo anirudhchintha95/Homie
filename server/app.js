@@ -1,11 +1,12 @@
 import * as dotenv from "dotenv";
-dotenv.config({ path: ".env.example" });
+dotenv.config();
 
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+
 
 import configureRoutes from "./routes/index.js";
 

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -90,7 +90,7 @@ const validateNumberRange = (value, name, opts = {}) => {
 const validateId = (value, name) => {
   value = validateString(value, name);
 
-  if (!mongoose.Types.ObjectId.isValid(value)) {
+  if (!isValidObjectId(value)) {
     throw { status: 400, message: `${name} is not a valid id!` };
   }
 

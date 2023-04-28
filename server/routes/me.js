@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { userData, homeData } from "../data/index.js";
-import { authenticateRequest } from "../middlewares/index.js";
 
 const router = Router();
 
@@ -12,8 +11,8 @@ router.route("/").get(async (req, res) => {
     userDetails["homes"] = homeDetails;
     return res.status(200).json({ user: userDetails });
   } catch (e) {
-    return e[0]
-      ? res.status(e[0]).json(e[1])
+    return e.status
+      ? res.status(e.status).json(e.message)
       : res.status(500).json("Internal server error");
   }
 });

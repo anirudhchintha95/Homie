@@ -1,7 +1,7 @@
 import { Router } from "express";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
-import { auth } from "../data/index.js";
+// import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
 import JwtService from "../services/jwt-service.js";
 
