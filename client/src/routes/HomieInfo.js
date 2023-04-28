@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   CardMedia,
   Divider,
   Fab,
@@ -18,6 +19,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ChatIcon from "@mui/icons-material/Chat";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 import { fetchHomieApi } from "../api/homies";
 import { getFullName } from "../utils";
@@ -89,9 +94,7 @@ const HomieInfo = () => {
           }));
         }}
       />
-      {[CONNECTION_STATUSES.FAVORITE, CONNECTION_STATUSES.MATCHED].includes(
-        status
-      ) ? (
+      {status === CONNECTION_STATUSES.MATCHED ? (
         <Fab
           sx={{
             position: "fixed",
@@ -129,6 +132,83 @@ const HomieInfo = () => {
           <Typography variant="h6" color="primary.light">
             {user.gender} | {user.age} YO
           </Typography>
+        </Box>
+        <Divider sx={{ width: "100%" }} />
+        <Box
+          marginTop={2}
+          marginBottom={2}
+          display="flex"
+          alignItems="center"
+          flexDirection="column"
+        >
+          <Box display="flex" alignItems="center" marginBottom={2}>
+            <Box display="flex" alignItems="center">
+              <Tooltip title="Location">
+                <StyledAvatar>
+                  <EmailIcon />
+                </StyledAvatar>
+              </Tooltip>
+              <Typography
+                variant="h6"
+                color="primary"
+                marginLeft={1}
+                sx={{ display: { xs: "none", sm: "inline" } }}
+              >
+                Email:
+              </Typography>
+              <Typography variant="h6" color="primary" marginLeft={0.5}>
+                {user.email || "N/A"}
+              </Typography>
+            </Box>
+            <Divider sx={{ height: 28, m: 1 }} orientation="vertical" />
+            <Box display="flex" alignItems="center">
+              <Tooltip title="Location">
+                <StyledAvatar>
+                  <PhoneIcon />
+                </StyledAvatar>
+              </Tooltip>
+              <Typography
+                variant="h6"
+                color="primary"
+                marginLeft={1}
+                sx={{ display: { xs: "none", sm: "inline" } }}
+              >
+                Phone:
+              </Typography>
+              <Typography variant="h6" color="primary" marginLeft={0.5}>
+                {user.phone || "N/A"}
+              </Typography>
+            </Box>
+          </Box>
+          {!user.phone || !user.email ? (
+            <Typography variant="overline">
+              *
+              {status === CONNECTION_STATUSES.MATCHED
+                ? "Please wait for them to show their information."
+                : "Contact information will be shown if you are matched with them."}
+            </Typography>
+          ) : (
+            <></>
+          )}
+          {status === CONNECTION_STATUSES.MATCHED && (
+            <Button
+              variant="outlined"
+              startIcon={
+                user.myContactsVisible ? <PersonOffIcon /> : <PersonIcon />
+              }
+              sx={{
+                border: "2px solid",
+                borderColor: "primary",
+                marginTop: 2,
+              }}
+              // onClick={onClick}
+              disabled={loading}
+            >
+              {user.myContactsVisible
+                ? "Hide my contact info"
+                : "Show my contact info"}
+            </Button>
+          )}
         </Box>
         <Divider sx={{ width: "100%" }} />
         <HomieActions
@@ -256,10 +336,11 @@ const HomieInfo = () => {
             {!Object.keys(user.preferences.rent || {}).length ? (
               "N/A"
             ) : user.preferences.rent.exact ? (
-              <span>${user.preferences.rent.exact}</span>
+              <span>${user.preferences.rent.exact / 100}</span>
             ) : (
               <span>
-                ${user.preferences.rent.min} - ${user.preferences.rent.max}
+                ${user.preferences.rent.min / 100} - $
+                {user.preferences.rent.max / 100}
               </span>
             )}
           </Typography>

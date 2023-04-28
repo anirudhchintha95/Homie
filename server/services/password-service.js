@@ -1,4 +1,4 @@
-import bcrypt from "brcrpt";
+import bcrypt from "bcrypt";
 
 class PasswordService {
   constructor(password) {

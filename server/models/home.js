@@ -6,6 +6,10 @@ const HomeSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    description: {
+      type: String,
+      required: true,
+    },
     address1: {
       type: String,
       required: true,

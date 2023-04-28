@@ -29,9 +29,9 @@ const validateString = (value, name, opts = {}) => {
     throw { status: 400, message: `${name} is not a string!` };
   }
 
-  string = string.trim();
+  value = value.trim();
 
-  if (!string) {
+  if (!value) {
     throw { status: 400, message: `${name} is required!` };
   }
 
@@ -47,6 +47,7 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
+  return value;
 };
 
 const validateNumber = (value, name) => {
@@ -92,6 +93,8 @@ const validateId = (value, name) => {
   if (!mongoose.Types.ObjectId.isValid(value)) {
     throw { status: 400, message: `${name} is not a valid id!` };
   }
+
+  return value;
 };
 
 export {

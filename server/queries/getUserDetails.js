@@ -61,8 +61,19 @@ const getUserDetails = async (currentUser, homieId) => {
     {
       $lookup: {
         from: "homes",
-        foreignField: "userId",
-        localField: "_id",
+        let: { homeOwnerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$userId", "$$homeOwnerId"] },
+                  { $eq: ["$listed", true] },
+                ],
+              },
+            },
+          },
+        ],
         as: "homes",
       },
     },
@@ -95,10 +106,35 @@ const getUserDetails = async (currentUser, homieId) => {
         showHomieData: {
           $cond: {
             if: {
-              $eq: ["$connection.createdByUserId", currentUser._id],
+              $eq: [{ $ifNull: ["$connection._id", null] }, null],
             },
-            then: "$connection.showCreatedForUserData",
-            else: "$connection.showCreatedByUserData",
+            then: false,
+            else: {
+              $cond: {
+                if: {
+                  $eq: ["$connection.createdByUserId", currentUser._id],
+                },
+                then: "$connection.showCreatedForUserData",
+                else: "$connection.showCreatedByUserData",
+              },
+            },
+          },
+        },
+        myContactsVisible: {
+          $cond: {
+            if: {
+              $eq: [{ $ifNull: ["$connection._id", null] }, null],
+            },
+            then: false,
+            else: {
+              $cond: {
+                if: {
+                  $eq: ["$connection.createdByUserId", currentUser._id],
+                },
+                then: "$connection.showCreatedByUserData",
+                else: "$connection.showCreatedForUserData",
+              },
+            },
           },
         },
       },
@@ -108,6 +144,7 @@ const getUserDetails = async (currentUser, homieId) => {
         _id: 1,
         firstName: 1,
         lastName: 1,
+        myContactsVisible: 1,
         email: {
           $cond: {
             if: {
@@ -129,9 +166,9 @@ const getUserDetails = async (currentUser, homieId) => {
         age: 1,
         location: 1,
         gender: 1,
-        "preferences.*": 1,
-        "home.*": 1,
-        "images.*": 1,
+        preferences: 1,
+        homes: 1,
+        images: 1,
         "connection._id": 1,
         "connection.status": 1,
         "connection.messages": 1,
