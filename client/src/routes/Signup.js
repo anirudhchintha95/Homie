@@ -353,9 +353,6 @@ const Signup = () => {
         <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
           Create Account
         </SubmitButton>
-        <Typography mt={2} textAlign="center">
-          Click below to login:
-        </Typography>
         <Box textAlign="center">
           <Button
             variant="contained"

@@ -121,7 +121,6 @@ const Login = () => {
                             <Typography color="error">{error}</Typography>
                         </Box>
                     )}
-                    <Typography mt={2} textAlign="center">Click below to signup:</Typography>
                     <Box textAlign="center">
                         <Button
                             variant="contained"
@@ -130,6 +129,7 @@ const Login = () => {
                             sx={{ mt: 2 }}
                             color="secondary"
                             fullWidth
+                            disabled={loading}
                         >
                             Signup
                         </Button>
