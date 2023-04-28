@@ -24,6 +24,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { from } = location.state || { from: { pathname: "/" } };
+  const headerRef = React.useRef();
 
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
@@ -60,74 +61,83 @@ const Signup = () => {
     value: "",
   });
 
+  const validateForm = () => {
+    if (
+      !firstName.value ||
+      !lastName.value ||
+      !email.value ||
+      !password.value ||
+      !dob.value ||
+      !phoneNumber.value ||
+      !gender.value
+    ) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (!firstName.value) {
+      setFirstName({
+        ...firstName,
+        error: true,
+      });
+      return;
+    }
+    if (!lastName.value) {
+      setLastName({
+        ...lastName,
+        error: true,
+      });
+      return;
+    }
+    if (!email.value) {
+      setEmail({
+        ...email,
+        error: true,
+      });
+      return;
+    }
+    if (!password.value) {
+      setPassword({
+        ...password,
+        error: true,
+      });
+      return;
+    }
+    if (!confirmPassword.value) {
+      setconfirmPassword({
+        ...confirmPassword,
+        error: true,
+      });
+      return;
+    }
+
+    if (!dob.value) {
+      setDob({
+        ...dob,
+        error: true,
+      });
+      return;
+    }
+    if (!phoneNumber.value) {
+      setPhoneNumber({
+        ...phoneNumber,
+        error: true,
+      });
+      return;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (
-        !firstName.value ||
-        !lastName.value ||
-        !email.value ||
-        !password.value ||
-        !dob.value ||
-        !phoneNumber.value ||
-        !gender.value
-      ) {
-        setError("Please fill in all fields");
-        return;
-      }
+      const isFormValid = validateForm();
 
-      if (password.value !== confirmPassword.value) {
-        setError("Passwords do not match");
-        return;
-      }
-      if (!firstName.value) {
-        setFirstName({
-          ...firstName,
-          error: true,
-        });
-        return;
-      }
-      if (!lastName.value) {
-        setLastName({
-          ...lastName,
-          error: true,
-        });
-        return;
-      }
-      if (!email.value) {
-        setEmail({
-          ...email,
-          error: true,
-        });
-        return;
-      }
-      if (!password.value) {
-        setPassword({
-          ...password,
-          error: true,
-        });
-        return;
-      }
-      if (!confirmPassword.value) {
-        setconfirmPassword({
-          ...confirmPassword,
-          error: true,
-        });
-        return;
-      }
-
-      if (!dob.value) {
-        setDob({
-          ...dob,
-          error: true,
-        });
-        return;
-      }
-      if (!phoneNumber.value) {
-        setPhoneNumber({
-          ...phoneNumber,
-          error: true,
-        });
+      if (!isFormValid) {
+        headerRef.current.scrollIntoView({ behavior: "smooth", block: "start", });
         return;
       }
 
@@ -160,11 +170,10 @@ const Signup = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }}>
+    <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }} ref={headerRef}>
       <Typography variant="h4" align="center" mb={4} color="primary">
         Signup
       </Typography>
-      {error ? <Alert severity="error">{error}</Alert> : <></>}
 
       <Paper
         component="form"
@@ -172,6 +181,9 @@ const Signup = () => {
         sx={{ p: 2, borderColor: "primary" }}
       >
         <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={12}>
+            {error ? <Alert severity="error">{error}</Alert> : <></>}
+          </Grid>
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -303,6 +315,7 @@ const Signup = () => {
               maxDate={
                 new Date(new Date().setFullYear(new Date().getFullYear() - 13))
               }
+              error={dob.error}
             />
           </Grid>
 
@@ -340,6 +353,7 @@ const Signup = () => {
                     value: e.target.value,
                   })
                 }
+                error={gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>
                 <MenuItem value={"Female"}>Female</MenuItem>

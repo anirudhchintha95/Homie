@@ -1,7 +1,7 @@
 import { validateEmail, validatePassword } from "../helpers";
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Button, Grid, TextField, Box, Paper, Typography } from "@mui/material";
+import { Button, Grid, TextField, Box, Paper, Typography, Alert } from "@mui/material";
 import { SubmitButton } from "../components";
 
 import useAuth from "../useAuth";
@@ -87,6 +87,9 @@ const Login = () => {
                 <Paper component="form" onSubmit={login} sx={{ p: 2 }}>
                     <Grid container spacing={2} sx={{ mb: 2 }}>
                         <Grid item xs={12}>
+                            {error ? <Alert severity="error">{error}</Alert> : <></>}
+                        </Grid>
+                        <Grid item xs={12}>
                             <TextField
                                 fullWidth
                                 required
@@ -116,11 +119,6 @@ const Login = () => {
                         </Grid>
                     </Grid>
                     <SubmitButton loading={loading} fullWidth>Login</SubmitButton>
-                    {error && (
-                        <Box mt={2} textAlign="center">
-                            <Typography color="error">{error}</Typography>
-                        </Box>
-                    )}
                     <Box textAlign="center">
                         <Button
                             variant="contained"

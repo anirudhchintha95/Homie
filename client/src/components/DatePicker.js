@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const CustomInput = React.forwardRef(({ value, onClick, label }, ref) => (
+const CustomInput = React.forwardRef(({ value, onClick, label, error }, ref) => (
   <TextField
     onClick={onClick}
     inputRef={ref}
@@ -12,17 +12,17 @@ const CustomInput = React.forwardRef(({ value, onClick, label }, ref) => (
     autoComplete="off"
     placeholder="Select Date"
     label={label}
+    error={error}
     fullWidth
   />
 ));
 
-const DatePicker = ({ value, onChange, label, ...rest }) => {
-
+const DatePicker = ({ value, onChange, label, error, ...rest }) => {
   return (
     <ReactDatePicker
       selected={value}
       onChange={onChange}
-      customInput={<CustomInput label={label} />}
+      customInput={<CustomInput label={label} error={error} />}
       showYearDropdown
       showMonthDropdown
       {...rest}
