@@ -22,6 +22,17 @@ class ImageService {
       filename = file.filename;
     }
 
+    // If an image is already created for this model, delete it
+
+    const existingImage = await Image.findOne({
+      imageableType,
+      imageableId,
+    });
+
+    if (existingImage) {
+      await Image.deleteOne({ _id: existingImage._id });
+    }
+
     const image = await Image.create({
       name: file.originalname,
       filename,
@@ -63,7 +74,7 @@ class ImageService {
     const urls = await Promise.all(
       images.map(async (image) => {
         const url = await ImageService.getPresignedUrl(image.filename);
-        return url;
+        return { url, ...image };
       })
     );
 
@@ -81,7 +92,10 @@ class ImageService {
       return await ImageService.getImagePresignedUrls(images);
     } else {
       return images.map((image) => {
-        return `${baseUrl}/${image.filename}`;
+        return {
+          ...image,
+          url: `${baseUrl}/${image._id}`,
+        };
       });
     }
   }

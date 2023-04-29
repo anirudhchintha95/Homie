@@ -2,7 +2,7 @@ import { Router } from "express";
 import { homiesData } from "../data/index.js";
 
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
-import { formatUserListResponse } from "../utils.js";
+import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
 
 const homiesRouter = Router();
@@ -37,7 +37,7 @@ homiesRouter.route("/:id").get(async (req, res) => {
     let { id } = req.params;
     id = validateId(id, "homieId");
     const user = await homiesData.getHomie(req.currentUser, id);
-    res.json({ user });
+    res.json({ user: await formatUserToResponse(req, user) });
   } catch (error) {
     return res.status(error.status || 500).json({ error: error.message });
   }

@@ -10,12 +10,7 @@ import profileRoutes from "./me.js";
 
 const configureRoutes = (app) => {
   app.use("/api", authRoutes);
-  app.use(
-    "/api/images/:imageableType/:imageableId",
-    authenticateRequest,
-    validateImageRoutes,
-    imagesRouter
-  );
+  app.use("/api/images", imagesRouter);
   app.use("/api/homies", authenticateRequest, homiesRouter);
   app.use("/api/me", authenticateRequest, profileRoutes);
 

@@ -15,6 +15,7 @@ const AuthProvider = ({ children }) => {
 
   const getCurrentUser = useCallback(async () => {
     try {
+      setError()
       const accesstoken = getFromStorage(userAccessTokenKey);
       if (!accesstoken) {
         setAppLoaded(true);
