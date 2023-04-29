@@ -46,3 +46,14 @@ export const getConnectionByCreatedForAndCreatedByUserId = async (
 
   return connection ? connection : null;
 };
+
+export const swapConnectionUsers = async (connection) => {
+  if (!connection) {
+    throw { status: 400, message: "Error: Invalid connection object" };
+  }
+
+  const temp = connection.createdByUserId;
+  connection.createdByUserId = connection.createdForUserId;
+  connection.createdForUserId = temp;
+  return connection.save();
+};
