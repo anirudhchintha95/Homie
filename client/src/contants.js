@@ -18,3 +18,9 @@ export const CONNECTION_TYPES_TO_STATUSES = {
   [CONNECTION_TYPES.IGNORED]: CONNECTION_STATUSES.IGNORED,
   [CONNECTION_TYPES.ADMIRERS]: null,
 };
+
+export const ACCOUNT_PANELS = {
+  settings: "settings",
+  authentication: "authentication",
+  images: "images",
+};

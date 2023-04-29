@@ -1,7 +1,6 @@
 import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 // import IconButton from "@mui/material/IconButton";
@@ -20,6 +19,7 @@ import Toast from "./Toast";
 import useHomieInteractions from "../useUserInteractions";
 import HomieActions from "./HomieActions";
 import NameAvatar from "./NameAvatar";
+import DisplayImage from "./DisplayImage";
 
 const HomieCard = ({
   user,
@@ -100,11 +100,13 @@ const HomieCard = ({
           ) : (
             <></>
           )}
-          <CardMedia
-            component="img"
+          <DisplayImage
+            image={
+              user.images?.length
+                ? user.images[0]
+                : { url: NoImage, id: "no-image" }
+            }
             height={isLarge ? "350" : "100"}
-            image={user.images?.length ? user.images[0] : NoImage}
-            alt="user-images"
           />
           {!status || status === CONNECTION_STATUSES.IGNORED ? (
             <Box
@@ -136,11 +138,13 @@ const HomieCard = ({
           )}
         </Box>
       ) : (
-        <CardMedia
-          component="img"
+        <DisplayImage
+          image={
+            user.images?.length
+              ? user.images[0]
+              : { url: NoImage, id: "no-image" }
+          }
           height="100"
-          image={user.images?.length ? user.images[0] : NoImage}
-          alt="user-images"
         />
       )}
 

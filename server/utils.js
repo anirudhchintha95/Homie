@@ -14,7 +14,7 @@ export const formatUserListResponse = async (req, users) => {
 export const formatUserToResponse = async (req, user) => {
   const baseUrl = `${req.protocol}://${req.get(
     "host"
-  )}/api/images/User/${req.currentUser._id.toString()}/download`;
+  )}/api/images/User/${user._id.toString()}/download`;
 
   return {
     ...user,
