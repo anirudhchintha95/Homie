@@ -7,8 +7,9 @@ export const getAllConnections = async () => {
 };
 
 export const getConnectionByCreatedForUserId = async (userId) => {
-  if (!isValidObjectId(userId))
+  if (!isValidObjectId(userId)) {
     throw { status: 400, message: "Error: Invalid User Id" };
+  }
 
   const connection = await Connection.findOne(
     { createdForUserId: userId },
@@ -47,7 +48,11 @@ export const getConnectionByCreatedForAndCreatedByUserId = async (
 };
 
 export const swapConnectionUsers = async (connection) => {
-  if (!connection) {
+  if (
+    !connection ||
+    !connection.createdByUserId ||
+    !connection.createdForUserId
+  ) {
     throw { status: 400, message: "Error: Invalid connection object" };
   }
 
