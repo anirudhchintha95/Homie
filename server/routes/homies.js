@@ -9,6 +9,7 @@ import {
   createConnection,
   swapConnectionUsers,
 } from "../data/connections.js";
+import { isValidObjectId } from "mongoose";
 
 const homiesRouter = Router();
 
@@ -75,6 +76,10 @@ homiesRouter.route("/:id/add-favorite").post(async (req, res) => {
       userBeingViewed
     );
 
+    if (!isValidObjectId(userBeingViewed) || !isValidObjectId(user)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
+
     if (connectionExists) {
       if (connectionExists.status === "favorite") {
         // Connection already exists and is a favorite, update status to match
@@ -96,6 +101,33 @@ homiesRouter.route("/:id/add-favorite").post(async (req, res) => {
       newConnection.status = "favorite";
       await newConnection.save();
 
+      return res.status(200).json({ message: "New connection created" });
+    }
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
+homiesRouter.route("/:id/remove-favorite").post(async (req, res) => {
+  try {
+    const userBeingViewed = req.params.id;
+    const user = req.currentUser._id.toString();
+
+    const connectionExists = await getConnectionByCreatedForAndCreatedByUserId(
+      user,
+      userBeingViewed
+    );
+
+    if (!isValidObjectId(userBeingViewed) || !isValidObjectId(user)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
+
+    if (connectionExists) {
+      return res.status(200).json({ message: "Connection Exists" });
+    } else {
+      const newConnection = await createConnection(userBeingViewed, user);
+      newConnection.status = "ignored";
+      await newConnection.save();
       return res.status(200).json({ message: "New connection created" });
     }
   } catch (error) {
