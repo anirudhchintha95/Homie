@@ -2,7 +2,6 @@ import { isValidObjectId } from "mongoose";
 import Connection from "../models/connection.js";
 
 export const getAllConnections = async () => {
-  console.log("Hello");
   const connections = await Connection.find({});
   return connections;
 };
