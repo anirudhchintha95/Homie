@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Button,
-  CardMedia,
   Divider,
   Fab,
   Paper,
@@ -27,7 +26,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import { fetchHomieApi } from "../api/homies";
 import { getFullName } from "../utils";
 
-import { Loader, HomieActions, ChatModal, PageError } from "../components";
+import { Loader, HomieActions, ChatModal, PageError, DisplayImage } from "../components";
 import { CONNECTION_STATUSES } from "../contants";
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -113,12 +112,7 @@ const HomieInfo = () => {
         <></>
       )}
       <Paper component={Box} marginTop="1rem" marginBottom="1rem">
-        <CardMedia
-          component="img"
-          height="300"
-          image={user.images[0]}
-          alt="user-images"
-        />
+        <DisplayImage image={user.images[0]} height="300" />
       </Paper>
 
       <Box

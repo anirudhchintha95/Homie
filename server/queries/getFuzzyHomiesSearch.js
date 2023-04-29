@@ -282,12 +282,13 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
     {
       $lookup: {
         from: "images",
+        let: { userId: "$_id" },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ["$imageableId", currentUser._id] },
+                  { $eq: ["$imageableId", "$$userId"] },
                   { $eq: ["$imageableType", "User"] },
                 ],
               },
