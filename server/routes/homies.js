@@ -2,8 +2,12 @@ import { Router } from "express";
 import { homiesData } from "../data/index.js";
 
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
-import { formatUserListResponse } from "../utils.js";
+import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
+import {
+  getConnectionByCreatedForAndCreatedByUserId,
+  createConnection,
+} from "../data/connections.js";
 
 const homiesRouter = Router();
 
@@ -37,7 +41,7 @@ homiesRouter.route("/:id").get(async (req, res) => {
     let { id } = req.params;
     id = validateId(id, "homieId");
     const user = await homiesData.getHomie(req.currentUser, id);
-    res.json({ user });
+    res.json({ user: await formatUserToResponse(req, user) });
   } catch (error) {
     return res.status(error.status || 500).json({ error: error.message });
   }
@@ -55,6 +59,34 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
       message
     );
     res.json({ connection });
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
+homiesRouter.route("/:id/add-favorite").post(async (req, res) => {
+  try {
+    const userBeingViewed = req.params.id;
+    const user = req.currentUser._id.toString();
+
+    const connectionExists = await getConnectionByCreatedForAndCreatedByUserId(
+      userBeingViewed,
+      user
+    );
+
+    if (connectionExists) {
+      // Connection already exists, update status to match
+      connectionExists.status = "match";
+      await connectionExists.save();
+      return res.status(200).json({ message: "Connection updated" });
+    } else {
+      // Create new connection
+      const newConnection = await createConnection(userBeingViewed, user);
+      newConnection.status = "favorite";
+      await newConnection.save();
+
+      return res.status(200).json({ message: "New connection created" });
+    }
   } catch (error) {
     return res.status(error.status || 500).json({ error: error.message });
   }
