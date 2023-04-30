@@ -55,10 +55,41 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                   }
                 : connectionType === CONNECTION_TYPES.IGNORED
                 ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.IGNORED] },
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
+                    $or: [
+                      {
+                        $and: [
+                          {
+                            $eq: ["$status", CONNECTION_STATUSES.BOTH_IGNORED],
+                          },
+                          {
+                            $or: [
+                              {
+                                $and: [
+                                  {
+                                    $eq: ["$createdByUserId", currentUser._id],
+                                  },
+                                  { $eq: ["$createdForUserId", "$$userId"] },
+                                ],
+                              },
+                              {
+                                $and: [
+                                  {
+                                    $eq: ["$createdForUserId", currentUser._id],
+                                  },
+                                  { $eq: ["$createdByUserId", "$$userId"] },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        $and: [
+                          { $eq: ["$status", CONNECTION_STATUSES.IGNORED] },
+                          { $eq: ["$createdByUserId", currentUser._id] },
+                          { $eq: ["$createdForUserId", "$$userId"] },
+                        ],
+                      },
                     ],
                   }
                 : connectionType === CONNECTION_TYPES.ADMIRERS

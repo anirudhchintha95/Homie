@@ -41,7 +41,13 @@ const FindMyHomies = () => {
         ) : (
           homies.map((user) => (
             <Grid xs={12} md={8} key={user._id}>
-              <HomieCard user={user} onActionsClick={fetchHomies} />
+              <HomieCard
+                user={{
+                  ...user,
+                  connection: { ...user.connection, status: null },
+                }}
+                onActionsClick={fetchHomies}
+              />
             </Grid>
           ))
         )}

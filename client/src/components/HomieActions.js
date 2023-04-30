@@ -47,11 +47,14 @@ const HomieActions = ({
     if (!user.connection) return;
 
     if (
-      user.connection.createdById === user._id &&
+      user.connection.createdByUserId === user._id &&
       user.connection.status === CONNECTION_STATUSES.FAVORITE
     ) {
       return;
     }
+
+    if (user.connection.status === CONNECTION_STATUSES.BOTH_IGNORED)
+      return CONNECTION_STATUSES.IGNORED;
 
     return user.connection.status;
   }, [user]);
