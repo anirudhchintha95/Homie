@@ -5,7 +5,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { fetchMyHomiesApi } from "../api/homies";
-import { CONNECTION_TYPES, CONNECTION_TYPES_TO_STATUSES } from "../contants";
+import { CONNECTION_TYPES } from "../contants";
 
 import {
   HomieCard,
@@ -92,15 +92,7 @@ const MyHomies = () => {
         <Grid container spacing={2}>
           {myHomies.map((user) => (
             <Grid xs={12} sm={6} md={4} lg={3} key={user._id}>
-              <HomieCard
-                user={user}
-                variant="small"
-                status={
-                  CONNECTION_TYPES_TO_STATUSES[
-                    connectionTypes[connectionTypeIdx]
-                  ]
-                }
-              />
+              <HomieCard user={user} variant="small" />
             </Grid>
           ))}
         </Grid>

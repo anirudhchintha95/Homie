@@ -21,12 +21,7 @@ import HomieActions from "./HomieActions";
 import NameAvatar from "./NameAvatar";
 import DisplayImage from "./DisplayImage";
 
-const HomieCard = ({
-  user,
-  variant = "large",
-  onActionsClick,
-  status = null,
-}) => {
+const HomieCard = ({ user, variant = "large", onActionsClick }) => {
   const isLarge = variant === "large";
 
   const { error, resetError, handleActionClick } = useHomieInteractions({
@@ -72,7 +67,7 @@ const HomieCard = ({
           width="100%"
           position="relative"
         >
-          {!status || status === CONNECTION_STATUSES.IGNORED ? (
+          {!user.connection.status || user.connection.status === CONNECTION_STATUSES.IGNORED ? (
             <Box
               width="60px"
               display="flex"
@@ -108,7 +103,7 @@ const HomieCard = ({
             }
             height={isLarge ? "350" : "100"}
           />
-          {!status || status === CONNECTION_STATUSES.IGNORED ? (
+          {!user.connection.status || user.connection.status === CONNECTION_STATUSES.IGNORED ? (
             <Box
               width="60px"
               display="flex"

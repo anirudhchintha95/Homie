@@ -9,6 +9,7 @@ export const CONNECTION_STATUSES = {
   FAVORITE: "favorite",
   MATCHED: "matched",
   IGNORED: "ignored",
+  BOTH_IGNORED: "both_ignored",
   BLOCKED: "blocked",
 };
 

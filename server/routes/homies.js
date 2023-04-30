@@ -86,9 +86,14 @@ homiesRouter.route("/:id/add-favorite").post(async (req, res) => {
         connectionExists.status = "matched";
         await connectionExists.save();
         return res.status(200).json({ message: "Connection updated" });
-      } else if (connectionExists.status === "ignored") {
-        // Connection already exists and is ignored, swap createdBy and createdFor and update status to favorite
-        await swapConnectionUsers(connectionExists);
+      } else if (
+        connectionExists.status === "ignored" ||
+        connectionExists.status === "both_ignored"
+      ) {
+        if (connectionExists.createdByUserId !== user) {
+          // Connection already exists and is ignored, swap createdBy and createdFor and update status to favorite
+          await swapConnectionUsers(connectionExists);
+        }
         connectionExists.status = "favorite";
         await connectionExists.save();
         return res.status(200).json({ message: "Connection updated" });
