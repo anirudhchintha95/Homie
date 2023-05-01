@@ -28,7 +28,7 @@ const ConnectedUserSchema = new Schema(
     },
     status: {
       type: Schema.Types.String,
-      enum: Object.values(CONNECTION_STATUSES),
+      enum: Object.values(CONNECTION_STATUSES).concat([null]),
     },
     showUserData: {
       type: Schema.Types.Boolean,
