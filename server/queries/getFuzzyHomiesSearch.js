@@ -200,23 +200,25 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
           {
             $match: {
               $expr: {
-                $or: [
-                  {
-                    $and: [
-                      { $eq: ["$firstUserId", currentUser._id] },
-                      { $eq: ["$secondUserId", "$$userId"] },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { $eq: ["$secondUserId", currentUser._id] },
-                      { $eq: ["$firstUserId", "$$userId"] },
-                    ],
-                  },
-                ],
                 $and: [
                   { $ne: ["$firstUserStatus", CONNECTION_STATUSES.BLOCKED] },
                   { $ne: ["$secondUserStatus", CONNECTION_STATUSES.BLOCKED] },
+                  {
+                    $or: [
+                      {
+                        $and: [
+                          { $eq: ["$firstUserId", currentUser._id] },
+                          { $eq: ["$secondUserId", "$$userId"] },
+                        ],
+                      },
+                      {
+                        $and: [
+                          { $eq: ["$secondUserId", currentUser._id] },
+                          { $eq: ["$firstUserId", "$$userId"] },
+                        ],
+                      },
+                    ],
+                  },
                 ],
               },
             },
@@ -255,6 +257,9 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
         ],
         as: "connection",
       },
+    },
+    {
+      $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
     },
     {
       $match: {

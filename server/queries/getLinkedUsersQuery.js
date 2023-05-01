@@ -52,6 +52,18 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                               CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
+                          {
+                            $ne: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
+                            ],
+                          },
                         ]
                       : []),
                     ...(connectionType === CONNECTION_TYPES.IGNORED
@@ -60,6 +72,12 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                             $eq: [
                               "$firstUserStatus",
                               CONNECTION_STATUSES.IGNORED,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
                             ],
                           },
                         ]
@@ -72,7 +90,6 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                               CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
-                          // first user status cannot be favorite or blocked
                           {
                             $ne: [
                               "$firstUserStatus",
@@ -117,6 +134,18 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                               CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
+                          {
+                            $ne: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
+                            ],
+                          },
                         ]
                       : []),
                     ...(connectionType === CONNECTION_TYPES.IGNORED
@@ -125,6 +154,12 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                             $eq: [
                               "$secondUserStatus",
                               CONNECTION_STATUSES.IGNORED,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
                             ],
                           },
                         ]
@@ -137,7 +172,6 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
                               CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
-                          // first user status cannot be favorite or blocked
                           {
                             $ne: [
                               "$secondUserStatus",
