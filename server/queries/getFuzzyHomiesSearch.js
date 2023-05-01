@@ -354,9 +354,9 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
     {
       $sort: { score: -1 },
     },
-    // {
-    //   $limit: 1,
-    // },
+    {
+      $limit: 1,
+    },
     {
       $lookup: {
         from: "images",
