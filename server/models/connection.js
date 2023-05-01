@@ -21,20 +21,23 @@ const MessageSchema = new Schema(
 
 const ConnectionSchema = new Schema(
   {
-    createdByUserId: {
+    firstUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    createdForUserId: {
+    secondUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    status: {
+    firstUserStatus: {
       type: Schema.Types.String,
       enum: Object.values(CONNECTION_STATUSES),
-      default: CONNECTION_STATUSES.FAVORITE,
+    },
+    secondUserStatus: {
+      type: Schema.Types.String,
+      enum: Object.values(CONNECTION_STATUSES),
     },
     showCreatedByUserData: {
       type: Schema.Types.Boolean,
@@ -56,8 +59,8 @@ const ConnectionSchema = new Schema(
       async findByUserIds(user1Id, user2Id) {
         return await this.findOne({
           $or: [
-            { createdByUserId: user1Id, createdForUserId: user2Id },
-            { createdByUserId: user2Id, createdForUserId: user1Id },
+            { firstUserId: user1Id, secondUserId: user2Id },
+            { firstUserId: user2Id, secondUserId: user1Id },
           ],
         });
       },

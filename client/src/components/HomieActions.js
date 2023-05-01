@@ -28,17 +28,12 @@ const HomieActions = ({
 
   const onFavoriteClick = async () =>
     handleActionClick("addFavorite", onChange);
-  // null to FAVORITE
-  // FAVORITE to MATCHED
 
   const removeFavoriteClick = async () =>
     handleActionClick("removeFavorite", onChange);
-  // FAVORITE to null
-  // null to IGNORED
 
   const removeMatchedClick = async () =>
     handleActionClick("removeMatched", onChange);
-  // MATCHED to IGNORED
 
   const blockClick = async () => handleActionClick("block", onChange);
 
@@ -47,16 +42,13 @@ const HomieActions = ({
     if (!user.connection) return;
 
     if (
-      user.connection.createdByUserId === user._id &&
-      user.connection.status === CONNECTION_STATUSES.FAVORITE
+      user.connection.currentUser.status === CONNECTION_STATUSES.FAVORITE &&
+      user.connection.otherUser.status === CONNECTION_STATUSES.FAVORITE
     ) {
-      return;
+      return CONNECTION_STATUSES.MATCHED;
     }
 
-    if (user.connection.status === CONNECTION_STATUSES.BOTH_IGNORED)
-      return CONNECTION_STATUSES.IGNORED;
-
-    return user.connection.status;
+    return user.connection?.currentUser?.status;
   }, [user]);
 
   const actions = [];
