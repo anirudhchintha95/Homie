@@ -201,22 +201,58 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
             $match: {
               $expr: {
                 $and: [
-                  { $ne: ["$firstUserStatus", CONNECTION_STATUSES.BLOCKED] },
-                  { $ne: ["$secondUserStatus", CONNECTION_STATUSES.BLOCKED] },
+                  // users records size should be 2
+                  { $eq: [{ $size: "$users" }, 2] },
+                  // users array should have exactly one current user and one other user
                   {
-                    $or: [
+                    $eq: [
                       {
-                        $and: [
-                          { $eq: ["$firstUserId", currentUser._id] },
-                          { $eq: ["$secondUserId", "$$userId"] },
-                        ],
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $eq: ["$$user.userId", currentUser._id],
+                            },
+                          },
+                        },
                       },
+                      1,
+                    ],
+                  },
+                  {
+                    $eq: [
                       {
-                        $and: [
-                          { $eq: ["$secondUserId", currentUser._id] },
-                          { $eq: ["$firstUserId", "$$userId"] },
-                        ],
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $ne: ["$$user.userId", "$$userId"],
+                            },
+                          },
+                        },
                       },
+                      1,
+                    ],
+                  },
+                  {
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $eq: [
+                                "$$user.status",
+                                CONNECTION_STATUSES.BLOCKED,
+                              ],
+                            },
+                          },
+                        },
+                      },
+                      0,
                     ],
                   },
                 ],
@@ -228,27 +264,27 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
               _id: 1,
               currentUser: {
                 $cond: {
-                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  if: {
+                    $eq: ["$users.0.userId", "$$userId"],
+                  },
                   then: {
-                    _id: "$firstUserId",
-                    status: "$firstUserStatus",
+                    $arrayElemAt: ["$users", 1],
                   },
                   else: {
-                    _id: "$secondUserId",
-                    status: "$secondUserStatus",
+                    $arrayElemAt: ["$users", 0],
                   },
                 },
               },
               otherUser: {
                 $cond: {
-                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  if: {
+                    $eq: ["$users.0.userId", "$$userId"],
+                  },
                   then: {
-                    _id: "$secondUserId",
-                    status: "$secondUserStatus",
+                    $arrayElemAt: ["$users", 0],
                   },
                   else: {
-                    _id: "$firstUserId",
-                    status: "$firstUserStatus",
+                    $arrayElemAt: ["$users", 1],
                   },
                 },
               },
@@ -265,11 +301,12 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
       $match: {
         $or: [
           { "connection._id": { $exists: false } },
-          // If connection exists, then firstUserStatus should be empty and the secondUserStatus should be not be blocked
           {
             $and: [
               { "connection.currentUser.status": { $exists: false } },
-              { "connection.otherUser.status": { $ne: "blocked" } },
+              {
+                "connection.otherUser.status": CONNECTION_STATUSES.FAVORITE,
+              },
             ],
           },
         ],
