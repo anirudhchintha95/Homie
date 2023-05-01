@@ -67,14 +67,16 @@ homiesRouter
   .route("/:id/add-favorite")
   .post(addFavoriteValidator, async (req, res) => {
     const userBeingViewed = req.params.id;
-    const user = req.currentUser._id.toString();
+    const currentUserId = req.currentUser._id.toString();
 
     try {
-      const update = await addFavorite(user, userBeingViewed);
+      await addFavorite(currentUserId, userBeingViewed);
 
-      return res
-        .status(200)
-        .json(await homiesData.getHomie(user, userBeingViewed));
+      const updatedUser = await homiesData.getHomie(
+        req.currentUser,
+        userBeingViewed
+      );
+      res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
       return res.status(error.status || 500).json({ error: error.message });
     }
@@ -84,14 +86,16 @@ homiesRouter
   .route("/:id/remove-favorite")
   .post(removeFavoriteValidator, async (req, res) => {
     const userBeingViewed = req.params.id;
-    const user = req.currentUser._id.toString();
+    const currentUserId = req.currentUser._id.toString();
 
     try {
-      const update = await removeFavorite(user, userBeingViewed);
+      await removeFavorite(currentUserId, userBeingViewed);
 
-      return res
-        .status(200)
-        .json(await homiesData.getHomie(user, userBeingViewed));
+      const updatedUser = await homiesData.getHomie(
+        req.currentUser,
+        userBeingViewed
+      );
+      res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
       return res.status(error.status || 500).json({ error: error.message });
     }

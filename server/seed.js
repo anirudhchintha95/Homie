@@ -177,10 +177,14 @@ for (let i = 0; i < 3; i++) {
 
 const generateConnection = (user, otherUser) => {
   return {
-    createdByUserId: user._id,
-    createdForUserId: otherUser._id,
+    firstUserId: user._id,
+    secondUserId: otherUser._id,
     // Status between 3 options
-    status:
+    firstUserStatus:
+      Object.values(CONNECTION_STATUSES)[
+        Math.floor(Math.random() * 3)
+      ].toLowerCase(),
+    secondUserStatus:
       Object.values(CONNECTION_STATUSES)[
         Math.floor(Math.random() * 3)
       ].toLowerCase(),
@@ -198,10 +202,10 @@ while (connLen < 3) {
     if (
       connections.find(
         (conn) =>
-          (conn.createdByUserId === randomUser._id &&
-            conn.createdForUserId === otherUser._id) ||
-          (conn.createdByUserId === otherUser._id &&
-            conn.createdForUserId === randomUser._id)
+          (conn.firstUserId === randomUser._id &&
+            conn.secondUserId === otherUser._id) ||
+          (conn.firstUserId === otherUser._id &&
+            conn.secondUserId === randomUser._id)
       )
     )
       continue;

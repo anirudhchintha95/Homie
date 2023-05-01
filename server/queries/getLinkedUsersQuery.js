@@ -23,84 +23,169 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
         {
           $match: {
             $expr: {
-              ...(connectionType === CONNECTION_TYPES.MATCHED
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.MATCHED] },
-                      {
-                        $or: [
+              $or: [
+                {
+                  $and: [
+                    { $eq: ["$firstUserId", currentUser._id] },
+                    { $eq: ["$secondUserId", "$$userId"] },
+                    ...(connectionType === CONNECTION_TYPES.MATCHED
+                      ? [
                           {
-                            $and: [
-                              { $eq: ["$createdByUserId", currentUser._id] },
-                              { $eq: ["$createdForUserId", "$$userId"] },
+                            $eq: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
                           {
-                            $and: [
-                              { $eq: ["$createdForUserId", currentUser._id] },
-                              { $eq: ["$createdByUserId", "$$userId"] },
+                            $eq: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
-                        ],
-                      },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.FAVORITES
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.IGNORED
-                ? {
-                    $or: [
-                      {
-                        $and: [
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.FAVORITES
+                      ? [
                           {
-                            $eq: ["$status", CONNECTION_STATUSES.BOTH_IGNORED],
-                          },
-                          {
-                            $or: [
-                              {
-                                $and: [
-                                  {
-                                    $eq: ["$createdByUserId", currentUser._id],
-                                  },
-                                  { $eq: ["$createdForUserId", "$$userId"] },
-                                ],
-                              },
-                              {
-                                $and: [
-                                  {
-                                    $eq: ["$createdForUserId", currentUser._id],
-                                  },
-                                  { $eq: ["$createdByUserId", "$$userId"] },
-                                ],
-                              },
+                            $eq: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
                             ],
                           },
-                        ],
-                      },
-                      {
-                        $and: [
-                          { $eq: ["$status", CONNECTION_STATUSES.IGNORED] },
-                          { $eq: ["$createdByUserId", currentUser._id] },
-                          { $eq: ["$createdForUserId", "$$userId"] },
-                        ],
-                      },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.ADMIRERS
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },
-                      { $eq: ["$createdForUserId", currentUser._id] },
-                      { $eq: ["$createdByUserId", "$$userId"] },
-                    ],
-                  }
-                : {}),
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.IGNORED
+                      ? [
+                          {
+                            $eq: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.IGNORED,
+                            ],
+                          },
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.ADMIRERS
+                      ? [
+                          {
+                            $eq: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          // first user status cannot be favorite or blocked
+                          {
+                            $ne: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
+                            ],
+                          },
+                        ]
+                      : []),
+                  ],
+                },
+                {
+                  $and: [
+                    { $eq: ["$secondUserId", currentUser._id] },
+                    { $eq: ["$firstUserId", "$$userId"] },
+                    ...(connectionType === CONNECTION_TYPES.MATCHED
+                      ? [
+                          {
+                            $eq: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          {
+                            $eq: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.FAVORITES
+                      ? [
+                          {
+                            $eq: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.IGNORED
+                      ? [
+                          {
+                            $eq: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.IGNORED,
+                            ],
+                          },
+                        ]
+                      : []),
+                    ...(connectionType === CONNECTION_TYPES.ADMIRERS
+                      ? [
+                          {
+                            $eq: [
+                              "$firstUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          // first user status cannot be favorite or blocked
+                          {
+                            $ne: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.FAVORITE,
+                            ],
+                          },
+                          {
+                            $ne: [
+                              "$secondUserStatus",
+                              CONNECTION_STATUSES.BLOCKED,
+                            ],
+                          },
+                        ]
+                      : []),
+                  ],
+                },
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            currentUser: {
+              $cond: {
+                if: { $eq: ["$firstUserId", currentUser._id] },
+                then: {
+                  _id: "$firstUserId",
+                  status: "$firstUserStatus",
+                },
+                else: {
+                  _id: "$secondUserId",
+                  status: "$secondUserStatus",
+                },
+              },
+            },
+            otherUser: {
+              $cond: {
+                if: { $eq: ["$firstUserId", currentUser._id] },
+                then: {
+                  _id: "$secondUserId",
+                  status: "$secondUserStatus",
+                },
+                else: {
+                  _id: "$firstUserId",
+                  status: "$firstUserStatus",
+                },
+              },
             },
           },
         },

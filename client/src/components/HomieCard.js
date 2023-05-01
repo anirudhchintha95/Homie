@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -30,13 +30,23 @@ const HomieCard = ({ user, variant = "large", onActionsClick }) => {
 
   const onFavoriteClick = async () =>
     handleActionClick("addFavorite", onActionsClick);
-  // null to FAVORITE
-  // FAVORITE to MATCHED
 
   const removeFavoriteClick = async () =>
     handleActionClick("removeFavorite", onActionsClick);
-  // FAVORITE to null
-  // null to IGNORED
+
+  const status = useMemo(() => {
+    if (!user) return;
+    if (!user.connection) return;
+
+    if (
+      user.connection.currentUser.status === CONNECTION_STATUSES.FAVORITE &&
+      user.connection.otherUser.status === CONNECTION_STATUSES.FAVORITE
+    ) {
+      return CONNECTION_STATUSES.MATCHED;
+    }
+
+    return user.connection?.currentUser?.status;
+  }, [user]);
 
   return (
     <Card elevation={4}>
@@ -67,7 +77,7 @@ const HomieCard = ({ user, variant = "large", onActionsClick }) => {
           width="100%"
           position="relative"
         >
-          {!user.connection.status || user.connection.status === CONNECTION_STATUSES.IGNORED ? (
+          {!status || status === CONNECTION_STATUSES.IGNORED ? (
             <Box
               width="60px"
               display="flex"
@@ -103,7 +113,7 @@ const HomieCard = ({ user, variant = "large", onActionsClick }) => {
             }
             height={isLarge ? "350" : "100"}
           />
-          {!user.connection.status || user.connection.status === CONNECTION_STATUSES.IGNORED ? (
+          {!status || status === CONNECTION_STATUSES.IGNORED ? (
             <Box
               width="60px"
               display="flex"

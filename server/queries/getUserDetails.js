@@ -33,17 +33,52 @@ const getUserDetails = async (currentUser, homieId) => {
                 $or: [
                   {
                     $and: [
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
+                      { $eq: ["$firstUserId", currentUser._id] },
+                      { $eq: ["$secondUserId", "$$userId"] },
                     ],
                   },
                   {
                     $and: [
-                      { $eq: ["$createdForUserId", currentUser._id] },
-                      { $eq: ["$createdByUserId", "$$userId"] },
+                      { $eq: ["$secondUserId", currentUser._id] },
+                      { $eq: ["$firstUserId", "$$userId"] },
                     ],
                   },
                 ],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              currentUser: {
+                $cond: {
+                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  then: {
+                    _id: "$firstUserId",
+                    status: "$firstUserStatus",
+                    showData: "$showFirstUserData",
+                  },
+                  else: {
+                    _id: "$secondUserId",
+                    status: "$secondUserStatus",
+                    showData: "$showSecondUserData",
+                  },
+                },
+              },
+              otherUser: {
+                $cond: {
+                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  then: {
+                    _id: "$secondUserId",
+                    status: "$secondUserStatus",
+                    showData: "$showSecondUserData",
+                  },
+                  else: {
+                    _id: "$firstUserId",
+                    status: "$firstUserStatus",
+                    showData: "$showFirstUserData",
+                  },
+                },
               },
             },
           },
@@ -96,40 +131,8 @@ const getUserDetails = async (currentUser, homieId) => {
     },
     {
       $addFields: {
-        showHomieData: {
-          $cond: {
-            if: {
-              $eq: [{ $ifNull: ["$connection._id", null] }, null],
-            },
-            then: false,
-            else: {
-              $cond: {
-                if: {
-                  $eq: ["$connection.createdByUserId", currentUser._id],
-                },
-                then: "$connection.showCreatedForUserData",
-                else: "$connection.showCreatedByUserData",
-              },
-            },
-          },
-        },
-        myContactsVisible: {
-          $cond: {
-            if: {
-              $eq: [{ $ifNull: ["$connection._id", null] }, null],
-            },
-            then: false,
-            else: {
-              $cond: {
-                if: {
-                  $eq: ["$connection.createdByUserId", currentUser._id],
-                },
-                then: "$connection.showCreatedByUserData",
-                else: "$connection.showCreatedForUserData",
-              },
-            },
-          },
-        },
+        showHomieData: "$connection.otherUser.showData",
+        myContactsVisible: "$connection.currentUser.showData",
       },
     },
     {
@@ -162,9 +165,7 @@ const getUserDetails = async (currentUser, homieId) => {
         preferences: 1,
         homes: 1,
         images: 1,
-        "connection._id": 1,
-        "connection.status": 1,
-        "connection.messages": 1,
+        connection: 1,
       },
     },
   ]).exec();
