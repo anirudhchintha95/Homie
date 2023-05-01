@@ -69,12 +69,8 @@ const generateBooleanPreference = (key) => {
 const generateRentPreference = () => {
   const rand = Math.random();
   if (rand < 0.33) {
-    return {
-      rent: {
-        exact: Math.floor(Math.random() * 1000 + 500) * 100,
-      },
-    };
-  } else if (rand < 0.66) {
+    return {};
+  } else {
     const min = Math.floor(Math.random() * 1000 + 500) * 100;
     return {
       rent: {
@@ -82,8 +78,6 @@ const generateRentPreference = () => {
         max: min + Math.floor(Math.random() * 1000 + 500) * 100,
       },
     };
-  } else {
-    return {};
   }
 };
 

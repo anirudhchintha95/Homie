@@ -7,7 +7,7 @@ const buildScoreColumns = (preference) => {
     newColumns.smokingScore = {
       $cond: {
         if: { $eq: [{ $ifNull: ["$preferences.smoking", null] }, null] },
-        then: 0,
+        then: 1,
         else: {
           $cond: {
             if: {
@@ -27,7 +27,7 @@ const buildScoreColumns = (preference) => {
     newColumns.drinkingScore = {
       $cond: {
         if: { $eq: [{ $ifNull: ["$preferences.drinking", null] }, null] },
-        then: 0,
+        then: 1,
         else: {
           $cond: {
             if: {
@@ -47,7 +47,7 @@ const buildScoreColumns = (preference) => {
     newColumns.petsScore = {
       $cond: {
         if: { $eq: [{ $ifNull: ["$preferences.pets", null] }, null] },
-        then: 0,
+        then: 1,
         else: {
           $cond: {
             if: {
@@ -63,95 +63,31 @@ const buildScoreColumns = (preference) => {
     newColumns.petsScore = 1;
   }
 
-  if (preference.rent?.exact !== undefined) {
-    newColumns.rentScore = {
-      $cond: {
-        if: { $eq: [{ $ifNull: ["$preferences.rent.exact", null] }, null] },
-        then: {
-          // If exact rent is not set by the other user, then we check if the rent range is within the preference range
-          $cond: {
-            if: {
-              if: {
-                $or: [
-                  { $eq: [{ $ifNull: ["$preferences.rent.min", null] }, null] },
-                  { $eq: [{ $ifNull: ["$preferences.rent.max", null] }, null] },
-                ],
-              },
-              then: true,
-              else: {
-                $cond: {
-                  if: {
-                    $and: [
-                      {
-                        $gte: ["$preferences.rent.exact", preference.rent.min],
-                      },
-                      {
-                        $lte: ["$preferences.rent.exact", preference.rent.max],
-                      },
-                    ],
-                  },
-                  then: true,
-                  else: false,
-                },
-              },
-            },
-            then: 1,
-            else: 0,
-          },
-        },
-        else: {
-          $cond: {
-            if: {
-              $eq: ["$preferences.rent.exact", preference.rent.exact],
-            },
-            then: 1,
-            else: 0,
-          },
-        },
-      },
-    };
-  } else if (
+  if (
     preference.rent?.min !== undefined &&
     preference.rent?.max !== undefined
   ) {
     newColumns.rentScore = {
       $cond: {
         if: {
-          $eq: [{ $ifNull: ["$preferences.rent.exact", null] }, null],
+          $and: [
+            { $eq: [{ $ifNull: ["$preferences.rent.min", null] }, null] },
+            { $eq: [{ $ifNull: ["$preferences.rent.max", null] }, null] },
+          ],
         },
-        then: {
-          $cond: {
-            if: {
-              $gte: ["$preferences.rent.min", preference.rent.min],
-              $lte: ["$preferences.rent.max", preference.rent.max],
-            },
-            then: true,
-            else: false,
-          },
-        },
+        then: 1,
         else: {
           $cond: {
             if: {
-              $or: [
-                { $eq: [{ $ifNull: ["$preferences.rent.min", null] }, null] },
-                { $eq: [{ $ifNull: ["$preferences.rent.max", null] }, null] },
+              $and: [
+                { $gte: ["$preferences.rent.min", preference.rent.min] },
+                { $lte: ["$preferences.rent.max", preference.rent.max] },
               ],
             },
-            then: true,
-            else: {
-              $cond: {
-                if: {
-                  $gte: ["$preferences.rent.exact", preference.rent.min],
-                  $lte: ["$preferences.rent.exact", preference.rent.max],
-                },
-                then: true,
-                else: false,
-              },
-            },
+            then: 1,
+            else: 0,
           },
         },
-        then: 1,
-        else: 0,
       },
     };
   } else {
