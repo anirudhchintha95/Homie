@@ -1,14 +1,12 @@
 import { Router } from "express";
 import { homiesData } from "../data/index.js";
 
+import { addFavoriteValidator } from "../validators/addFavoriteValidator.js";
+import { removeFavoriteValidator } from "../validators/removeFavoriteValidator.js";
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
 import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
-import {
-  getConnectionByCreatedForAndCreatedByUserId,
-  createConnection,
-  swapConnectionUsers,
-} from "../data/connections.js";
+import { removeFavorite, addFavorite } from "../data/connections.js";
 
 const homiesRouter = Router();
 
@@ -65,47 +63,38 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
   }
 });
 
-homiesRouter.route("/:id/add-favorite").post(async (req, res) => {
-  try {
+homiesRouter
+  .route("/:id/add-favorite")
+  .post(addFavoriteValidator, async (req, res) => {
     const userBeingViewed = req.params.id;
     const user = req.currentUser._id.toString();
 
-    const connectionExists = await getConnectionByCreatedForAndCreatedByUserId(
-      user,
-      userBeingViewed
-    );
+    try {
+      const update = await addFavorite(user, userBeingViewed);
 
-    if (connectionExists) {
-      if (connectionExists.status === "favorite") {
-        // Connection already exists and is a favorite, update status to match
-        connectionExists.status = "matched";
-        await connectionExists.save();
-        return res.status(200).json({ message: "Connection updated" });
-      } else if (
-        connectionExists.status === "ignored" ||
-        connectionExists.status === "both_ignored"
-      ) {
-        if (connectionExists.createdByUserId !== user) {
-          // Connection already exists and is ignored, swap createdBy and createdFor and update status to favorite
-          await swapConnectionUsers(connectionExists);
-        }
-        connectionExists.status = "favorite";
-        await connectionExists.save();
-        return res.status(200).json({ message: "Connection updated" });
-      } else {
-        return res.status(400).json({ message: "Invalid connection status" });
-      }
-    } else {
-      // Create new connection
-      const newConnection = await createConnection(userBeingViewed, user);
-      newConnection.status = "favorite";
-      await newConnection.save();
-
-      return res.status(200).json({ message: "New connection created" });
+      return res
+        .status(200)
+        .json(await homiesData.getHomie(user, userBeingViewed));
+    } catch (error) {
+      return res.status(error.status || 500).json({ error: error.message });
     }
-  } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
-  }
-});
+  });
+
+homiesRouter
+  .route("/:id/remove-favorite")
+  .post(removeFavoriteValidator, async (req, res) => {
+    const userBeingViewed = req.params.id;
+    const user = req.currentUser._id.toString();
+
+    try {
+      const update = await removeFavorite(user, userBeingViewed);
+
+      return res
+        .status(200)
+        .json(await homiesData.getHomie(user, userBeingViewed));
+    } catch (error) {
+      return res.status(error.status || 500).json({ error: error.message });
+    }
+  });
 
 export default homiesRouter;
