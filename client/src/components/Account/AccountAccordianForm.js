@@ -29,6 +29,7 @@ const AccountAccordianForm = ({
   loading,
   setLoading,
   scrollToTop,
+  setSuccessMsg,
 }) => {
   const auth = useAuth();
   const [accountFormError, setAccountFormError] = useState();
@@ -110,8 +111,8 @@ const AccountAccordianForm = ({
         phoneNumber.value,
         gender.value
       );
-
-      await auth.getCurrentUser();
+      await auth.refreshCurrentUser();
+      setSuccessMsg("Account details updated successfully.");
     } catch (error) {
       setAccountFormError(
         error?.response?.data?.error ||

@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
 
   const getCurrentUser = useCallback(async () => {
     try {
-      setError()
+      setError();
       const accesstoken = getFromStorage(userAccessTokenKey);
       if (!accesstoken) {
         setAppLoaded(true);
@@ -33,6 +33,21 @@ const AuthProvider = ({ children }) => {
       setError("Could not fetch your details");
     } finally {
       setAppLoaded(true);
+    }
+  }, []);
+
+  const refreshCurrentUser = useCallback(async () => {
+    try {
+      setError();
+      const data = await getCurrentUserApi();
+      setUser(data);
+    } catch (err) {
+      console.log(
+        err?.response?.data?.message ||
+          err.message ||
+          "Could not fetch your details"
+      );
+      setError("Could not fetch your details");
     }
   }, []);
 
@@ -61,8 +76,24 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const authValues = useMemo(
-    () => ({ user, isLoggedIn, error, signIn, signOut, getCurrentUser }),
-    [user, isLoggedIn, error, signIn, signOut, getCurrentUser]
+    () => ({
+      user,
+      isLoggedIn,
+      error,
+      signIn,
+      signOut,
+      getCurrentUser,
+      refreshCurrentUser,
+    }),
+    [
+      user,
+      isLoggedIn,
+      error,
+      signIn,
+      signOut,
+      getCurrentUser,
+      refreshCurrentUser,
+    ]
   );
 
   return (

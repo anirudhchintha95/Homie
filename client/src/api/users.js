@@ -13,7 +13,11 @@ export const updateAccountApi = async (data) => {
 };
 
 export const updatePasswordApi = async (data) => {
-  const res = await axiosInstance.patch("/me/update-password", data);
+  await axiosInstance.patch("/me/update-password", data);
+};
+
+export const deleteAccountApi = async () => {
+  const res = await axiosInstance.delete("/me");
 
   return res.data?.user;
 };

@@ -19,6 +19,7 @@ const ImagesAccordianForm = ({
   loading,
   setLoading,
   scrollToTop,
+  setSuccessMsg,
 }) => {
   const auth = useAuth();
   const [image, setImage] = useState();
@@ -35,8 +36,8 @@ const ImagesAccordianForm = ({
 
       setLoading(true);
       await updateImageApi(auth.user._id, image);
-
-      await auth.getCurrentUser();
+      await auth.refreshCurrentUser();
+      setSuccessMsg("Image updated successfully.");
     } catch (error) {
       setImageFormError(
         error?.response?.data?.error ||

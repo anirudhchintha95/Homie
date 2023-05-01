@@ -69,12 +69,8 @@ const generateBooleanPreference = (key) => {
 const generateRentPreference = () => {
   const rand = Math.random();
   if (rand < 0.33) {
-    return {
-      rent: {
-        exact: Math.floor(Math.random() * 1000 + 500) * 100,
-      },
-    };
-  } else if (rand < 0.66) {
+    return {};
+  } else {
     const min = Math.floor(Math.random() * 1000 + 500) * 100;
     return {
       rent: {
@@ -82,8 +78,6 @@ const generateRentPreference = () => {
         max: min + Math.floor(Math.random() * 1000 + 500) * 100,
       },
     };
-  } else {
-    return {};
   }
 };
 
@@ -177,17 +171,24 @@ for (let i = 0; i < 3; i++) {
 
 const generateConnection = (user, otherUser) => {
   return {
-    firstUserId: user._id,
-    secondUserId: otherUser._id,
-    // Status between 3 options
-    firstUserStatus:
-      Object.values(CONNECTION_STATUSES)[
-        Math.floor(Math.random() * 3)
-      ].toLowerCase(),
-    secondUserStatus:
-      Object.values(CONNECTION_STATUSES)[
-        Math.floor(Math.random() * 3)
-      ].toLowerCase(),
+    users: [
+      {
+        userId: user._id,
+        status:
+          Object.values(CONNECTION_STATUSES)[
+            Math.floor(Math.random() * 3)
+          ].toLowerCase(),
+        showUserData: Math.random() > 0.5,
+      },
+      {
+        userId: otherUser._id,
+        status:
+          Object.values(CONNECTION_STATUSES)[
+            Math.floor(Math.random() * 3)
+          ].toLowerCase(),
+        showUserData: Math.random() > 0.5,
+      },
+    ],
   };
 };
 
@@ -198,14 +199,12 @@ while (connLen < 3) {
   try {
     const randomUser = users[Math.floor(Math.random() * users.length)];
     const otherUser = users[Math.floor(Math.random() * users.length)];
-    if (otherUser._id === randomUser._id) continue;
+    if (otherUser._id.toString() === randomUser._id.toString()) continue;
     if (
-      connections.find(
-        (conn) =>
-          (conn.firstUserId === randomUser._id &&
-            conn.secondUserId === otherUser._id) ||
-          (conn.firstUserId === otherUser._id &&
-            conn.secondUserId === randomUser._id)
+      connections.find((conn) =>
+        conn.users.every(({ userId }) =>
+          [otherUser._id, randomUser._id].includes(userId)
+        )
       )
     )
       continue;
