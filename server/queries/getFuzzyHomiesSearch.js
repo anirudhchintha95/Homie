@@ -129,6 +129,13 @@ const buildScoreColumns = (preference) => {
 const getFuzzyHomiesSearch = async (currentUser, preferences) => {
   return User.aggregate([
     {
+      $match: {
+        "location.city": currentUser.location.city,
+        "location.state": currentUser.location.state,
+        _id: { $ne: currentUser._id },
+      },
+    },
+    {
       $lookup: {
         from: "connections",
         let: { userId: "$_id" },
@@ -276,15 +283,6 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
             "$drinkingScore",
           ],
         },
-      },
-    },
-    {
-      $match: {
-        $and: [
-          {
-            _id: { $nin: [currentUser._id] },
-          },
-        ],
       },
     },
     {
