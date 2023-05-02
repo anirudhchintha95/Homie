@@ -4,9 +4,14 @@ import { homiesData } from "../data/index.js";
 import { addFavoriteValidator } from "../validators/addFavoriteValidator.js";
 import { removeFavoriteValidator } from "../validators/removeFavoriteValidator.js";
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
+import { removeMatchValidator } from "../validators/removeMatchValidator.js";
 import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
-import { removeFavorite, addFavorite } from "../data/connections.js";
+import {
+  removeFavorite,
+  addFavorite,
+  removeMatch,
+} from "../data/connections.js";
 
 const homiesRouter = Router();
 
@@ -90,6 +95,25 @@ homiesRouter
 
     try {
       await removeFavorite(currentUserId, userBeingViewed);
+
+      const updatedUser = await homiesData.getHomie(
+        req.currentUser,
+        userBeingViewed
+      );
+      res.json({ user: await formatUserToResponse(req, updatedUser) });
+    } catch (error) {
+      return res.status(error.status || 500).json({ error: error.message });
+    }
+  });
+
+homiesRouter
+  .route("/:id/remove-match")
+  .post(removeMatchValidator, async (req, res) => {
+    const userBeingViewed = req.params.id;
+    const currentUserId = req.currentUser._id.toString();
+
+    try {
+      await removeMatch(currentUserId, userBeingViewed);
 
       const updatedUser = await homiesData.getHomie(
         req.currentUser,
