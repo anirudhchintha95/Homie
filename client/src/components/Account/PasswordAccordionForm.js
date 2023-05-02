@@ -24,6 +24,7 @@ const PasswordAccordionForm = ({
   loading,
   setLoading,
   scrollToTop,
+  setSuccessMsg
 }) => {
   const auth = useAuth();
   const [currentPassword, setCurrentPassword] = useState({
@@ -122,13 +123,13 @@ const PasswordAccordionForm = ({
 
       setLoading(true);
 
-      await updatePasswordApi(
-        currentPassword.value,
-        newPassword.value,
-        confirmNewPassword.value
-      );
+      await updatePasswordApi({
+        currentPassword: currentPassword.value,
+        newPassword: newPassword.value,
+      });
 
-      await auth.getCurrentUser();
+      await auth.refreshCurrentUser();
+      setSuccessMsg("Password updated successfully.");
     } catch (error) {
       setPasswordFormError(
         error?.response?.data?.error ||

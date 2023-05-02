@@ -19,30 +19,40 @@ const MessageSchema = new Schema(
   }
 );
 
-const ConnectionSchema = new Schema(
+const ConnectedUserSchema = new Schema(
   {
-    createdByUserId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    createdForUserId: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     status: {
       type: Schema.Types.String,
-      enum: Object.values(CONNECTION_STATUSES),
-      default: CONNECTION_STATUSES.FAVORITE,
+      enum: Object.values(CONNECTION_STATUSES).concat([null]),
     },
-    showCreatedByUserData: {
+    showUserData: {
       type: Schema.Types.Boolean,
       default: false,
     },
-    showCreatedForUserData: {
-      type: Schema.Types.Boolean,
-      default: false,
+  },
+  {
+    timestamps: true,
+    methods: {},
+  }
+);
+
+const ConnectionSchema = new Schema(
+  {
+    users: {
+      type: [ConnectedUserSchema],
+      default: [],
+      required: true,
+      validate: {
+        validator: function (v) {
+          return v.length === 2;
+        },
+        message: () => `Error: Invalid number of users!`,
+      },
     },
     messages: {
       type: [MessageSchema],
@@ -53,13 +63,64 @@ const ConnectionSchema = new Schema(
     timestamps: true,
     methods: {},
     statics: {
-      async findByUserIds(user1Id, user2Id) {
-        return await this.findOne({
-          $or: [
-            { createdByUserId: user1Id, createdForUserId: user2Id },
-            { createdByUserId: user2Id, createdForUserId: user1Id },
+      async findByUserIds(
+        currentUserId,
+        otherUserId,
+        { display = false } = {}
+      ) {
+        if (!currentUserId || !otherUserId)
+          throw new Error("Invalid user ids!");
+
+        const query = this.findOne({
+          $and: [
+            {
+              users: {
+                $elemMatch: {
+                  userId: currentUserId,
+                },
+              },
+            },
+            {
+              users: {
+                $elemMatch: {
+                  userId: otherUserId,
+                },
+              },
+            },
+            {
+              users: {
+                $size: 2,
+              },
+            },
           ],
         });
+
+        if (display) {
+          return await query.projection({
+            _id: 1,
+            currentUser: {
+              $filter: {
+                input: "$users",
+                as: "user",
+                cond: {
+                  $ne: ["$$user.userId", currentUserId],
+                },
+              },
+            },
+            otherUser: {
+              $filter: {
+                input: "$users",
+                as: "user",
+                cond: {
+                  $eq: ["$$user.userId", otherUserId],
+                },
+              },
+            },
+            messages: 1,
+          });
+        }
+
+        return await query;
       },
     },
   }

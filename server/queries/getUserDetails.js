@@ -30,21 +30,76 @@ const getUserDetails = async (currentUser, homieId) => {
           {
             $match: {
               $expr: {
-                $or: [
+                $and: [
+                  // users records size should be 2
+                  { $eq: [{ $size: "$users" }, 2] },
+                  // users array should have 2 objects with userId. Each userId should equal to current user and other user
                   {
-                    $and: [
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $eq: ["$$user.userId", currentUser._id],
+                            },
+                          },
+                        },
+                      },
+                      1,
                     ],
                   },
                   {
-                    $and: [
-                      { $eq: ["$createdForUserId", currentUser._id] },
-                      { $eq: ["$createdByUserId", "$$userId"] },
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $ne: ["$$user.userId", "$$userId"],
+                            },
+                          },
+                        },
+                      },
+                      1,
                     ],
                   },
                 ],
               },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              currentUser: {
+                $cond: {
+                  if: {
+                    $eq: ["$users.0.userId", "$$userId"],
+                  },
+                  then: {
+                    $arrayElemAt: ["$users", 1],
+                  },
+                  else: {
+                    $arrayElemAt: ["$users", 0],
+                  },
+                },
+              },
+              otherUser: {
+                $cond: {
+                  if: {
+                    $eq: ["$users.0.userId", "$$userId"],
+                  },
+                  then: {
+                    $arrayElemAt: ["$users", 0],
+                  },
+                  else: {
+                    $arrayElemAt: ["$users", 1],
+                  },
+                },
+              },
+              messages: 1,
             },
           },
         ],
@@ -96,40 +151,8 @@ const getUserDetails = async (currentUser, homieId) => {
     },
     {
       $addFields: {
-        showHomieData: {
-          $cond: {
-            if: {
-              $eq: [{ $ifNull: ["$connection._id", null] }, null],
-            },
-            then: false,
-            else: {
-              $cond: {
-                if: {
-                  $eq: ["$connection.createdByUserId", currentUser._id],
-                },
-                then: "$connection.showCreatedForUserData",
-                else: "$connection.showCreatedByUserData",
-              },
-            },
-          },
-        },
-        myContactsVisible: {
-          $cond: {
-            if: {
-              $eq: [{ $ifNull: ["$connection._id", null] }, null],
-            },
-            then: false,
-            else: {
-              $cond: {
-                if: {
-                  $eq: ["$connection.createdByUserId", currentUser._id],
-                },
-                then: "$connection.showCreatedByUserData",
-                else: "$connection.showCreatedForUserData",
-              },
-            },
-          },
-        },
+        showHomieData: "$connection.otherUser.showData",
+        myContactsVisible: "$connection.currentUser.showData",
       },
     },
     {
@@ -162,9 +185,7 @@ const getUserDetails = async (currentUser, homieId) => {
         preferences: 1,
         homes: 1,
         images: 1,
-        "connection._id": 1,
-        "connection.status": 1,
-        "connection.messages": 1,
+        connection: 1,
       },
     },
   ]).exec();

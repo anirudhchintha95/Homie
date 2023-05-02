@@ -22,6 +22,14 @@ const RequiresAuth = ({ children }) => {
     );
   }
 
+  if (location.pathname === "/create-preferences") {
+    if (!auth?.user?.preferences?._id) {
+      return children;
+    } else {
+      return <Navigate to="/" />;
+    }
+  }
+
   return children;
 };
 

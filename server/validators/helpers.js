@@ -11,6 +11,26 @@ function isValidPassword(password) {
   return true;
 }
 
+const validatePassword = (password, variableName = "Password") => {
+  if (!password) {
+    throw {
+      status: 400,
+      message: `${variableName} is required!`,
+    };
+  }
+  if (
+    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
+      password
+    )
+  ) {
+    throw {
+      status: 400,
+      message: `${variableName} must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character.`,
+    };
+  }
+  return password;
+};
+
 const checkBoolean = (value) => {
   if (typeof value === "boolean") {
     return true;
@@ -105,4 +125,5 @@ export {
   validateNumberRange,
   validateString,
   validateId,
+  validatePassword,
 };

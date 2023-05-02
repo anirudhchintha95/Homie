@@ -26,7 +26,13 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import { fetchHomieApi } from "../api/homies";
 import { getFullName } from "../utils";
 
-import { Loader, HomieActions, ChatModal, PageError, DisplayImage } from "../components";
+import {
+  Loader,
+  HomieActions,
+  ChatModal,
+  PageError,
+  DisplayImage,
+} from "../components";
 import { CONNECTION_STATUSES } from "../contants";
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -66,15 +72,13 @@ const HomieInfo = () => {
     if (!user.connection) return;
 
     if (
-      user.connection.createdById === user._id &&
-      [CONNECTION_STATUSES.FAVORITE, CONNECTION_STATUSES.IGNORED].includes(
-        user.connection.status
-      )
+      user.connection.currentUser.status === CONNECTION_STATUSES.FAVORITE &&
+      user.connection.otherUser.status === CONNECTION_STATUSES.FAVORITE
     ) {
-      return;
+      return CONNECTION_STATUSES.MATCHED;
     }
 
-    return user.connection.status;
+    return user.connection?.currentUser?.status;
   }, [user]);
 
   return loading ? (
@@ -333,8 +337,6 @@ const HomieInfo = () => {
           <Typography variant="h6" color="primary" marginLeft={0.5}>
             {!Object.keys(user.preferences.rent || {}).length ? (
               "N/A"
-            ) : user.preferences.rent.exact ? (
-              <span>${user.preferences.rent.exact / 100}</span>
             ) : (
               <span>
                 ${user.preferences.rent.min / 100} - $

@@ -23,85 +23,123 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
         {
           $match: {
             $expr: {
-              ...(connectionType === CONNECTION_TYPES.MATCHED
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.MATCHED] },
-                      {
-                        $or: [
-                          {
-                            $and: [
-                              { $eq: ["$createdByUserId", currentUser._id] },
-                              { $eq: ["$createdForUserId", "$$userId"] },
-                            ],
+              $and: [
+                // users records size should be 2
+                { $eq: [{ $size: "$users" }, 2] },
+                // users array should have 2 objects with userId. Each userId should equal to current user and other user
+                {
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $eq: ["$$user.userId", currentUser._id],
                           },
-                          {
-                            $and: [
-                              { $eq: ["$createdForUserId", currentUser._id] },
-                              { $eq: ["$createdByUserId", "$$userId"] },
-                            ],
-                          },
-                        ],
+                        },
                       },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.FAVORITES
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },
-                      { $eq: ["$createdByUserId", currentUser._id] },
-                      { $eq: ["$createdForUserId", "$$userId"] },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.IGNORED
-                ? {
-                    $or: [
-                      {
-                        $and: [
-                          {
-                            $eq: ["$status", CONNECTION_STATUSES.BOTH_IGNORED],
+                    },
+                    1,
+                  ],
+                },
+                {
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $ne: ["$$user.userId", "$$userId"],
                           },
-                          {
-                            $or: [
-                              {
-                                $and: [
-                                  {
-                                    $eq: ["$createdByUserId", currentUser._id],
-                                  },
-                                  { $eq: ["$createdForUserId", "$$userId"] },
-                                ],
-                              },
-                              {
-                                $and: [
-                                  {
-                                    $eq: ["$createdForUserId", currentUser._id],
-                                  },
-                                  { $eq: ["$createdByUserId", "$$userId"] },
-                                ],
-                              },
-                            ],
+                        },
+                      },
+                    },
+                    1,
+                  ],
+                },
+                {
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $eq: ["$$user.status", CONNECTION_STATUSES.BLOCKED],
                           },
-                        ],
+                        },
                       },
-                      {
-                        $and: [
-                          { $eq: ["$status", CONNECTION_STATUSES.IGNORED] },
-                          { $eq: ["$createdByUserId", currentUser._id] },
-                          { $eq: ["$createdForUserId", "$$userId"] },
-                        ],
-                      },
-                    ],
-                  }
-                : connectionType === CONNECTION_TYPES.ADMIRERS
-                ? {
-                    $and: [
-                      { $eq: ["$status", CONNECTION_STATUSES.FAVORITE] },
-                      { $eq: ["$createdForUserId", currentUser._id] },
-                      { $eq: ["$createdByUserId", "$$userId"] },
-                    ],
-                  }
-                : {}),
+                    },
+                    0,
+                  ],
+                },
+              ],
             },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            currentUser: {
+              $cond: {
+                if: {
+                  $eq: ["$users.0.userId", "$$userId"],
+                },
+                then: {
+                  $arrayElemAt: ["$users", 1],
+                },
+                else: {
+                  $arrayElemAt: ["$users", 0],
+                },
+              },
+            },
+            otherUser: {
+              $cond: {
+                if: {
+                  $eq: ["$users.0.userId", "$$userId"],
+                },
+                then: {
+                  $arrayElemAt: ["$users", 0],
+                },
+                else: {
+                  $arrayElemAt: ["$users", 1],
+                },
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            _id: { $exists: true },
+            ...(connectionType === CONNECTION_TYPES.MATCHED
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "otherUser.status": CONNECTION_STATUSES.FAVORITE,
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.FAVORITES
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "otherUser.status": {
+                    $ne: CONNECTION_STATUSES.FAVORITE,
+                  },
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.IGNORED
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.IGNORED,
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.ADMIRERS
+              ? {
+                  "otherUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "currentUser.status": {
+                    $ne: CONNECTION_STATUSES.FAVORITE,
+                  },
+                }
+              : {}),
           },
         },
       ],
@@ -109,13 +147,13 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
     },
   });
   pipeline.push({
+    $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
+  });
+  pipeline.push({
     $match: {
       "connection._id": { $exists: true },
       _id: { $ne: currentUser._id },
     },
-  });
-  pipeline.push({
-    $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
   });
   pipeline.push({
     $lookup: {
