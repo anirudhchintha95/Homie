@@ -1,6 +1,31 @@
 import { isValidObjectId } from "mongoose";
 import Connection from "../models/connection.js";
 
+export const findByUserIds = (currentUserId, otherUserId) => {
+  if (!currentUserId || !otherUserId) {
+    throw new Error("Invalid user ids!");
+  }
+
+  return Connection.findOne({
+    $and: [
+      {
+        users: {
+          $elemMatch: {
+            userId: currentUserId,
+          },
+        },
+      },
+      {
+        users: {
+          $elemMatch: {
+            userId: otherUserId,
+          },
+        },
+      },
+    ],
+  });
+};
+
 export const getAllConnections = async () => {
   const connections = await Connection.find({});
   return connections;
@@ -31,20 +56,30 @@ export const createConnection = async (createdForUserId, createdByUserId) => {
   return connection;
 };
 
-export const getConnectionByCreatedForAndCreatedByUserId = async (
-  createdForUserId,
-  createdByUserId
-) => {
-  if (!isValidObjectId(createdForUserId) || !isValidObjectId(createdByUserId)) {
-    throw { status: 400, message: "Error: Invalid User Id" };
+export const addFavorite = async (userId, userBeingViewedId) => {
+  try {
+    const connection = await Connection.findByUserIds(
+      userId,
+      userBeingViewedId
+    );
+    if (connection) {
+      const currentUserIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userId
+      );
+      connection.users[currentUserIndex].status = "favorite";
+      await connection.save();
+    } else {
+      const newConnection = new Connection({
+        users: [
+          { userId, status: "favorite" },
+          { userId: userBeingViewedId, status: null },
+        ],
+      });
+      await newConnection.save();
+    }
+  } catch (err) {
+    console.error(err);
   }
-
-  const connection = await Connection.findOne(
-    { createdForUserId: createdForUserId, createdByUserId: createdByUserId },
-    "-__v"
-  );
-
-  return connection ? connection : null;
 };
 
 export const swapConnectionUsers = async (connection) => {
@@ -64,10 +99,7 @@ export const swapConnectionUsers = async (connection) => {
 
 export const removeFavorite = async (user, userBeingViewed) => {
   try {
-    const connection = await getConnectionByCreatedForAndCreatedByUserId(
-      user,
-      userBeingViewed
-    );
+    const connection = await findConnection(user, userBeingViewed);
 
     if (!isValidObjectId(userBeingViewed) || !isValidObjectId(user)) {
       throw { status: 400, message: "Error: Invalid user ID" };
@@ -98,49 +130,5 @@ export const removeFavorite = async (user, userBeingViewed) => {
       status: error.status || 500,
       message: error.message || "Internal server error",
     };
-  }
-};
-
-export const addFavorite = async (user, userBeingViewed) => {
-  try {
-    const connectionExists = await getConnectionByCreatedForAndCreatedByUserId(
-      user,
-      userBeingViewed
-    );
-
-    if (!isValidObjectId(userBeingViewed) || !isValidObjectId(user)) {
-      throw { status: 400, message: "Error: Invalid user ID" };
-    }
-
-    if (connectionExists) {
-      if (connectionExists.status === "favorite") {
-        // Connection already exists and is a favorite, update status to match
-        connectionExists.status = "matched";
-        await connectionExists.save();
-        return connectionExists;
-      } else if (
-        connectionExists.status === "ignored" ||
-        connectionExists.status === "both_ignored"
-      ) {
-        if (connectionExists.createdByUserId !== user) {
-          // Connection already exists and is ignored, swap createdBy and createdFor and update status to favorite
-          await swapConnectionUsers(connectionExists);
-        }
-        connectionExists.status = "favorite";
-        await connectionExists.save();
-        return connectionExists;
-      } else {
-        throw { status: 400, message: "Invalid connection status" };
-      }
-    } else {
-      // Create new connection
-      const newConnection = await createConnection(userBeingViewed, user);
-      newConnection.status = "favorite";
-      await newConnection.save();
-
-      return newConnection;
-    }
-  } catch (error) {
-    throw error;
   }
 };
