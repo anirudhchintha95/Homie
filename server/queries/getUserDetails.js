@@ -76,26 +76,32 @@ const getUserDetails = async (currentUser, homieId) => {
               currentUser: {
                 $cond: {
                   if: {
-                    $eq: ["$users.0.userId", "$$userId"],
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
                   },
                   then: {
-                    $arrayElemAt: ["$users", 1],
+                    $arrayElemAt: ["$users", 0],
                   },
                   else: {
-                    $arrayElemAt: ["$users", 0],
+                    $arrayElemAt: ["$users", 1],
                   },
                 },
               },
               otherUser: {
                 $cond: {
                   if: {
-                    $eq: ["$users.0.userId", "$$userId"],
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
                   },
                   then: {
-                    $arrayElemAt: ["$users", 0],
+                    $arrayElemAt: ["$users", 1],
                   },
                   else: {
-                    $arrayElemAt: ["$users", 1],
+                    $arrayElemAt: ["$users", 0],
                   },
                 },
               },
