@@ -112,6 +112,18 @@ export const removeFavorite = async (userId, userBeingViewedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
+      if (connection.users[currentUserIndex].status === "ignored") {
+        throw {
+          status: 400,
+          message: "Error: Current user already has the status ignored",
+        };
+      }
+      if (connection.users[currentUserIndex].status === "blocked") {
+        throw {
+          status: 400,
+          message: "Error: Cannot ignore blocked user",
+        };
+      }
       connection.users[currentUserIndex].status = "ignored";
       await connection.save();
     } else {
@@ -124,6 +136,6 @@ export const removeFavorite = async (userId, userBeingViewedId) => {
       await newConnection.save();
     }
   } catch (err) {
-    console.error(err);
+    throw err;
   }
 };
