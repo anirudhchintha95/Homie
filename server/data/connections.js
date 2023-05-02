@@ -58,6 +58,9 @@ export const createConnection = async (createdForUserId, createdByUserId) => {
 
 export const addFavorite = async (userId, userBeingViewedId) => {
   try {
+    if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
     const connection = await Connection.findByUserIds(
       userId,
       userBeingViewedId
@@ -71,7 +74,7 @@ export const addFavorite = async (userId, userBeingViewedId) => {
     } else {
       const newConnection = new Connection({
         users: [
-          { userId, status: "favorite" },
+          { userId: userId, status: "favorite" },
           { userId: userBeingViewedId, status: null },
         ],
       });
@@ -97,38 +100,30 @@ export const swapConnectionUsers = async (connection) => {
   return connection.save();
 };
 
-export const removeFavorite = async (user, userBeingViewed) => {
+export const removeFavorite = async (userId, userBeingViewedId) => {
   try {
-    const connection = await findConnection(user, userBeingViewed);
-
-    if (!isValidObjectId(userBeingViewed) || !isValidObjectId(user)) {
+    if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
       throw { status: 400, message: "Error: Invalid user ID" };
     }
 
+    const connection = await findByUserIds(userId, userBeingViewedId);
+
     if (connection) {
-      if (connection.status === "ignored") {
-        connection.status = "both_ignored";
-        await connection.save();
-        return connection;
-      } else if (connection.status === "favorite") {
-        const swappedConnection = await swapConnectionUsers(connection);
-        swappedConnection.status = "ignored";
-        swappedConnection.save();
-        return swappedConnection;
-      } else {
-        // Change this
-        throw { status: 500, message: "Invalid connection status" };
-      }
+      const currentUserIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userId
+      );
+      connection.users[currentUserIndex].status = "ignored";
+      await connection.save();
     } else {
-      const newConnection = await createConnection(userBeingViewed, user);
-      newConnection.status = "ignored";
+      const newConnection = new Connection({
+        users: [
+          { userId: userId, status: "ignored" },
+          { userId: userBeingViewedId, status: null },
+        ],
+      });
       await newConnection.save();
-      return newConnection;
     }
-  } catch (error) {
-    throw {
-      status: error.status || 500,
-      message: error.message || "Internal server error",
-    };
+  } catch (err) {
+    console.error(err);
   }
 };
