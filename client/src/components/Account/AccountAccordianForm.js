@@ -103,13 +103,13 @@ const AccountAccordianForm = ({
 
       setLoading(true);
 
-      await updateAccountApi(
-        firstName.value,
-        lastName.value,
-        dob.value,
-        phoneNumber.value,
-        gender.value
-      );
+      await updateAccountApi({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        dob: dob.value,
+        phoneNumber: phoneNumber.value,
+        gender: gender.value,
+      });
 
       await auth.getCurrentUser();
     } catch (error) {
