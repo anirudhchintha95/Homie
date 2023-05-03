@@ -109,7 +109,7 @@ const ConnectionSchema = new Schema(
                 if: {
                   $eq: [
                     { $arrayElemAt: ["$users.userId", 0] },
-                    currentUser._id,
+                    currentUserId,
                   ],
                 },
                 then: {
@@ -125,7 +125,7 @@ const ConnectionSchema = new Schema(
                 if: {
                   $eq: [
                     { $arrayElemAt: ["$users.userId", 0] },
-                    currentUser._id,
+                    currentUserId,
                   ],
                 },
                 then: {
