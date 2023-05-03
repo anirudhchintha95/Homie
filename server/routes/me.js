@@ -69,7 +69,7 @@ router
     } catch (e) {}
   })
   .delete(async (req, res) => {
-    const { email } = req.currentUser;
+    const userId = req.currentUser._id;
     try {
     } catch (e) {}
   });

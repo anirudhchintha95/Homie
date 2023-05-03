@@ -144,3 +144,32 @@ export const addFavorite = async (user, userBeingViewed) => {
     throw error;
   }
 };
+
+export const toggleShowUserData = async (currentUserId, homieId) => {
+  if (!currentUserId) {
+    throw { status: 401, message: "Unauthorised request" };
+  }
+
+  homieId = validateId(homieId, "homieId");
+  const connection = await Connection.findByUserIds(currentUserId, homieId);
+
+  // Only matched connections can send messages to each other
+  if (
+    !connection?.users?.every(
+      ({ status }) => status === CONNECTION_STATUSES.FAVORITE
+    )
+  ) {
+    throw { status: 400, message: "Users not matched" };
+  }
+  const currentUserIndex = connection.users.findIndex(
+    (user) => (user.userId = currentUserId)
+  );
+  if (!connection.users[currentUserIndex]) {
+    connection.users[currentUserIndex] = true;
+  } else {
+    connection.users[currentUserIndex] = false;
+  }
+
+  await connection.save();
+  return connection;
+};

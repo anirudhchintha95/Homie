@@ -25,13 +25,14 @@ class ImageService {
 
     // If an image is already created for this model, delete it
 
-    const existingImage = await Image.findOne({
+    const existingImages = await Image.find({
       imageableType,
       imageableId,
     });
 
-    if (existingImage) {
-      await Image.deleteOne({ _id: existingImage._id });
+    if (existingImages) {
+      // await Image.deleteOne({ _id: existingImage._id });
+      await ImageService.deleteImages(existingImages);
     }
 
     const image = await Image.create({
@@ -119,7 +120,7 @@ class ImageService {
         }
       }
     }
-    //Image.deleteMany({});
+    await Image.deleteMany({});
   }
 }
 
