@@ -25,8 +25,9 @@ export const isEitherUserBlocked = async (userId, userBeingViewedId) => {
   );
 
   return (
-    connection.users[currentUserIndex].status === "blocked" ||
-    connection.users[userBeingViewedIndex].status === "blocked"
+    connection.users[currentUserIndex].status === CONNECTION_STATUSES.BLOCKED ||
+    connection.users[userBeingViewedIndex].status ===
+      CONNECTION_STATUSES.BLOCKED
   );
 };
 
@@ -61,12 +62,12 @@ export const addFavorite = async (userId, userBeingViewedId) => {
         };
       }
 
-      connection.users[currentUserIndex].status = "favorite";
+      connection.users[currentUserIndex].status = CONNECTION_STATUSES.FAVORITE;
       await connection.save();
     } else {
       const newConnection = new Connection({
         users: [
-          { userId: userId, status: "favorite" },
+          { userId: userId, status: CONNECTION_STATUSES.FAVORITE },
           { userId: userBeingViewedId, status: null },
         ],
       });
@@ -99,19 +100,22 @@ export const removeFavorite = async (userId, userBeingViewedId) => {
             "Error: Cannot favorite if a connection is blocked by either user",
         };
       }
-      if (connection.users[currentUserIndex].status === "ignored") {
+      if (
+        connection.users[currentUserIndex].status ===
+        CONNECTION_STATUSES.IGNORED
+      ) {
         throw {
           status: 400,
           message: "Error: Current user already has the status ignored",
         };
       }
 
-      connection.users[currentUserIndex].status = "ignored";
+      connection.users[currentUserIndex].status = CONNECTION_STATUSES.IGNORED;
       await connection.save();
     } else {
       const newConnection = new Connection({
         users: [
-          { userId: userId, status: "ignored" },
+          { userId: userId, status: CONNECTION_STATUSES.IGNORED },
           { userId: userBeingViewedId, status: null },
         ],
       });
