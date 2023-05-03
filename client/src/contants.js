@@ -13,6 +13,7 @@ export const CONNECTION_STATUSES = {
 };
 
 export const ACCOUNT_PANELS = {
+  preferences: "preferences",
   settings: "settings",
   authentication: "authentication",
   images: "images",
