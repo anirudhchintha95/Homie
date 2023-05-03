@@ -1,35 +1,6 @@
 import { isValidObjectId } from "mongoose";
-import Connection from "../models/connection.js";
 import { CONNECTION_STATUSES } from "../constants.js";
-
-export const isEitherUserBlocked = async (userId, userBeingViewedId) => {
-  if (!userBeingViewedId || !userId)
-    throw { status: 400, message: "Error: Invalid user ID" };
-
-  if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
-    throw { status: 400, message: "Error: Invalid user ID" };
-  }
-
-  const connection = await Connection.findByUserIds(userId, userBeingViewedId);
-
-  if (!connection) {
-    return false;
-  }
-
-  const currentUserIndex = connection.users.findIndex(
-    (user) => user.userId.toString() === userId
-  );
-
-  const userBeingViewedIndex = connection.users.findIndex(
-    (user) => user.userId.toString() === userBeingViewedId
-  );
-
-  return (
-    connection.users[currentUserIndex].status === CONNECTION_STATUSES.BLOCKED ||
-    connection.users[userBeingViewedIndex].status ===
-      CONNECTION_STATUSES.BLOCKED
-  );
-};
+import Connection from "../models/connection.js";
 
 export const addFavorite = async (userId, userBeingViewedId) => {
   try {
@@ -45,7 +16,7 @@ export const addFavorite = async (userId, userBeingViewedId) => {
         (user) => user.userId.toString() === userId
       );
 
-      if (await isEitherUserBlocked(userId, userBeingViewedId)) {
+      if (connection.isEitherUserBlocked()) {
         throw {
           status: 400,
           message:
@@ -93,7 +64,7 @@ export const removeFavorite = async (userId, userBeingViewedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
-      if (await isEitherUserBlocked(userId, userBeingViewedId)) {
+      if (connection.isEitherUserBlocked(userId, userBeingViewedId)) {
         throw {
           status: 400,
           message:
