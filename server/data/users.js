@@ -27,6 +27,7 @@ export const getUserProfile = async (email) => {
   if (!userProfile) throw { status: 404, message: "User not found" };
 
   userProfile._id = userProfile._id.toString();
+  userProfile.dateOfBirth = new Date(userProfile.dateOfBirth);
   return userProfile._doc;
 };
 
@@ -119,6 +120,9 @@ export const updateUserProfile = async (
   if (modifiedUser.lastErrorObject.n === 0)
     throw { status: 404, message: "Error: User not found" };
 
+  modifiedUser.value._doc.dateOfBirth = new Date(
+    modifiedUser.value._doc.dateOfBirth
+  );
   return modifiedUser.value._doc;
 };
 

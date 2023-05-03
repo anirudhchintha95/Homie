@@ -44,7 +44,7 @@ const AccountAccordianForm = ({
 
   const [dob, setDob] = useState({
     error: false,
-    value: auth?.user?.dateOfBirth,
+    value: new Date(auth?.user?.dateOfBirth),
   });
   const [phoneNumber, setPhoneNumber] = useState({
     error: false,
