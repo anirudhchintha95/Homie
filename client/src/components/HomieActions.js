@@ -75,7 +75,7 @@ const HomieActions = ({
   } else if (status === CONNECTION_STATUSES.FAVORITE) {
     actions.push({
       title: "Remove Favorite",
-      Icon: ThumbUpAltIcon,
+      Icon: ThumbDownOffAltIcon,
       onClick: removeFavoriteClick,
     });
     actions.push({

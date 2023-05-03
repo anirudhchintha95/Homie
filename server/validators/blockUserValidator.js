@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 
-export const addFavoriteValidator = (req, res, next) => {
+export const blockUserValidator = async (req, res, next) => {
   const { id } = req.params;
   const user = req.currentUser;
 

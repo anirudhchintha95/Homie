@@ -92,7 +92,11 @@ const MyHomies = () => {
         <Grid container spacing={2}>
           {myHomies.map((user) => (
             <Grid xs={12} sm={6} md={4} lg={3} key={user._id}>
-              <HomieCard user={user} variant="small" />
+              <HomieCard
+                onActionsClick={fetchMyHomies}
+                user={user}
+                variant="small"
+              />
             </Grid>
           ))}
         </Grid>
