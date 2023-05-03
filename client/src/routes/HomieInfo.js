@@ -337,8 +337,6 @@ const HomieInfo = () => {
           <Typography variant="h6" color="primary" marginLeft={0.5}>
             {!Object.keys(user.preferences.rent || {}).length ? (
               "N/A"
-            ) : user.preferences.rent.exact ? (
-              <span>${user.preferences.rent.exact / 100}</span>
             ) : (
               <span>
                 ${user.preferences.rent.min / 100} - $

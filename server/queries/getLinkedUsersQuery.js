@@ -23,135 +23,56 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
         {
           $match: {
             $expr: {
-              $or: [
+              $and: [
+                // users records size should be 2
+                { $eq: [{ $size: "$users" }, 2] },
+                // users array should have 2 objects with userId. Each userId should equal to current user and other user
                 {
-                  $and: [
-                    { $eq: ["$firstUserId", currentUser._id] },
-                    { $eq: ["$secondUserId", "$$userId"] },
-                    ...(connectionType === CONNECTION_TYPES.MATCHED
-                      ? [
-                          {
-                            $eq: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $eq: ["$$user.userId", currentUser._id],
                           },
-                          {
-                            $eq: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.FAVORITES
-                      ? [
-                          {
-                            $eq: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.IGNORED
-                      ? [
-                          {
-                            $eq: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.IGNORED,
-                            ],
-                          },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.ADMIRERS
-                      ? [
-                          {
-                            $eq: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                          // first user status cannot be favorite or blocked
-                          {
-                            $ne: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                          {
-                            $ne: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.BLOCKED,
-                            ],
-                          },
-                        ]
-                      : []),
+                        },
+                      },
+                    },
+                    1,
                   ],
                 },
                 {
-                  $and: [
-                    { $eq: ["$secondUserId", currentUser._id] },
-                    { $eq: ["$firstUserId", "$$userId"] },
-                    ...(connectionType === CONNECTION_TYPES.MATCHED
-                      ? [
-                          {
-                            $eq: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $ne: ["$$user.userId", "$$userId"],
                           },
-                          {
-                            $eq: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
+                        },
+                      },
+                    },
+                    1,
+                  ],
+                },
+                {
+                  $eq: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$users",
+                          as: "user",
+                          cond: {
+                            $eq: ["$$user.status", CONNECTION_STATUSES.BLOCKED],
                           },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.FAVORITES
-                      ? [
-                          {
-                            $eq: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.IGNORED
-                      ? [
-                          {
-                            $eq: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.IGNORED,
-                            ],
-                          },
-                        ]
-                      : []),
-                    ...(connectionType === CONNECTION_TYPES.ADMIRERS
-                      ? [
-                          {
-                            $eq: [
-                              "$firstUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                          // first user status cannot be favorite or blocked
-                          {
-                            $ne: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.FAVORITE,
-                            ],
-                          },
-                          {
-                            $ne: [
-                              "$secondUserStatus",
-                              CONNECTION_STATUSES.BLOCKED,
-                            ],
-                          },
-                        ]
-                      : []),
+                        },
+                      },
+                    },
+                    0,
                   ],
                 },
               ],
@@ -163,30 +84,62 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
             _id: 1,
             currentUser: {
               $cond: {
-                if: { $eq: ["$firstUserId", currentUser._id] },
+                if: {
+                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUser._id],
+                },
                 then: {
-                  _id: "$firstUserId",
-                  status: "$firstUserStatus",
+                  $arrayElemAt: ["$users", 0],
                 },
                 else: {
-                  _id: "$secondUserId",
-                  status: "$secondUserStatus",
+                  $arrayElemAt: ["$users", 1],
                 },
               },
             },
             otherUser: {
               $cond: {
-                if: { $eq: ["$firstUserId", currentUser._id] },
+                if: {
+                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUser._id],
+                },
                 then: {
-                  _id: "$secondUserId",
-                  status: "$secondUserStatus",
+                  $arrayElemAt: ["$users", 1],
                 },
                 else: {
-                  _id: "$firstUserId",
-                  status: "$firstUserStatus",
+                  $arrayElemAt: ["$users", 0],
                 },
               },
             },
+          },
+        },
+        {
+          $match: {
+            _id: { $exists: true },
+            ...(connectionType === CONNECTION_TYPES.MATCHED
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "otherUser.status": CONNECTION_STATUSES.FAVORITE,
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.FAVORITES
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "otherUser.status": {
+                    $ne: CONNECTION_STATUSES.FAVORITE,
+                  },
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.IGNORED
+              ? {
+                  "currentUser.status": CONNECTION_STATUSES.IGNORED,
+                }
+              : {}),
+            ...(connectionType === CONNECTION_TYPES.ADMIRERS
+              ? {
+                  "otherUser.status": CONNECTION_STATUSES.FAVORITE,
+                  "currentUser.status": {
+                    $ne: CONNECTION_STATUSES.FAVORITE,
+                  },
+                }
+              : {}),
           },
         },
       ],
@@ -194,13 +147,13 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
     },
   });
   pipeline.push({
+    $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
+  });
+  pipeline.push({
     $match: {
       "connection._id": { $exists: true },
       _id: { $ne: currentUser._id },
     },
-  });
-  pipeline.push({
-    $addFields: { connection: { $arrayElemAt: ["$connection", 0] } },
   });
   pipeline.push({
     $lookup: {

@@ -1,6 +1,6 @@
-import { isValidObjectId } from 'mongoose';
-import { GENDERS } from '../constants.js';
-import { DateTime } from 'luxon';
+import { isValidObjectId } from "mongoose";
+import { GENDERS } from "../constants.js";
+import { DateTime } from "luxon";
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -19,8 +19,28 @@ function isValidPassword(password) {
   return true;
 }
 
+const validatePassword = (password, variableName = "Password") => {
+  if (!password) {
+    throw {
+      status: 400,
+      message: `${variableName} is required!`,
+    };
+  }
+  if (
+    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
+      password
+    )
+  ) {
+    throw {
+      status: 400,
+      message: `${variableName} must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character.`,
+    };
+  }
+  return password;
+};
+
 const checkBoolean = (value) => {
-  if (typeof value === 'boolean') {
+  if (typeof value === "boolean") {
     return true;
   }
   return false;
@@ -33,7 +53,7 @@ const validateString = (value, name, opts = {}) => {
     throw { status: 400, message: `${name} is required!` };
   }
 
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     throw { status: 400, message: `${name} is not a string!` };
   }
 
@@ -55,7 +75,7 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
-  if (name in ['firstName', 'lastName'] && value.match(/[0-9]/g)) {
+  if (name in ["firstName", "lastName"] && value.match(/[0-9]/g)) {
     throw {
       status: 400,
       message: `${name} must not contain numbers`,
@@ -65,7 +85,7 @@ const validateString = (value, name, opts = {}) => {
 };
 
 const validateNumber = (value, name) => {
-  if (typeof value !== 'number') {
+  if (typeof value !== "number") {
     throw { status: 400, message: `${name} is not a number!` };
   }
   if (isNaN(value)) {
@@ -82,10 +102,10 @@ const validateNumberRange = (value, name, opts = {}) => {
       status: 400,
       message: [
         name,
-        'must be greater than',
-        includeMin ? 'or equal to' : '',
+        "must be greater than",
+        includeMin ? "or equal to" : "",
         min,
-      ].join(' '),
+      ].join(" "),
     };
   }
   if (max && value > max && (!includeMax || value !== max)) {
@@ -93,10 +113,10 @@ const validateNumberRange = (value, name, opts = {}) => {
       status: 400,
       message: [
         name,
-        'must be less than',
-        includeMax ? 'or equal to' : '',
+        "must be less than",
+        includeMax ? "or equal to" : "",
         max,
-      ].join(' '),
+      ].join(" "),
     };
   }
 };
@@ -113,13 +133,13 @@ const validateId = (value, name) => {
 
 const validateDOB = (dob, name) => {
   if (!dob) {
-    throw { status: 400, message: 'Date of birth is required.' };
+    throw { status: 400, message: "Date of birth is required." };
   }
 
   if (dob > DateTime.now()) {
     throw {
       status: 400,
-      message: 'Date of birth cannot be in the future.',
+      message: "Date of birth cannot be in the future.",
     };
   }
   // dob must be at least 18 years ago using luxon
@@ -127,7 +147,7 @@ const validateDOB = (dob, name) => {
   if (dob > eighteenYearsAgo) {
     throw {
       status: 400,
-      message: 'You must be at least 18 years old to register.',
+      message: "You must be at least 18 years old to register.",
     };
   }
 
@@ -136,7 +156,7 @@ const validateDOB = (dob, name) => {
   if (dob < oneHundredYearsAgo) {
     throw {
       status: 400,
-      message: 'You must be less than 100 years old to register.',
+      message: "You must be less than 100 years old to register.",
     };
   }
   return dob;

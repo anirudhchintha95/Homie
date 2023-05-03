@@ -21,16 +21,9 @@ const PreferenceSchema = new Schema({
         if (Object.keys(v).length === 0) return true;
         const hasMin = typeof v.min === "number";
         const hasMax = typeof v.max === "number";
-        const hasExact = typeof v.exact === "number";
 
-        if (hasExact) {
-          try {
-            validations.validateNumber(v.exact, "exact rent", {
-              min: 1,
-            });
-          } catch (error) {
-            return false;
-          }
+        if ((hasMin && !hasMax) || (!hasMin && hasMax)) {
+          return false;
         }
 
         if (hasMin) {

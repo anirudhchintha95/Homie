@@ -3,17 +3,20 @@ import Box from "@mui/material/Box";
 import { Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-import { SubmitButton } from "../components";
+import { SubmitButton, Toast } from "../components";
 import {
   AccountAccordianForm,
+  DeleteUserConfirmationDialog,
   ImagesAccordianForm,
   PasswordAccordionForm,
 } from "../components/Account";
 
 const Account = () => {
   const headerRef = React.useRef();
+  const [open, setOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState();
   const [loading, setLoading] = useState();
+  const [successMsg, setSuccessMsg] = useState();
 
   const handleChange = (panel) => (_, isExpanded) => {
     if (loading) return;
@@ -34,12 +37,27 @@ const Account = () => {
         Account
       </Typography>
 
+      <DeleteUserConfirmationDialog
+        open={open}
+        setOpen={setOpen}
+        loading={loading}
+        setLoading={setLoading}
+      />
+
+      <Toast
+        open={!!successMsg}
+        handleClose={() => setSuccessMsg()}
+        message={successMsg}
+        variant="success"
+      />
+
       <AccountAccordianForm
         expanded={expanded}
         handleChange={handleChange}
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
+        setSuccessMsg={setSuccessMsg}
       />
       <PasswordAccordionForm
         expanded={expanded}
@@ -47,6 +65,7 @@ const Account = () => {
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
+        setSuccessMsg={setSuccessMsg}
       />
       <ImagesAccordianForm
         expanded={expanded}
@@ -54,6 +73,7 @@ const Account = () => {
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
+        setSuccessMsg={setSuccessMsg}
       />
       <Button
         variant="contained"
@@ -71,6 +91,7 @@ const Account = () => {
         loading={loading}
         fullWidth
         color="error"
+        onClick={() => setOpen(true)}
       >
         Delete Account
       </SubmitButton>

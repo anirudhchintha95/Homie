@@ -30,17 +30,40 @@ const getUserDetails = async (currentUser, homieId) => {
           {
             $match: {
               $expr: {
-                $or: [
+                $and: [
+                  // users records size should be 2
+                  { $eq: [{ $size: "$users" }, 2] },
+                  // users array should have 2 objects with userId. Each userId should equal to current user and other user
                   {
-                    $and: [
-                      { $eq: ["$firstUserId", currentUser._id] },
-                      { $eq: ["$secondUserId", "$$userId"] },
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $eq: ["$$user.userId", currentUser._id],
+                            },
+                          },
+                        },
+                      },
+                      1,
                     ],
                   },
                   {
-                    $and: [
-                      { $eq: ["$secondUserId", currentUser._id] },
-                      { $eq: ["$firstUserId", "$$userId"] },
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: "$users",
+                            as: "user",
+                            cond: {
+                              $ne: ["$$user.userId", "$$userId"],
+                            },
+                          },
+                        },
+                      },
+                      1,
                     ],
                   },
                 ],
@@ -52,34 +75,37 @@ const getUserDetails = async (currentUser, homieId) => {
               _id: 1,
               currentUser: {
                 $cond: {
-                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  if: {
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
+                  },
                   then: {
-                    _id: "$firstUserId",
-                    status: "$firstUserStatus",
-                    showData: "$showFirstUserData",
+                    $arrayElemAt: ["$users", 0],
                   },
                   else: {
-                    _id: "$secondUserId",
-                    status: "$secondUserStatus",
-                    showData: "$showSecondUserData",
+                    $arrayElemAt: ["$users", 1],
                   },
                 },
               },
               otherUser: {
                 $cond: {
-                  if: { $eq: ["$firstUserId", currentUser._id] },
+                  if: {
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
+                  },
                   then: {
-                    _id: "$secondUserId",
-                    status: "$secondUserStatus",
-                    showData: "$showSecondUserData",
+                    $arrayElemAt: ["$users", 1],
                   },
                   else: {
-                    _id: "$firstUserId",
-                    status: "$firstUserStatus",
-                    showData: "$showFirstUserData",
+                    $arrayElemAt: ["$users", 0],
                   },
                 },
               },
+              messages: 1,
             },
           },
         ],
