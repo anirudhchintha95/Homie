@@ -139,7 +139,10 @@ const Signup = () => {
       const isFormValid = validateForm();
 
       if (!isFormValid) {
-        headerRef.current.scrollIntoView({ behavior: "smooth", block: "start", });
+        headerRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
         return;
       }
 
@@ -314,9 +317,9 @@ const Signup = () => {
                   value: new Date(date),
                 })
               }
-              // min date is 13 years ago
+              // min date is 18 years ago
               maxDate={
-                new Date(new Date().setFullYear(new Date().getFullYear() - 13))
+                new Date(new Date().setFullYear(new Date().getFullYear() - 18))
               }
               error={dob.error}
             />
