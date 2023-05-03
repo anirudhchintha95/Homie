@@ -30,6 +30,10 @@ const RequiresAuth = ({ children }) => {
     }
   }
 
+  if (!auth?.user?.preferences?._id) {
+    return <Navigate to="/create-preferences"></Navigate>;
+  }
+
   return children;
 };
 

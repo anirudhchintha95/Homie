@@ -1,5 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import Connection from "../models/connection.js";
+import { CONNECTION_STATUSES } from "../constants.js";
 
 export const findByUserIds = (currentUserId, otherUserId) => {
   if (!currentUserId || !otherUserId) {
@@ -69,7 +70,11 @@ export const addFavorite = async (userId, userBeingViewedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
-      if (connection.users[currentUserIndex].status === "favorite") {
+      // Use static vars
+      if (
+        connection.users[currentUserIndex].status ===
+        CONNECTION_STATUSES.FAVORITE
+      ) {
         throw {
           status: 400,
           message: "Error: Current user already has the status favorite",
