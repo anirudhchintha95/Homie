@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { clearFromStorage, getFromStorage, setToStorage } from "../utils";
 import { getCurrentUserApi } from "../api/users";
+import axiosInstance from "../api/axiosInstance";
 
 import AuthContext from "../AuthContext";
 import Loader from "./Loader";
@@ -95,6 +96,31 @@ const AuthProvider = ({ children }) => {
       refreshCurrentUser,
     ]
   );
+
+  useEffect(() => {
+    const authResponseInterceptor = axiosInstance.interceptors.response.use(
+      async (response) => {
+        return response;
+      },
+      async (error) => {
+        const status = error.response.status;
+
+        if (
+          (status === 401 || status === 403) &&
+          getFromStorage(userAccessTokenKey)
+        ) {
+          signOut(() => {
+            window.location.href = "/login";
+          });
+        } else {
+          return Promise.reject(error);
+        }
+      }
+    );
+    return () => {
+      axiosInstance.interceptors.response.eject(authResponseInterceptor);
+    };
+  }, [signOut]);
 
   return (
     <AuthContext.Provider value={authValues}>
