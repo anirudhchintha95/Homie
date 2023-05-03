@@ -2,59 +2,32 @@ import { isValidObjectId } from "mongoose";
 import Connection from "../models/connection.js";
 import { CONNECTION_STATUSES } from "../constants.js";
 
-export const findByUserIds = (currentUserId, otherUserId) => {
-  if (!currentUserId || !otherUserId) {
-    throw new Error("Invalid user ids!");
+export const isEitherUserBlocked = async (userId, userBeingViewedId) => {
+  if (!userBeingViewedId || !userId)
+    throw { status: 400, message: "Error: Invalid user ID" };
+
+  if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
+    throw { status: 400, message: "Error: Invalid user ID" };
   }
 
-  return Connection.findOne({
-    $and: [
-      {
-        users: {
-          $elemMatch: {
-            userId: currentUserId,
-          },
-        },
-      },
-      {
-        users: {
-          $elemMatch: {
-            userId: otherUserId,
-          },
-        },
-      },
-    ],
-  });
-};
+  const connection = await Connection.findByUserIds(userId, userBeingViewedId);
 
-export const getAllConnections = async () => {
-  const connections = await Connection.find({});
-  return connections;
-};
-
-export const getConnectionByCreatedForUserId = async (userId) => {
-  if (!isValidObjectId(userId)) {
-    throw { status: 400, message: "Error: Invalid User Id" };
+  if (!connection) {
+    return false;
   }
 
-  const connection = await Connection.findOne(
-    { createdForUserId: userId },
-    "-__v"
+  const currentUserIndex = connection.users.findIndex(
+    (user) => user.userId.toString() === userId
   );
-  return connection;
-};
 
-export const createConnection = async (createdForUserId, createdByUserId) => {
-  if (!isValidObjectId(createdByUserId) || !isValidObjectId(createdForUserId)) {
-    throw { status: 400, message: "Error: Invalid User Id" };
-  }
+  const userBeingViewedIndex = connection.users.findIndex(
+    (user) => user.userId.toString() === userBeingViewedId
+  );
 
-  const connection = await Connection.create({
-    createdByUserId: createdByUserId,
-    createdForUserId: createdForUserId,
-  });
-
-  return connection;
+  return (
+    connection.users[currentUserIndex].status === "blocked" ||
+    connection.users[userBeingViewedIndex].status === "blocked"
+  );
 };
 
 export const addFavorite = async (userId, userBeingViewedId) => {
@@ -70,7 +43,14 @@ export const addFavorite = async (userId, userBeingViewedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
-      // Use static vars
+
+      if (await isEitherUserBlocked(userId, userBeingViewedId)) {
+        throw {
+          status: 400,
+          message:
+            "Error: Cannot favorite if a connection is blocked by either user",
+        };
+      }
       if (
         connection.users[currentUserIndex].status ===
         CONNECTION_STATUSES.FAVORITE
@@ -80,12 +60,7 @@ export const addFavorite = async (userId, userBeingViewedId) => {
           message: "Error: Current user already has the status favorite",
         };
       }
-      if (connection.users[currentUserIndex].status === "blocked") {
-        throw {
-          status: 400,
-          message: "Error: Cannot favorite blocked user",
-        };
-      }
+
       connection.users[currentUserIndex].status = "favorite";
       await connection.save();
     } else {
@@ -102,45 +77,35 @@ export const addFavorite = async (userId, userBeingViewedId) => {
   }
 };
 
-export const swapConnectionUsers = async (connection) => {
-  if (
-    !connection ||
-    !connection.createdByUserId ||
-    !connection.createdForUserId
-  ) {
-    throw { status: 400, message: "Error: Invalid connection object" };
-  }
-
-  const temp = connection.createdByUserId;
-  connection.createdByUserId = connection.createdForUserId;
-  connection.createdForUserId = temp;
-  return connection.save();
-};
-
 export const removeFavorite = async (userId, userBeingViewedId) => {
   try {
     if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
       throw { status: 400, message: "Error: Invalid user ID" };
     }
 
-    const connection = await findByUserIds(userId, userBeingViewedId);
+    const connection = await Connection.findByUserIds(
+      userId,
+      userBeingViewedId
+    );
 
     if (connection) {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
+      if (await isEitherUserBlocked(userId, userBeingViewedId)) {
+        throw {
+          status: 400,
+          message:
+            "Error: Cannot favorite if a connection is blocked by either user",
+        };
+      }
       if (connection.users[currentUserIndex].status === "ignored") {
         throw {
           status: 400,
           message: "Error: Current user already has the status ignored",
         };
       }
-      if (connection.users[currentUserIndex].status === "blocked") {
-        throw {
-          status: 400,
-          message: "Error: Cannot ignore blocked user",
-        };
-      }
+
       connection.users[currentUserIndex].status = "ignored";
       await connection.save();
     } else {

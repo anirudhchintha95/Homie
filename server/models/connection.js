@@ -64,22 +64,6 @@ const ConnectionSchema = new Schema(
 
     methods: {},
     statics: {
-      async isBlocked(userId, userBeingViewedId) {
-        if (!userId || !userBeingViewedId) throw new Error("Invalid user ids!");
-
-        const currentUserIndex = this.users.findIndex(
-          (user) => user.userId.toString() === userId
-        );
-
-        const userBeingViewedIndex = this.users.findIndex(
-          (user) => user.userId.toString() === userBeingViewedId
-        );
-
-        return (
-          this.users[currentUserIndex].status === "blocked" ||
-          this.users[userBeingViewedIndex].status === "blocked"
-        );
-      },
       async findByUserIds(
         currentUserId,
         otherUserId,
