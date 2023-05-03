@@ -208,4 +208,5 @@ export {
   validateDOB,
   validatePhone,
   validateGender,
+  validatePassword,
 };

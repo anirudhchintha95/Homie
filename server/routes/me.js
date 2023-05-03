@@ -43,6 +43,7 @@ router
         .json({ error: "There are no fields in the request body" });
     }
     let { firstName, lastName, dob, phoneNumber, gender } = req.body;
+    dob = new Date(dob);
     const sessionEmail = req.currentUser.email;
     try {
       firstName = validateString(firstName, "firstName");
@@ -65,6 +66,11 @@ router
         gender
       );
       return res.status(200).json({ user: userUpdated });
+    } catch (e) {}
+  })
+  .delete(async (req, res) => {
+    const { email } = req.currentUser;
+    try {
     } catch (e) {}
   });
 

@@ -121,3 +121,11 @@ export const updateUserProfile = async (
 
   return modifiedUser.value._doc;
 };
+
+export const deleteUser = async (email) => {
+  const userDeleted = await User.findOneAndDelete(
+    { email: email },
+    { projection: { _id: 1 } }
+  );
+  return userDeleted;
+};
