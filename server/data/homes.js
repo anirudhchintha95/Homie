@@ -10,6 +10,6 @@ export const getHome = async (userId) => {
 };
 
 export const deleteHome = async (userId) => {
-  const deletedHome = await Home.deleteOne({ userId: userId });
-  return deletedHome.acknowledged && deletedHome.deletedCount == 1;
+  const deletedHomes = await Home.deleteMany({ userId: userId });
+  return deletedHomes.deletedCount !== 0;
 };

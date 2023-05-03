@@ -44,7 +44,7 @@ const AccountAccordianForm = ({
 
   const [dob, setDob] = useState({
     error: false,
-    value: auth?.user?.dob,
+    value: auth?.user?.dateOfBirth,
   });
   const [phoneNumber, setPhoneNumber] = useState({
     error: false,
@@ -235,10 +235,10 @@ const AccountAccordianForm = ({
                     value: new Date(date),
                   })
                 }
-                // min date is 13 years ago
+                // min date is 18 years ago
                 maxDate={
                   new Date(
-                    new Date().setFullYear(new Date().getFullYear() - 13)
+                    new Date().setFullYear(new Date().getFullYear() - 18)
                   )
                 }
                 error={dob.error}
