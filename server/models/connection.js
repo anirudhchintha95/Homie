@@ -61,7 +61,13 @@ const ConnectionSchema = new Schema(
   },
   {
     timestamps: true,
-    methods: {},
+    methods: {
+      isEitherUserBlocked() {
+        return this.users.some(
+          (user) => user.status === CONNECTION_STATUSES.BLOCKED
+        );
+      },
+    },
     statics: {
       async findByUserIds(
         currentUserId,
@@ -99,20 +105,34 @@ const ConnectionSchema = new Schema(
           return await query.projection({
             _id: 1,
             currentUser: {
-              $filter: {
-                input: "$users",
-                as: "user",
-                cond: {
-                  $ne: ["$$user.userId", currentUserId],
+              $cond: {
+                if: {
+                  $eq: [
+                    { $arrayElemAt: ["$users.userId", 0] },
+                    currentUserId,
+                  ],
+                },
+                then: {
+                  $arrayElemAt: ["$users", 0],
+                },
+                else: {
+                  $arrayElemAt: ["$users", 1],
                 },
               },
             },
             otherUser: {
-              $filter: {
-                input: "$users",
-                as: "user",
-                cond: {
-                  $eq: ["$$user.userId", otherUserId],
+              $cond: {
+                if: {
+                  $eq: [
+                    { $arrayElemAt: ["$users.userId", 0] },
+                    currentUserId,
+                  ],
+                },
+                then: {
+                  $arrayElemAt: ["$users", 1],
+                },
+                else: {
+                  $arrayElemAt: ["$users", 0],
                 },
               },
             },
