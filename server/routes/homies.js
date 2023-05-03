@@ -108,7 +108,7 @@ homiesRouter
 
 homiesRouter
   .route("/:id/remove-match")
-  .post(removeMatchValidator, async (req, res) => {
+  .patch(removeMatchValidator, async (req, res) => {
     const userBeingViewed = req.params.id;
     const currentUserId = req.currentUser._id.toString();
 

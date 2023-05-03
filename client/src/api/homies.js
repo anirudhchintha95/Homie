@@ -34,7 +34,7 @@ export const removeUserAsFavoriteApi = async (userId) => {
 };
 
 export const removeMatchedUserApi = async (userId) => {
-  const response = await axiosInstance.post(`/homies/${userId}/remove-match`);
+  const response = await axiosInstance.patch(`/homies/${userId}/remove-match`);
 
   return response?.data?.user || {};
 };
