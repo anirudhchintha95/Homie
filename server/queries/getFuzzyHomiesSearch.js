@@ -129,6 +129,13 @@ const buildScoreColumns = (preference) => {
 const getFuzzyHomiesSearch = async (currentUser, preferences) => {
   return User.aggregate([
     {
+      $match: {
+        "location.city": currentUser.location.city,
+        "location.state": currentUser.location.state,
+        _id: { $ne: currentUser._id },
+      },
+    },
+    {
       $lookup: {
         from: "connections",
         let: { userId: "$_id" },
@@ -201,26 +208,32 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
               currentUser: {
                 $cond: {
                   if: {
-                    $eq: ["$users.0.userId", "$$userId"],
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
                   },
                   then: {
-                    $arrayElemAt: ["$users", 1],
+                    $arrayElemAt: ["$users", 0],
                   },
                   else: {
-                    $arrayElemAt: ["$users", 0],
+                    $arrayElemAt: ["$users", 1],
                   },
                 },
               },
               otherUser: {
                 $cond: {
                   if: {
-                    $eq: ["$users.0.userId", "$$userId"],
+                    $eq: [
+                      { $arrayElemAt: ["$users.userId", 0] },
+                      currentUser._id,
+                    ],
                   },
                   then: {
-                    $arrayElemAt: ["$users", 0],
+                    $arrayElemAt: ["$users", 1],
                   },
                   else: {
-                    $arrayElemAt: ["$users", 1],
+                    $arrayElemAt: ["$users", 0],
                   },
                 },
               },
@@ -276,15 +289,6 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
             "$drinkingScore",
           ],
         },
-      },
-    },
-    {
-      $match: {
-        $and: [
-          {
-            _id: { $nin: [currentUser._id] },
-          },
-        ],
       },
     },
     {
