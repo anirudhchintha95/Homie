@@ -3,25 +3,25 @@ import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 
 function valuetext(value) {
-  return `$${value * 100}`;
+  return `${value} YO`;
 }
 
-const minDistance = 10;
+const minDistance = 1;
 
-const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
+const AgeSlider = ({ minAge, maxAge, onMinAgeChange, onMaxAgeChange }) => {
   const handleChange = (_, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
       return;
     }
 
     if (activeThumb === 0) {
-      onMinRentChange({
-        value: Math.min(newValue[0] * 100, maxRent.value - minDistance * 100),
+      onMinAgeChange({
+        value: Math.min(newValue[0], maxAge.value - minDistance),
         error: "",
       });
     } else {
-      onMaxRentChange({
-        value: Math.max(newValue[1] * 100, minRent.value + minDistance * 100),
+      onMaxAgeChange({
+        value: Math.max(newValue[1], minAge.value + minDistance),
         error: "",
       });
     }
@@ -31,7 +31,9 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
     <Box sx={{ width: "100%" }}>
       <Slider
         getAriaLabel="Rent Slider"
-        value={[minRent.value / 100, maxRent.value / 100]}
+        min={18}
+        max={60}
+        value={[minAge.value, maxAge.value]}
         onChange={handleChange}
         valueLabelDisplay="auto"
         getAriaValueText={valuetext}
@@ -41,4 +43,4 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
   );
 };
 
-export default RentSlider;
+export default AgeSlider;
