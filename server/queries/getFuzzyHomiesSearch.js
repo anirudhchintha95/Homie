@@ -179,25 +179,6 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
                       1,
                     ],
                   },
-                  {
-                    $eq: [
-                      {
-                        $size: {
-                          $filter: {
-                            input: "$users",
-                            as: "user",
-                            cond: {
-                              $eq: [
-                                "$$user.status",
-                                CONNECTION_STATUSES.BLOCKED,
-                              ],
-                            },
-                          },
-                        },
-                      },
-                      0,
-                    ],
-                  },
                 ],
               },
             },
