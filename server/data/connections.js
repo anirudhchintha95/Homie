@@ -161,4 +161,42 @@ export const toggleShowUserData = async (currentUserId, homieId) => {
 
   await connection.save();
   return connection;
+  
+export const removeMatch = async (userId, userBeingViewedId) => {
+  try {
+    if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
+
+    const connection = await Connection.findByUserIds(
+      userId,
+      userBeingViewedId
+    );
+
+    if (connection) {
+      const currentUserIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userId
+      );
+      const userBeingViewedIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userBeingViewedId
+      );
+      if (
+        connection.users[currentUserIndex].status === "favorite" &&
+        connection.users[userBeingViewedIndex].status === "favorite"
+      ) {
+        connection.users[currentUserIndex].status = "ignored";
+        await connection.save();
+      } else {
+        throw {
+          status: 400,
+          message:
+            "Error: Both users must have the status favorite to be a match",
+        };
+      }
+    } else {
+      throw { status: 400, message: "Error: Connection not found" };
+    }
+  } catch (err) {
+    throw err;
+  }
 };
