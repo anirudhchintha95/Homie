@@ -5,12 +5,15 @@ import { addFavoriteValidator } from "../validators/addFavoriteValidator.js";
 import { removeFavoriteValidator } from "../validators/removeFavoriteValidator.js";
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
 import { removeMatchValidator } from "../validators/removeMatchValidator.js";
+import { blockUserValidator } from "../validators/blockUserValidator.js";
+
 import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
 import {
   removeFavorite,
   addFavorite,
   removeMatch,
+  blockUser,
 } from "../data/connections.js";
 
 const homiesRouter = Router();
@@ -124,5 +127,21 @@ homiesRouter
       return res.status(error.status || 500).json({ error: error.message });
     }
   });
+homiesRouter.route("/:id/block").post(blockUserValidator, async (req, res) => {
+  const userBeingBlocked = req.params.id;
+  const currentUserId = req.currentUser._id.toString();
+
+  try {
+    await blockUser(currentUserId, userBeingBlocked);
+
+    const updatedUser = await homiesData.getHomie(
+      req.currentUser,
+      userBeingBlocked
+    );
+    res.json({ user: await formatUserToResponse(req, updatedUser) });
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
 
 export default homiesRouter;

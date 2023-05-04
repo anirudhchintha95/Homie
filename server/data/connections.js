@@ -97,6 +97,42 @@ export const removeFavorite = async (userId, userBeingViewedId) => {
   }
 };
 
+export const blockUser = async (userId, userBeingBlockedId) => {
+  try {
+    if (!isValidObjectId(userBeingBlockedId) || !isValidObjectId(userId)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
+
+    const connection = await Connection.findByUserIds(
+      userId,
+      userBeingBlockedId
+    );
+    if (connection) {
+      const currentUserIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userId
+      );
+      if (connection.users[currentUserIndex].status === "blocked") {
+        throw {
+          status: 400,
+          message: "Error: Current user already has the status blocked",
+        };
+      }
+      connection.users[currentUserIndex].status = "blocked";
+      await connection.save();
+    } else {
+      const newConnection = new Connection({
+        users: [
+          { userId: userId, status: "blocked" },
+          { userId: userBeingBlockedId, status: null },
+        ],
+      });
+      await newConnection.save();
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const removeMatch = async (userId, userBeingViewedId) => {
   try {
     if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
