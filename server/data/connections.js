@@ -161,7 +161,8 @@ export const toggleShowUserData = async (currentUserId, homieId) => {
 
   await connection.save();
   return connection;
-  
+};
+
 export const removeMatch = async (userId, userBeingViewedId) => {
   try {
     if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
