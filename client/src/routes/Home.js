@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../homepage.css";
+import useAuth from "../useAuth";
 
 const Home = () => {
+  const auth = useAuth();
   return (
     <div className="home-container">
       <h1 className="title">Welcome to Homie!</h1>
@@ -23,14 +25,20 @@ const Home = () => {
         Sign up today and start your journey to finding the perfect roommate and
         a cozy place to call home!
       </p>
-      <div className="button-container">
-        <Link to="/signup">
-          <button className="signup-button">Sign up</button>
+      {auth?.isLoggedIn ? (
+        <Link to="/homies">
+          <button className="signup-button">Start Hunting</button>
         </Link>
-        <Link to="/login">
-          <button className="login-button">Log in</button>
-        </Link>
-      </div>
+      ) : (
+        <div className="button-container">
+          <Link to="/signup">
+            <button className="signup-button">Sign up</button>
+          </Link>
+          <Link to="/login">
+            <button className="login-button">Log in</button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

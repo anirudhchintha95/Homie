@@ -25,19 +25,23 @@ const Navbar = () => {
       name: "Find homies",
       path: "/homies",
     },
-    auth?.isLoggedIn
-      ? {
-          name: "My homies",
-          path: "/my-homies",
-        }
-      : {
-          name: "Login",
-          path: "/login",
-        },
-    {
-      name: "About",
-      path: "/about",
-    },
+    ...(auth?.isLoggedIn
+      ? [
+          {
+            name: "My homies",
+            path: "/my-homies",
+          },
+        ]
+      : [
+          {
+            name: "Login",
+            path: "/login",
+          },
+          {
+            name: "Sign up",
+            path: "/signup",
+          },
+        ]),
   ];
 
   const handleOpenNavMenu = (event) => {
@@ -62,7 +66,7 @@ const Navbar = () => {
             variant="h6"
             noWrap
             component={Link}
-            to="/"
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -127,7 +131,7 @@ const Navbar = () => {
             variant="h5"
             noWrap
             component={Link}
-            to="/"
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
