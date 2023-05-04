@@ -101,7 +101,7 @@ const HomieInfo = () => {
   return loading ? (
     <Loader />
   ) : error ? (
-    <PageError onRefresh={fetchUser}>{error}</PageError>
+    <PageError onRefresh={() => fetchUser(id)}>{error}</PageError>
   ) : (
     <Box>
       <Toast
