@@ -14,6 +14,7 @@ import {
   validateGender,
 } from "../validators/helpers.js";
 import { updatePasswordValidator } from "../validators/updatePasswordValidator.js";
+import { isValidObjectId } from "mongoose";
 
 export const getUserProfile = async (email) => {
   if (!isValidEmail(email))
@@ -31,11 +32,11 @@ export const getUserProfile = async (email) => {
   return userProfile._doc;
 };
 
-export const getImages = async (currentUser) => {
-  if (!currentUser) throw { status: 401, message: "Unauthorized" };
+export const getImages = async (currentUserId) => {
+  if (!currentUserId) throw { status: 401, message: "Unauthorized" };
 
   const images = await Image.find({
-    imageableId: currentUser._id,
+    imageableId: currentUserId,
     imageableType: "User",
   });
 
@@ -126,9 +127,11 @@ export const updateUserProfile = async (
   return modifiedUser.value._doc;
 };
 
-export const deleteUser = async (email) => {
+export const deleteUser = async (userId) => {
+  if (!isValidObjectId(userId))
+    throw { status: 400, message: "Error: Invaild User Id" };
   const userDeleted = await User.findOneAndDelete(
-    { email: email },
+    { _id: userId },
     { projection: { _id: 1 } }
   );
   return userDeleted;

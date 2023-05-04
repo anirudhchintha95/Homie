@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { userData, homeData } from "../data/index.js";
 import { formatUserToResponse } from "../utils.js";
+import ImageService from "../services/image-service.js";
 import {
   isValidEmail,
   isValidPassword,
@@ -23,7 +24,7 @@ router
     const { email } = req.currentUser;
     try {
       const userDetails = await userData.getUserProfile(email);
-      const homeDetails = await homeData.getHome(userDetails._id);
+      const homeDetails = await homeData.getHomes(userDetails._id);
       const images = await userData.getImages(userDetails._id);
       userDetails.homes = homeDetails;
       userDetails.images = images;
@@ -71,7 +72,17 @@ router
   .delete(async (req, res) => {
     const userId = req.currentUser._id;
     try {
-    } catch (e) {}
+      const deletedUser = await userData.deleteUser(userId);
+      const deletedHomes = await homeData.deleteHomes(userId);
+      const userImages = await userData.getImages(userId);
+      const homeImages = await homeData.getAllHomeImagesOfUser(userId);
+      let allImages = userImages.concat(homeImages);
+      const deletedImages = await ImageService.deleteImages(allImages);
+
+      return res.status(200).json({ message: "Successfully deleted account" });
+    } catch (e) {
+      return res.status(500).json({ message: e });
+    }
   });
 
 router

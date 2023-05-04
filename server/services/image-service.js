@@ -120,7 +120,11 @@ class ImageService {
         }
       }
     }
-    await Image.deleteMany({});
+    let imageIdList = images.map((image) => image.imageableId);
+    const deletedImages = await Image.deleteMany({
+      imageableId: { $in: imageIdList },
+    });
+    return deletedImages.deletedCount !== 0;
   }
 }
 
