@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import BlockIcon from "@mui/icons-material/Block";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import VerifiedIcon from "@mui/icons-material/Verified";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 import { Button, Tooltip, IconButton } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 
@@ -86,7 +85,7 @@ const HomieActions = ({
   } else if (status === CONNECTION_STATUSES.MATCHED) {
     actions.push({
       title: "Remove Match",
-      Icon: VerifiedIcon,
+      Icon: PersonOffIcon,
       onClick: removeMatchedClick,
     });
     actions.push({

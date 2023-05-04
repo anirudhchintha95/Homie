@@ -112,18 +112,18 @@ export const blockUser = async (userId, userBeingBlockedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
-      if (connection.users[currentUserIndex].status === "blocked") {
+      if (connection.users[currentUserIndex].status === CONNECTION_STATUSES.BLOCKED) {
         throw {
           status: 400,
           message: "Error: Current user already has the status blocked",
         };
       }
-      connection.users[currentUserIndex].status = "blocked";
+      connection.users[currentUserIndex].status = CONNECTION_STATUSES.BLOCKED;
       await connection.save();
     } else {
       const newConnection = new Connection({
         users: [
-          { userId: userId, status: "blocked" },
+          { userId: userId, status: CONNECTION_STATUSES.BLOCKED },
           { userId: userBeingBlockedId, status: null },
         ],
       });
@@ -182,10 +182,12 @@ export const removeMatch = async (userId, userBeingViewedId) => {
         (user) => user.userId.toString() === userBeingViewedId
       );
       if (
-        connection.users[currentUserIndex].status === "favorite" &&
-        connection.users[userBeingViewedIndex].status === "favorite"
+        connection.users[currentUserIndex].status === CONNECTION_STATUSES.FAVORITE &&
+        connection.users[userBeingViewedIndex].status === CONNECTION_STATUSES.FAVORITE
       ) {
-        connection.users[currentUserIndex].status = "ignored";
+        connection.users[currentUserIndex].status = CONNECTION_STATUSES.IGNORED;
+        connection.users[currentUserIndex].showUserData = false;
+        connection.users[userBeingViewedIndex].showUserData = false;
         await connection.save();
       } else {
         throw {

@@ -1,5 +1,6 @@
 import { ObjectId } from "bson";
 import { User } from "../models/index.js";
+import { CONNECTION_STATUSES } from "../constants.js";
 
 const getUserDetails = async (currentUser, homieId) => {
   const aggregateResult = await User.aggregate([
@@ -157,8 +158,28 @@ const getUserDetails = async (currentUser, homieId) => {
     },
     {
       $addFields: {
-        showHomieData: "$connection.otherUser.showData",
-        myContactsVisible: "$connection.currentUser.showData",
+        isMatched: {
+          $cond: {
+            if: {
+              $and: [
+                {
+                  $eq: [
+                    "$connection.otherUser.status",
+                    CONNECTION_STATUSES.FAVORITE,
+                  ],
+                },
+                {
+                  $eq: [
+                    "$connection.currentUser.status",
+                    CONNECTION_STATUSES.FAVORITE,
+                  ],
+                },
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
       },
     },
     {
@@ -170,7 +191,10 @@ const getUserDetails = async (currentUser, homieId) => {
         email: {
           $cond: {
             if: {
-              $eq: ["$showHomieData", true],
+              $and: [
+                { $eq: ["$connection.otherUser.showUserData", true] },
+                { $eq: ["$isMatched", true] },
+              ],
             },
             then: "$email",
             else: "",
@@ -179,7 +203,10 @@ const getUserDetails = async (currentUser, homieId) => {
         phone: {
           $cond: {
             if: {
-              $eq: ["$showHomieData", true],
+              $and: [
+                { $eq: ["$connection.otherUser.showUserData", true] },
+                { $eq: ["$isMatched", true] },
+              ],
             },
             then: "$phone",
             else: "",

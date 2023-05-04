@@ -15,3 +15,4 @@ export { default as AuthHoc } from "./AuthHoc";
 export { default as PageError } from "./PageError";
 export { default as SubmitButton } from "./SubmitButton";
 export { default as DisplayImage } from "./DisplayImage";
+export { default as ConnectionIcon } from "./ConnectionIcon";
