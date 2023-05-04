@@ -1,4 +1,6 @@
 import { isValidObjectId } from "mongoose";
+import { GENDERS } from "../constants.js";
+import { DateTime } from "luxon";
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -7,7 +9,13 @@ function isValidEmail(email) {
 }
 
 function isValidPassword(password) {
-  if (!password || password.length < 5) return false;
+  if (
+    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
+      password
+    )
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -67,6 +75,12 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
+  if (["firstName", "lastName"].includes(name) && value.match(/[0-9]/g)) {
+    throw {
+      status: 400,
+      message: `${name} must not contain numbers`,
+    };
+  }
   return value;
 };
 
@@ -117,6 +131,72 @@ const validateId = (value, name) => {
   return value;
 };
 
+const validateDOB = (dob, name) => {
+  if (!dob) {
+    throw { status: 400, message: "Date of birth is required." };
+  }
+
+  if (dob > DateTime.now()) {
+    throw {
+      status: 400,
+      message: "Date of birth cannot be in the future.",
+    };
+  }
+  // dob must be at least 18 years ago using luxon
+  const eighteenYearsAgo = DateTime.now().minus({ years: 18 });
+  if (dob > eighteenYearsAgo) {
+    throw {
+      status: 400,
+      message: "You must be at least 18 years old to register.",
+    };
+  }
+
+  // dob must be at max 100 years ago
+  const oneHundredYearsAgo = DateTime.now().minus({ years: 100 });
+  if (dob < oneHundredYearsAgo) {
+    throw {
+      status: 400,
+      message: "You must be less than 100 years old to register.",
+    };
+  }
+  return dob;
+};
+
+const validatePhone = (value, name) => {
+  if (!value) {
+    throw {
+      status: 400,
+      message: `${name} is required!`,
+    };
+  }
+  value = value.trim();
+  if (isNaN(value))
+    throw { status: 400, message: `${name} must only contain numbers` };
+  if (value.length != 10) {
+    throw {
+      status: 400,
+      message: `${name} must contain 10 digits`,
+    };
+  }
+  return value;
+};
+
+const validateGender = (value, name) => {
+  if (!value) {
+    throw {
+      status: 400,
+      message: `${name} is required!`,
+    };
+  }
+  if (!Object.values(GENDERS).includes(value)) {
+    throw {
+      status: 400,
+      message: `Invalid ${name}`,
+    };
+  }
+  return value;
+};
+
 export {
   isValidEmail,
   isValidPassword,
@@ -125,5 +205,8 @@ export {
   validateNumberRange,
   validateString,
   validateId,
+  validateDOB,
+  validatePhone,
+  validateGender,
   validatePassword,
 };

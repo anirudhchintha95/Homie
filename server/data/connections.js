@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { CONNECTION_STATUSES } from "../constants.js";
 import Connection from "../models/connection.js";
+import { validateId } from "../validators/helpers.js";
 
 export const addFavorite = async (userId, userBeingViewedId) => {
   try {
@@ -133,6 +134,34 @@ export const blockUser = async (userId, userBeingBlockedId) => {
   }
 };
 
+export const toggleShowUserData = async (currentUserId, homieId) => {
+  if (!currentUserId) {
+    throw { status: 401, message: "Unauthorised request" };
+  }
+
+  homieId = validateId(homieId, "homieId");
+  const connection = await Connection.findByUserIds(currentUserId, homieId);
+
+  // Only matched connections can send messages to each other
+  if (
+    !connection?.users?.every(
+      ({ status }) => status === CONNECTION_STATUSES.FAVORITE
+    )
+  ) {
+    throw { status: 400, message: "Users not matched" };
+  }
+  const currentUserIndex = connection.users.findIndex(
+    (user) => currentUserId === user.userId.toString()
+  );
+  if (!connection.users[currentUserIndex].showUserData) {
+    connection.users[currentUserIndex].showUserData = true;
+  } else {
+    connection.users[currentUserIndex].showUserData = false;
+  }
+
+  await connection.save();
+  return connection;
+  
 export const removeMatch = async (userId, userBeingViewedId) => {
   try {
     if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {

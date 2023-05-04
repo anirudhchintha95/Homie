@@ -1,6 +1,7 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Image } from "../models/index.js";
+import { unlink } from "node:fs/promises";
 
 class ImageService {
   static s3Enabled() {
@@ -24,13 +25,14 @@ class ImageService {
 
     // If an image is already created for this model, delete it
 
-    const existingImage = await Image.findOne({
+    const existingImages = await Image.find({
       imageableType,
       imageableId,
     });
 
-    if (existingImage) {
-      await Image.deleteOne({ _id: existingImage._id });
+    if (existingImages) {
+      // await Image.deleteOne({ _id: existingImage._id });
+      await ImageService.deleteImages(existingImages);
     }
 
     const image = await Image.create({
@@ -98,6 +100,31 @@ class ImageService {
         };
       });
     }
+  }
+
+  static async deleteImages(images) {
+    if (!images) return [];
+
+    if (ImageService.s3Enabled()) {
+      //TODO
+    } else {
+      for (let i in images) {
+        const directoryPath = __basedir + "/uploads/";
+        const { filename } = i;
+        const imagePath = directoryPath + filename;
+        try {
+          //Refer unlink docs
+          await unlink(imagePath);
+        } catch (e) {
+          console.log({ status: 400, message: e });
+        }
+      }
+    }
+    let imageIdList = images.map((image) => image.imageableId);
+    const deletedImages = await Image.deleteMany({
+      imageableId: { $in: imageIdList },
+    });
+    return deletedImages.deletedCount !== 0;
   }
 }
 
