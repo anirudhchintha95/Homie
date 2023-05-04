@@ -137,7 +137,7 @@ homiesRouter
         userBeingViewed
       );
       res.json({ user: await formatUserToResponse(req, updatedUser) });
-    } catch (e) {
+    } catch (error) {
       return res.status(error.status || 500).json({ error: error.message });
     }
   });

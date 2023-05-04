@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { CONNECTION_STATUSES } from "../constants.js";
 import Connection from "../models/connection.js";
+import { validateId } from "../validators/helpers.js";
 
 export const addFavorite = async (userId, userBeingViewedId) => {
   try {
@@ -150,12 +151,12 @@ export const toggleShowUserData = async (currentUserId, homieId) => {
     throw { status: 400, message: "Users not matched" };
   }
   const currentUserIndex = connection.users.findIndex(
-    (user) => (user.userId = currentUserId)
+    (user) => currentUserId === user.userId.toString()
   );
-  if (!connection.users[currentUserIndex]) {
-    connection.users[currentUserIndex] = true;
+  if (!connection.users[currentUserIndex].showUserData) {
+    connection.users[currentUserIndex].showUserData = true;
   } else {
-    connection.users[currentUserIndex] = false;
+    connection.users[currentUserIndex].showUserData = false;
   }
 
   await connection.save();

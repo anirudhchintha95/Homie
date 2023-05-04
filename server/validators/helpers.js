@@ -75,7 +75,7 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
-  if (name in ["firstName", "lastName"] && value.match(/[0-9]/g)) {
+  if (["firstName", "lastName"].includes(name) && value.match(/[0-9]/g)) {
     throw {
       status: 400,
       message: `${name} must not contain numbers`,
