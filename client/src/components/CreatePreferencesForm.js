@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Alert, Button, Grid, Paper, Select, TextField } from "@mui/material";
+import {
+  Alert,
+  Grid,
+  Paper,
+  Select,
+  TextField,
+  Stack,
+  Switch,
+  Typography,
+} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,6 +18,9 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import useAuth from "../useAuth";
 import { SubmitButton } from "../components";
+import CityStatePicker from "./CityStatePicker";
+import RentSlider from "./RentSlider";
+import AgeSlider from "./AgeSlider";
 import { createPreferencesApi } from "../api/preferences";
 
 export default function CreatePreferencesForm() {
@@ -69,6 +81,12 @@ export default function CreatePreferencesForm() {
     value: [],
   });
 
+  const hasRent = React.useMemo(() => {
+    return (
+      typeof rentMin.value === "number" && typeof rentMax.value === "number"
+    );
+  }, [rentMin, rentMax]);
+
   const handleChange = (event) => {
     const {
       target: { value },
@@ -80,104 +98,101 @@ export default function CreatePreferencesForm() {
   };
 
   const validateForm = () => {
-    // if (
-    //   !firstName.value ||
-    //   !lastName.value ||
-    //   !email.value ||
-    //   !password.value ||
-    //   !dob.value ||
-    //   !phoneNumber.value ||
-    //   !gender.value
-    // ) {
-    //   setError("Please fill in all fields");
-    //   return;
-    // }
-
-    // if (password.value !== confirmPassword.value) {
-    //   setError("Passwords do not match");
-    //   return;
-    // }
-    // if (!firstName.value) {
-    //   setFirstName({
-    //     ...firstName,
-    //     error: true,
-    //   });
-    //   return;
-    // }
-
-    if (!city.value) {
-      setCity((prev) => ({ ...prev, error: "City is required" }));
-      return;
-    }
+    setError("");
 
     if (!state.value) {
       setState((prev) => ({ ...prev, error: true }));
-      setError("State is required");
+      setError("Error: State is required");
       return;
     }
 
-    // if (!smoking.value) {
-    //   setSmoking((prev) => ({ ...prev, error: true }));
-    //   setError("Smoking is required");
-    //   return;
-    // }
+    if (!city.value) {
+      setError("");
+      setCity((prev) => ({ ...prev, error: true }));
+      setError("Error: City is required");
+      return;
+    }
 
-    // if (!drinking.value) {
-    //   setDrinking((prev) => ({ ...prev, error: true }));
-    //   setError("Drinking is required");
-    //   return;
-    // }
+    if (city.value) {
+      if (!/^[a-zA-Z\s]*$/.test(city.value)) {
+        setError("");
+        setCity((prev) => ({ ...prev, error: true }));
+        setError("Error: City should contain only alphabets");
+        return;
+      }
+    }
 
-    // if (!pets.value) {
-    //   setPets((prev) => ({ ...prev, error: true }));
-    //   setError("Pets is required");
-    //   return;
-    // }
+    if (
+      smoking.value !== "" &&
+      smoking.value !== true &&
+      smoking.value !== false
+    ) {
+      setSmoking((prev) => ({ ...prev, error: true }));
+      setError("Error: Smoking should be either true or false or None");
+      return;
+    }
 
-    // if(!drinking.value) {
-    //   setDrinking({
-    //     ...drinking,
-    //     error: true,
-    //   });
-    //   return;
-    // }
+    if (
+      drinking.value !== "" &&
+      drinking.value !== true &&
+      drinking.value !== false
+    ) {
+      setDrinking((prev) => ({ ...prev, error: true }));
+      setError("Error: Drinking should be either true or false or None");
+      return;
+    }
 
-    // if(!pets.value) {
-    //   setPets({
-    //     ...pets,
-    //     error: true,
-    //   });
-    //   return;
-    // }
+    if (pets.value !== "" && pets.value !== true && pets.value !== false) {
+      setPets((prev) => ({ ...prev, error: true }));
+      setError("Error: Pets should be either true or false or None");
+      return;
+    }
 
-    // if (!rentMin.value) {
-    //   setError("");
-    //   setRentMin((prev) => ({ ...prev, error: "Minimum Rent is required" }));
-    //   return;
-    // }
+    if (
+      (rentMin.value !== undefined && rentMax.value === undefined) ||
+      (rentMin.value === undefined && rentMax.value !== undefined)
+    ) {
+      if (rentMin.value === undefined) {
+        setRentMin((prev) => ({
+          ...prev,
+          error: true,
+        }));
+      }
+      if (rentMax.value === undefined) {
+        setRentMax((prev) => ({
+          ...prev,
+          error: true,
+        }));
+      }
+      setError("Error: Both Minimum and Maximum Rent should be specified");
+      return;
+    }
 
-    // if (!rentMax.value) {
-    //   setError("");
-    //   setRentMax((prev) => ({ ...prev, error: "Maximum Rent is required" }));
-    //   return;
-    // }
+    if ((ageMin.value && !ageMax.value) || (!ageMin.value && ageMax.value)) {
+      if (!ageMin.value) {
+        setAgeMin((prev) => ({
+          ...prev,
+          error: "Error: Both Minimum and Maximum Age should be specified",
+        }));
+        return;
+      }
+      if (!ageMax.value) {
+        setAgeMax((prev) => ({
+          ...prev,
+          error: "Error: Both Minimum and Maximum Age should be specified",
+        }));
+        return;
+      }
+    }
 
-    // if (!ageMin.value) {
-    //   setError("");
-    //   setAgeMin((prev) => ({ ...prev, error: "Minimum Age is required" }));
-    //   return;
-    // }
-
-    // if (!ageMax.value) {
-    //   setError("");
-    //   setAgeMax((prev) => ({ ...prev, error: "Maximum Age is required" }));
-    //   return;
-    // }
-
-    // if (!state.value || !smoking.value || !drinking.value || !pets.value) {
-    //   setError("Please fill in all fields");
-    //   return;
-    // }
+    const gendersArr = ["Male", "Female", "Non-Binary"];
+    if (!gender.value.every((elem) => gendersArr.includes(elem))) {
+      setGender((prev) => ({ ...prev, error: true }));
+      setError(
+        "Error: Each element in gender must be either Male, Female or Non-Binary."
+      );
+      return;
+    }
 
     return true;
   };
@@ -224,37 +239,28 @@ export default function CreatePreferencesForm() {
         createPreferences.state = state.value;
       }
 
-      if (
-        typeof rentMin.value === "string" &&
-        rentMin.value.trim().length > 0
-      ) {
-        createPreferences.rentMin = rentMin.value;
+      if (typeof rentMin.value === "number") {
+        createPreferences.rentMin = parseInt(rentMin.value);
       }
 
-      if (
-        typeof rentMax.value === "string" &&
-        rentMax.value.trim().length > 0
-      ) {
-        createPreferences.rentMax = rentMax.value;
+      if (typeof rentMax.value === "number") {
+        createPreferences.rentMax = parseInt(rentMax.value);
       }
 
-      if (typeof ageMin.value === "string" && ageMin.value.trim().length > 0) {
-        createPreferences.ageMin = ageMin.value;
+      if (typeof ageMin.value === "number") {
+        createPreferences.ageMin = parseInt(ageMin.value);
       }
 
-      if (typeof ageMax.value === "string" && ageMax.value.trim().length > 0) {
-        createPreferences.ageMax = ageMax.value;
+      if (typeof ageMax.value === "number") {
+        createPreferences.ageMax = parseInt(ageMax.value);
       }
 
       if (gender.value) {
         createPreferences.genders = gender.value;
       }
 
-      //console.log(!gender[0]);
-      // if (Object.keys(createPreferences).length === 0) {
-      //   setError("No changes were made");
-      // }
       if (Object.keys(createPreferences).length > 0) {
+        //console.log(createPreferences);
         await createPreferencesApi(createPreferences);
       }
     } catch (error) {
@@ -281,55 +287,12 @@ export default function CreatePreferencesForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Location-City"
-              value={city.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setCity({
-                  error: false,
-                  value,
-                });
-              }}
-              onBlur={() => {
-                setCity({
-                  error: false,
-                  value: city.value.trim(),
-                });
-              }}
-              error={!!city.error}
-              helperText={city.error}
-              fullWidth
+            <CityStatePicker
+              city={city}
+              state={state}
+              onCityChange={setCity}
+              onStateChange={setState}
             />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel>State</InputLabel>
-              <Select
-                value={state.value}
-                label="State"
-                onChange={(e) =>
-                  setState({
-                    error: false,
-                    value: e.target.value,
-                  })
-                }
-                error={!!state.error}
-              >
-                <MenuItem value={"CA"}>California</MenuItem>
-                <MenuItem value={"CT"}>Connecticut</MenuItem>
-                <MenuItem value={"PA"}>Pennsylvania</MenuItem>
-                <MenuItem value={"RI"}>Rhode Island</MenuItem>
-                <MenuItem value={"VT"}>Vermont</MenuItem>
-                <MenuItem value={"NH"}>New Hampshire</MenuItem>
-                <MenuItem value={"ME"}>Maine</MenuItem>
-                <MenuItem value={"NJ"}>New Jersey</MenuItem>
-                <MenuItem value={"NY"}>New York</MenuItem>
-                <MenuItem value={"MA"}>Massachusetts</MenuItem>
-              </Select>
-            </FormControl>
           </Grid>
 
           <Grid item xs={12}>
@@ -395,7 +358,7 @@ export default function CreatePreferencesForm() {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <TextField
               variant="outlined"
               label="Minimum Rent"
@@ -487,6 +450,96 @@ export default function CreatePreferencesForm() {
               helperText={ageMax.error}
               fullWidth
             />
+          </Grid> */}
+
+          <Grid item xs={12}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>Rent Range</Typography>
+              <Switch
+                checked={hasRent}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setRentMin({
+                      error: false,
+                      value: 0,
+                    });
+                    setRentMax({
+                      error: false,
+                      value: 500,
+                    });
+                  } else {
+                    setRentMin({
+                      error: false,
+                      value: undefined,
+                    });
+                    setRentMax({
+                      error: false,
+                      value: undefined,
+                    });
+                  }
+                }}
+              />
+              <Typography>
+                {hasRent
+                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  : "--None--"}
+              </Typography>
+            </Stack>
+            {hasRent ? (
+              <RentSlider
+                minRent={rentMin}
+                maxRent={rentMax}
+                onMaxRentChange={setRentMax}
+                onMinRentChange={setRentMin}
+              />
+            ) : (
+              <> </>
+            )}
+          </Grid>
+
+          <Grid item xs={12}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>Age Range</Typography>
+              <Switch
+                checked={!!(ageMin?.value && ageMax?.value)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setAgeMin({
+                      error: false,
+                      value: 18,
+                    });
+                    setAgeMax({
+                      error: false,
+                      value: 24,
+                    });
+                  } else {
+                    setAgeMin({
+                      error: false,
+                      value: "",
+                    });
+                    setAgeMax({
+                      error: false,
+                      value: "",
+                    });
+                  }
+                }}
+              />
+              <Typography>
+                {ageMin?.value && ageMax?.value
+                  ? `Min: ${ageMin?.value}, Max: ${ageMax?.value}`
+                  : "--None--"}
+              </Typography>
+            </Stack>
+            {ageMin?.value && ageMax?.value ? (
+              <AgeSlider
+                minAge={ageMin}
+                maxAge={ageMax}
+                onMaxAgeChange={setAgeMax}
+                onMinAgeChange={setAgeMin}
+              />
+            ) : (
+              <> </>
+            )}
           </Grid>
 
           <Grid item xs={12}>

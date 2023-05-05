@@ -1,26 +1,8 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import {
-  Alert,
-  Button,
-  Grid,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 import useAuth from "../useAuth";
-import { sigunpApi } from "../api/auth";
-import { SubmitButton } from "../components";
-import DatePicker from "../components/DatePicker";
-import { createPreferencesApi } from "../api/users";
-import CreatePreferencesForm from "../components/CreatePreferencesForm";
 import { ImagesAccordianForm } from "../components/Account";
 import CreatePreferencesAccordionForm from "../components/CreatePeferencesAccordion";
 

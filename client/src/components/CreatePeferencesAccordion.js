@@ -7,9 +7,7 @@ import {
 import React, { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useAuth from "../useAuth";
-import { updateImageApi } from "../api/users";
 import { ACCOUNT_PANELS } from "../contants";
-import ImageUploadForm from "./ImageUploadForm";
 import CreatePreferencesForm from "./CreatePreferencesForm";
 
 const CreatePreferencesAccordionForm = ({

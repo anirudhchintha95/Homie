@@ -29,7 +29,7 @@ const PreferenceSchema = new Schema({
         if (hasMin) {
           try {
             validations.validateNumberRange(v.min, "min rent", {
-              min: 1,
+              min: 0,
             });
           } catch (error) {
             return false;

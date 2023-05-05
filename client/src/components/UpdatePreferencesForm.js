@@ -7,7 +7,6 @@ import {
   Select,
   Stack,
   Switch,
-  TextField,
   Typography,
 } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -17,9 +16,10 @@ import FormControl from "@mui/material/FormControl";
 
 import useAuth from "../useAuth";
 import { SubmitButton } from "../components";
+import CityStatePicker from "./CityStatePicker";
+import RentSlider from "./RentSlider";
 import { updatePreferencesApi } from "../api/preferences";
 import AgeSlider from "./AgeSlider";
-import RentSlider from "./RentSlider";
 
 export default function UpdatePreferencesForm() {
   const auth = useAuth();
@@ -72,7 +72,7 @@ export default function UpdatePreferencesForm() {
     value:
       typeof auth?.user?.preferences?.rent?.min === "number"
         ? auth?.user?.preferences?.rent?.min / 100
-        : "",
+        : undefined,
   });
 
   const [rentMax, setRentMax] = useState({
@@ -80,23 +80,17 @@ export default function UpdatePreferencesForm() {
     value:
       typeof auth?.user?.preferences?.rent?.max === "number"
         ? auth?.user?.preferences?.rent?.max / 100
-        : "",
+        : undefined,
   });
 
   const [ageMin, setAgeMin] = useState({
     error: false,
-    value:
-      typeof auth?.user?.preferences?.age?.min === "number"
-        ? auth?.user?.preferences?.age?.min
-        : "",
+    value: auth?.user?.preferences?.age?.min,
   });
 
   const [ageMax, setAgeMax] = useState({
     error: false,
-    value:
-      typeof auth?.user?.preferences?.age?.max === "number"
-        ? auth?.user?.preferences?.age?.max
-        : "",
+    value: auth?.user?.preferences?.age?.max,
   });
 
   const [gender, setGender] = useState({
@@ -124,105 +118,101 @@ export default function UpdatePreferencesForm() {
   };
 
   const validateForm = () => {
-    // if (
-    //   !firstName.value ||
-    //   !lastName.value ||
-    //   !email.value ||
-    //   !password.value ||
-    //   !dob.value ||
-    //   !phoneNumber.value ||
-    //   !gender.value
-    // ) {
-    //   setError("Please fill in all fields");
-    //   return;
-    // }
-
-    // if (password.value !== confirmPassword.value) {
-    //   setError("Passwords do not match");
-    //   return;
-    // }
-    // if (!firstName.value) {
-    //   setFirstName({
-    //     ...firstName,
-    //     error: true,
-    //   });
-    //   return;
-    // }
-
-    if (!city.value) {
-      setError("");
-      setCity((prev) => ({ ...prev, error: "City is required" }));
-      return;
-    }
+    setError("");
 
     if (!state.value) {
       setState((prev) => ({ ...prev, error: true }));
-      setError("State is required");
+      setError("Error: State is required");
       return;
     }
 
-    // if (!smoking.value) {
-    //   setSmoking((prev) => ({ ...prev, error: true }));
-    //   setError("Smoking is required");
-    //   return;
-    // }
+    if (!city.value) {
+      setError("");
+      setCity((prev) => ({ ...prev, error: true }));
+      setError("Error: City is required");
+      return;
+    }
 
-    // if (!drinking.value) {
-    //   setDrinking((prev) => ({ ...prev, error: true }));
-    //   setError("Drinking is required");
-    //   return;
-    // }
+    if (city.value) {
+      if (!/^[a-zA-Z\s]*$/.test(city.value)) {
+        setError("");
+        setCity((prev) => ({ ...prev, error: true }));
+        setError("Error: City should contain only alphabets");
+        return;
+      }
+    }
 
-    // if (!pets.value) {
-    //   setPets((prev) => ({ ...prev, error: true }));
-    //   setError("Pets is required");
-    //   return;
-    // }
+    if (
+      smoking.value !== "" &&
+      smoking.value !== true &&
+      smoking.value !== false
+    ) {
+      setSmoking((prev) => ({ ...prev, error: true }));
+      setError("Error: Smoking should be either true or false or None");
+      return;
+    }
 
-    // if(!drinking.value) {
-    //   setDrinking({
-    //     ...drinking,
-    //     error: true,
-    //   });
-    //   return;
-    // }
+    if (
+      drinking.value !== "" &&
+      drinking.value !== true &&
+      drinking.value !== false
+    ) {
+      setDrinking((prev) => ({ ...prev, error: true }));
+      setError("Error: Drinking should be either true or false or None");
+      return;
+    }
 
-    // if(!pets.value) {
-    //   setPets({
-    //     ...pets,
-    //     error: true,
-    //   });
-    //   return;
-    // }
+    if (pets.value !== "" && pets.value !== true && pets.value !== false) {
+      setPets((prev) => ({ ...prev, error: true }));
+      setError("Error: Pets should be either true or false or None");
+      return;
+    }
 
-    // if (!rentMin.value) {
-    //   setError("");
-    //   setRentMin((prev) => ({ ...prev, error: "Minimum Rent is required" }));
-    //   return;
-    // }
+    if (
+      (rentMin.value !== undefined && rentMax.value === undefined) ||
+      (rentMin.value === undefined && rentMax.value !== undefined)
+    ) {
+      if (rentMin.value === undefined) {
+        setRentMin((prev) => ({
+          ...prev,
+          error: true,
+        }));
+      }
+      if (rentMax.value === undefined) {
+        setRentMax((prev) => ({
+          ...prev,
+          error: true,
+        }));
+      }
+      setError("Error: Both Minimum and Maximum Rent should be specified");
+      return;
+    }
 
-    // if (!rentMax.value) {
-    //   setError("");
-    //   setRentMax((prev) => ({ ...prev, error: "Maximum Rent is required" }));
-    //   return;
-    // }
+    if ((ageMin.value && !ageMax.value) || (!ageMin.value && ageMax.value)) {
+      if (!ageMin.value) {
+        setAgeMin((prev) => ({
+          ...prev,
+          error: "Error: Both Minimum and Maximum Age should be specified",
+        }));
+        return;
+      }
+      if (!ageMax.value) {
+        setAgeMax((prev) => ({
+          ...prev,
+          error: "Error: Both Minimum and Maximum Age should be specified",
+        }));
+        return;
+      }
+    }
 
-    // if (!ageMin.value) {
-    //   setError("");
-    //   setAgeMin((prev) => ({ ...prev, error: "Minimum Age is required" }));
-    //   return;
-    // }
-
-    // if (!ageMax.value) {
-    //   setError("");
-    //   setAgeMax((prev) => ({ ...prev, error: "Maximum Age is required" }));
-    //   return;
-    // }
-
-    // if (!state.value || !smoking.value || !drinking.value || !pets.value) {
-    //   setError("Please fill in all fields");
-    //   return;
-    // }
+    const gendersArr = ["Male", "Female", "Non-Binary"];
+    if (!gender.value.every((elem) => gendersArr.includes(elem))) {
+      setGender((prev) => ({ ...prev, error: true }));
+      setError(
+        "Error: Each element in gender must be either Male, Female or Non-Binary."
+      );
+      return;
+    }
 
     return true;
   };
@@ -248,40 +238,52 @@ export default function UpdatePreferencesForm() {
         preferenceUpdates.city = city.value;
       }
 
+      if (auth.user?.location?.city === city.value) {
+        preferenceUpdates.city = auth.user?.location?.city;
+      }
+
       if (auth.user?.location?.state !== state.value) {
         preferenceUpdates.state = state.value;
       }
 
+      if (auth.user?.location?.state === state.value) {
+        preferenceUpdates.state = auth.user?.location?.state;
+      }
+
       if (
-        rentMax.value &&
+        rentMax.value !== undefined &&
         (auth.user?.preferences?.rent?.max !== parseInt(rentMax.value) * 100 ||
           typeof rentMax.value !== "number")
       ) {
+        preferenceUpdates.rentMin = parseInt(rentMin.value) * 100;
         preferenceUpdates.rentMax = parseInt(rentMax.value) * 100;
       }
 
       if (
+        rentMax.value === undefined &&
         typeof auth.user?.preferences?.rent?.max === "number" &&
-        typeof rentMax.value === "string"
+        typeof rentMax.value === "undefined"
       ) {
-        if (rentMax.value === "") {
+        if (rentMax.value === undefined) {
           preferenceUpdates.rentMax = null;
         }
       }
 
       if (
-        rentMin.value &&
+        rentMin.value !== undefined &&
         (auth.user?.preferences?.rent?.min !== parseInt(rentMin.value) * 100 ||
           typeof rentMin.value !== "number")
       ) {
         preferenceUpdates.rentMin = parseInt(rentMin.value) * 100;
+        preferenceUpdates.rentMax = parseInt(rentMax.value) * 100;
       }
 
       if (
+        rentMin.value === undefined &&
         typeof auth.user?.preferences?.rent?.min === "number" &&
-        typeof rentMin.value === "string"
+        typeof rentMin.value === "undefined"
       ) {
-        if (rentMin.value === "") {
+        if (rentMin.value === undefined) {
           preferenceUpdates.rentMin = null;
         }
       }
@@ -291,6 +293,7 @@ export default function UpdatePreferencesForm() {
         (auth.user?.preferences?.age?.max !== parseInt(ageMax.value) ||
           typeof ageMax.value !== "number")
       ) {
+        preferenceUpdates.ageMin = parseInt(ageMin.value);
         preferenceUpdates.ageMax = parseInt(ageMax.value);
       }
 
@@ -309,6 +312,7 @@ export default function UpdatePreferencesForm() {
           typeof ageMin.value !== "number")
       ) {
         preferenceUpdates.ageMin = parseInt(ageMin.value);
+        preferenceUpdates.ageMax = parseInt(ageMax.value);
       }
 
       if (
@@ -340,7 +344,7 @@ export default function UpdatePreferencesForm() {
         typeof auth.user?.preferences?.smoking === "boolean" &&
         typeof smoking.value === "string"
       ) {
-        preferenceUpdates.smoking = null;
+        preferenceUpdates.smoking = "";
       }
 
       if (
@@ -363,7 +367,7 @@ export default function UpdatePreferencesForm() {
         typeof auth.user?.preferences?.drinking === "boolean" &&
         typeof drinking.value === "string"
       ) {
-        preferenceUpdates.drinking = null;
+        preferenceUpdates.drinking = "";
       }
 
       if (
@@ -386,23 +390,8 @@ export default function UpdatePreferencesForm() {
         typeof auth.user?.preferences?.pets === "boolean" &&
         typeof pets.value === "string"
       ) {
-        preferenceUpdates.pets = null;
+        preferenceUpdates.pets = "";
       }
-
-      // if (
-      //   pets.value &&
-      //   (auth.user?.preferences?.pets !== pets.value ||
-      //     typeof pets.value !== "boolean")
-      // ) {
-      //   preferenceUpdates.pets = pets.value;
-      // }
-
-      // if (
-      //   typeof auth.user?.preferences?.pets === "boolean" &&
-      //   typeof pets.value === "string"
-      // ) {
-      //   preferenceUpdates.pets = null;
-      // }
 
       if (
         (gender.value &&
@@ -413,15 +402,18 @@ export default function UpdatePreferencesForm() {
         preferenceUpdates.genders = gender.value;
       }
 
-      if (Object.keys(preferenceUpdates).length === 0) {
+      if (
+        Object.keys(preferenceUpdates).length === 2 &&
+        preferenceUpdates.city === auth.user?.location?.city &&
+        preferenceUpdates.state === auth.user?.location?.state
+      ) {
         setError("No changes were made");
+        return;
       }
-      if (Object.keys(preferenceUpdates).length > 0) {
-        setError("");
-        await updatePreferencesApi(preferenceUpdates);
 
-        await auth.refreshCurrentUser();
-      }
+      setError("");
+      await updatePreferencesApi(preferenceUpdates);
+      await auth.refreshCurrentUser();
     } catch (error) {
       setError(
         error?.response?.data?.error ||
@@ -435,10 +427,6 @@ export default function UpdatePreferencesForm() {
 
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", p: 2 }} ref={headerRef}>
-      {/* <Typography variant="h4" align="center" mb={4} color="primary">
-      {auth?.user?.preferences? "Update" : "Create"} Preferences
-      </Typography> */}
-
       <Paper
         component="form"
         onSubmit={handleSubmit}
@@ -450,55 +438,12 @@ export default function UpdatePreferencesForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Location-City"
-              value={city.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setCity({
-                  error: false,
-                  value,
-                });
-              }}
-              //   onBlur={() => {
-              //     setCity({
-              //       error: false,
-              //       value: city.value.trim(),
-              //     });
-              //   }}
-              error={!!city.error}
-              helperText={city.error}
-              fullWidth
+            <CityStatePicker
+              city={city}
+              state={state}
+              onCityChange={setCity}
+              onStateChange={setState}
             />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel>State</InputLabel>
-              <Select
-                value={state.value}
-                label="State"
-                onChange={(e) =>
-                  setState({
-                    error: false,
-                    value: e.target.value,
-                  })
-                }
-                error={!!state.error}
-              >
-                <MenuItem value={"CA"}>California</MenuItem>
-                <MenuItem value={"CT"}>Connecticut</MenuItem>
-                <MenuItem value={"PA"}>Pennsylvania</MenuItem>
-                <MenuItem value={"RI"}>Rhode Island</MenuItem>
-                <MenuItem value={"VT"}>Vermont</MenuItem>
-                <MenuItem value={"NH"}>New Hampshire</MenuItem>
-                <MenuItem value={"ME"}>Maine</MenuItem>
-                <MenuItem value={"NJ"}>New Jersey</MenuItem>
-                <MenuItem value={"NY"}>New York</MenuItem>
-                <MenuItem value={"MA"}>Massachusetts</MenuItem>
-              </Select>
-            </FormControl>
           </Grid>
 
           <Grid item xs={12}>
@@ -582,11 +527,11 @@ export default function UpdatePreferencesForm() {
                   } else {
                     setRentMin({
                       error: false,
-                      value: "",
+                      value: undefined,
                     });
                     setRentMax({
                       error: false,
-                      value: "",
+                      value: undefined,
                     });
                   }
                 }}
@@ -677,11 +622,6 @@ export default function UpdatePreferencesForm() {
             </SubmitButton>
           </Grid>
         </Grid>
-        {/* add a gender selection field */}
-
-        {/* <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
-          Create Preferences
-        </SubmitButton> */}
       </Paper>
     </Box>
   );
