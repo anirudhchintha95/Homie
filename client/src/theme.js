@@ -27,6 +27,16 @@ const theme = createTheme({
   },
   components: {
     MuiTypography: {
+      variants: [
+        {
+          props: { variant: "h3-esque" },
+          style: {
+            fontWeight: 500,
+            fontSize: "1.25rem",
+            lineHeight: 1.6,
+          },
+        },
+      ],
       styleOverrides: {
         h1: {
           fontWeight: 400,

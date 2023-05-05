@@ -20,7 +20,7 @@ import RentSlider from "./RentSlider";
 import { updatePreferencesApi } from "../api/preferences";
 import AgeSlider from "./AgeSlider";
 
-export default function UpdatePreferencesForm() {
+export default function UpdatePreferencesForm({ onPreferencesUpdate }) {
   const auth = useAuth();
   const headerRef = React.useRef();
 
@@ -413,6 +413,7 @@ export default function UpdatePreferencesForm() {
       setError("");
       await updatePreferencesApi(preferenceUpdates);
       await auth.refreshCurrentUser();
+      onPreferencesUpdate();
     } catch (error) {
       setError(
         error?.response?.data?.error ||
@@ -425,7 +426,7 @@ export default function UpdatePreferencesForm() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto" }} ref={headerRef}>
+    <Box sx={{ maxWidth: { xs: "90%", sm: 400 }, mx: "auto" }} ref={headerRef}>
       <Paper
         component="form"
         onSubmit={handleSubmit}
