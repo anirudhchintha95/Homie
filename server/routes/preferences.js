@@ -52,9 +52,19 @@ router.route("/").post(async (req, res) => {
 
 router.route("/").patch(async (req, res) => {
   try {
-    const validatePref = validatePreferencesBE(req.body);
+    var cleanReqBody = {};
+    for (const key in req.body) {
+      if (key == "city" || key == "state")
+        cleanReqBody[key] = xss(req.body[key]);
+      else if (key == "genders")
+        cleanReqBody[key] = req.body.genders.map((gender) => xss(gender));
+      else cleanReqBody[key] = req.body[key];
+    }
+
+    const validatePref = validatePreferencesBE(cleanReqBody);
+
     const user = await preferenceData.updatePreferences(
-      req.body,
+      cleanReqBody,
       req.currentUser.email.toLowerCase()
     );
     return res.status(200).json({ user });
