@@ -8,11 +8,11 @@ const HomeSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: [true, "Description is required!"],
     },
     address1: {
       type: String,
-      required: true,
+      required: [true, "Street Address is required!"],
       trim: true,
     },
     address2: {
@@ -21,30 +21,30 @@ const HomeSchema = new Schema(
     },
     city: {
       type: String,
-      required: true,
+      required: [true, "City is required!"],
       trim: true,
     },
     state: {
       type: String,
-      required: true,
+      required: [true, "State is required!"],
       trim: true,
     },
     zip: {
       type: String,
-      required: true,
+      required: [true, "Zip is required!"],
       trim: true,
     },
     listed: {
       type: Boolean,
-      required: true,
+      required: [true, "Home Listed is required!"],
     },
     rent: {
       type: Number,
-      required: true,
+      required: [true, "Rent(Approx.) is required!"],
     },
     numberOfRoomsAvailable: {
       type: Number,
-      required: true,
+      required: [true, "Number of Rooms Available is required!"],
     },
   },
   {
