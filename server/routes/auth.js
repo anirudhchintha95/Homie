@@ -38,14 +38,22 @@ router.route("/signup").post(signupValidator, async (req, res) => {
     const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
 
+    const cleanFirstName = xss(firstName);
+    const cleanLastName = xss(lastName);
+    const cleanEmail = xss(email);
+    const cleanPassword = xss(password);
+    const cleanDateOfBirth = xss(dateOfBirth);
+    const cleanPhone = xss(phone);
+    const cleanGender = xss(gender);
+
     const user = await auth.signup(
-      firstName,
-      lastName,
-      email,
-      password,
-      dateOfBirth,
-      phone,
-      gender
+      cleanFirstName,
+      cleanLastName,
+      cleanEmail,
+      cleanPassword,
+      cleanDateOfBirth,
+      cleanPhone,
+      cleanGender
     );
 
     const accesstoken = user.generateToken();
