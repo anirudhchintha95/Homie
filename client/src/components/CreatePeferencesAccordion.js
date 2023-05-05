@@ -4,41 +4,16 @@ import {
   AccordionSummary,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import useAuth from "../useAuth";
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 import { ACCOUNT_PANELS } from "../contants";
 import CreatePreferencesForm from "./CreatePreferencesForm";
 
-const CreatePreferencesAccordionForm = ({
-  expanded,
-  handleChange,
-  loading,
-  setLoading,
-  scrollToTop,
-}) => {
-  const auth = useAuth();
-  // const [image, setImage] = useState();
-  // const [imageFormError, setImageFormError] = useState();
-
-  // const handleImageUpload = async (e) => {
-  //   e.preventDefault();
-  //   try {
-
-  //     setLoading(true);
-  //     //await updateImageApi(auth.user._id, image);
-
-  //     await auth.getCurrentUser();
-  //   } catch (error) {
-  //     setImageFormError(
-  //       error?.response?.data?.error ||
-  //         error?.message ||
-  //         "Could not update your password. Please try again later."
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  //};
+const CreatePreferencesAccordionForm = ({ expanded, handleChange }) => {
+  const [preferencesAdded, setPreferencesAdded] = React.useState(false);
   return (
     <Accordion
       expanded={expanded === ACCOUNT_PANELS.preferences}
@@ -51,7 +26,10 @@ const CreatePreferencesAccordionForm = ({
       >
         <Typography
           sx={{
-            width: expanded === ACCOUNT_PANELS.preferences ? "100%" : "33%",
+            width:
+              expanded === ACCOUNT_PANELS.preferences
+                ? "calc(100% - 24px)"
+                : "33%",
             textAlign:
               expanded === ACCOUNT_PANELS.preferences ? "center" : "inherit",
             flexShrink: 0,
@@ -68,9 +46,14 @@ const CreatePreferencesAccordionForm = ({
         >
           Create Preferences
         </Typography>
+        {preferencesAdded ? (
+          <CheckCircleIcon sx={{ marginLeft: "auto" }} color="success" />
+        ) : (
+          <ErrorIcon sx={{ marginLeft: "auto" }} color="error" />
+        )}
       </AccordionSummary>
       <AccordionDetails>
-        <CreatePreferencesForm />
+        <CreatePreferencesForm onCreatePreferences={() => setPreferencesAdded(true)} />
       </AccordionDetails>
     </Accordion>
   );

@@ -26,26 +26,26 @@ const PreferenceSchema = new Schema({
           return false;
         }
 
-        if (hasMin) {
-          try {
-            validations.validateNumberRange(v.min, "min rent", {
-              min: 0,
-            });
-          } catch (error) {
-            return false;
-          }
-        }
-        if (hasMax) {
-          try {
-            validations.validateNumberRange(v.max, "max rent", {
-              min: 1,
-            });
-          } catch (error) {
-            return false;
-          }
+        if (!hasMin && !hasMax) {
+          return true;
         }
 
-        return hasMin && hasMax ? v.min <= v.max : true;
+        try {
+          validations.validateNumberRange(v.min, "min rent", {
+            min: 0,
+          });
+        } catch (error) {
+          return false;
+        }
+        try {
+          validations.validateNumberRange(v.max, "max rent", {
+            min: v.min,
+          });
+        } catch (error) {
+          return false;
+        }
+
+        return v.min < v.max;
       },
       message: () => `Rent range is not valid!`,
     },
@@ -61,7 +61,7 @@ const PreferenceSchema = new Schema({
         if (hasMin) {
           try {
             validations.validateNumberRange(v.min, "min age", {
-              min: 13,
+              min: 18,
               includeMin: true,
             });
           } catch (error) {
@@ -71,7 +71,7 @@ const PreferenceSchema = new Schema({
         if (hasMax) {
           try {
             validations.validateNumberRange(v.max, "max age", {
-              min: 13,
+              min: 18,
               max: 100,
               includeMin: true,
             });
@@ -89,7 +89,7 @@ const PreferenceSchema = new Schema({
     type: Array,
     validate: {
       validator: function (v) {
-        return v.every((g) => Object.values(GENDERS).includes(g));
+        return !v || v.every((g) => Object.values(GENDERS).includes(g));
       },
       message: (props) => `${props.value} does not have valid genders!`,
     },
@@ -100,24 +100,30 @@ const UserSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: true,
+      required: [true, "First name is required!"],
       trim: true,
     },
     lastName: {
       type: String,
-      required: true,
+      required: [true, "Last name is required!"],
       trim: true,
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, "Email is required!"],
+      unique: [true, "Email already exists!"],
       trim: true,
+      validate: {
+        validator: function (v) {
+          return validations.isValidEmail(v);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
+      },
     },
     phone: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, "Phone number is required!"],
+      unique: [true, "Phone number already exists!"],
       trim: true,
     },
     encryptedPassword: {
@@ -126,7 +132,18 @@ const UserSchema = new Schema(
     },
     dateOfBirth: {
       type: Date,
-      required: true,
+      required: [true, "Date of birth is required!"],
+      validate: {
+        validator: function (v) {
+          try {
+            validations.validateDOB(v);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        message: (props) => `${props.value} is not a valid date of birth!`,
+      },
     },
     gender: {
       type: String,
@@ -136,7 +153,7 @@ const UserSchema = new Schema(
         },
         message: (props) => `${props.value} is not a valid gender!`,
       },
-      required: true,
+      required: [true, "Gender is required!"],
     },
     location: {
       city: {
@@ -148,6 +165,10 @@ const UserSchema = new Schema(
         trim: true,
       },
     },
+    description: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -155,7 +176,6 @@ const UserSchema = new Schema(
     },
     preferences: {
       type: PreferenceSchema,
-      //required: true,
     },
   },
   {

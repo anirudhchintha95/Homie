@@ -64,7 +64,7 @@ export const sendMessage = async (currentUser, homieId, message) => {
   }
 
   homieId = validateId(homieId, "homieId");
-  message = validateString(message, "message", { maxLength: 20 });
+  message = validateString(message, "message", { maxLength: 250 });
 
   const homie = await User.findById(homieId);
 

@@ -20,7 +20,7 @@ import RentSlider from "./RentSlider";
 import AgeSlider from "./AgeSlider";
 import { createPreferencesApi } from "../api/preferences";
 
-export default function CreatePreferencesForm() {
+export default function CreatePreferencesForm({ onCreatePreferences }) {
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
@@ -248,6 +248,7 @@ export default function CreatePreferencesForm() {
 
       if (Object.keys(createPreferences).length > 0) {
         await createPreferencesApi(createPreferences);
+        onCreatePreferences();
       }
     } catch (error) {
       setError(
@@ -272,14 +273,12 @@ export default function CreatePreferencesForm() {
             {error ? <Alert severity="error">{error}</Alert> : <></>}
           </Grid>
 
-          <Grid item xs={12}>
-            <CityStatePicker
-              city={city}
-              state={state}
-              onCityChange={setCity}
-              onStateChange={setState}
-            />
-          </Grid>
+          <CityStatePicker
+            city={city}
+            state={state}
+            onCityChange={setCity}
+            onStateChange={setState}
+          />
 
           <Grid item xs={12}>
             <FormControl fullWidth>

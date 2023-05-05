@@ -361,12 +361,13 @@ const Signup = () => {
             </FormControl>
           </Grid>
         </Grid>
-        {/* add a gender selection field */}
 
-        <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
-          Create Account
-        </SubmitButton>
-        <Box textAlign="center">
+        <Grid item xs={12}>
+          <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
+            Create Account
+          </SubmitButton>
+        </Grid>
+        <Grid item xs={12}>
           <Button
             variant="contained"
             component={Link}
@@ -377,7 +378,7 @@ const Signup = () => {
           >
             Login
           </Button>
-        </Box>
+        </Grid>
       </Paper>
     </Box>
   );

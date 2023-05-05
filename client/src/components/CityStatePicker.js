@@ -21,6 +21,7 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
             )}
             onChange={(_, newValue) => {
               onStateChange({ error: "", value: newValue?.isoCode || "" });
+              if (!newValue) onCityChange({ error: "", value: "" });
             }}
             getOptionLabel={(option) => option.name}
             options={statesMap}
@@ -32,11 +33,15 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
       <Grid item xs={12}>
         <FormControl fullWidth>
           <Autocomplete
-            value={citiesMap.find(({ name }) => name === city.value)}
+            value={
+              citiesMap?.length
+                ? citiesMap.find(({ name }) => name === city.value) || ""
+                : ""
+            }
             onChange={(_, newValue) => {
               onCityChange({ error: "", value: newValue?.name || "" });
             }}
-            getOptionLabel={(option) => option?.name}
+            getOptionLabel={(option) => option?.name || ""}
             options={citiesMap}
             renderInput={(params) => <TextField {...params} label="City" />}
             disabled={!state.value}

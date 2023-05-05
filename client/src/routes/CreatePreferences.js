@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
 import useAuth from "../useAuth";
 import { ImagesAccordianForm } from "../components/Account";
 import CreatePreferencesAccordionForm from "../components/CreatePeferencesAccordion";
+import { Toast } from "../components";
+import { useNavigate } from "react-router-dom";
 
 const CreatePreferences = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
   const headerRef = React.useRef();
   const [expanded, setExpanded] = React.useState();
+  const [toastError, setToastError] = React.useState();
   const [loading, setLoading] = useState();
 
   const handleChange = (panel) => (_, isExpanded) => {
@@ -25,8 +28,30 @@ const CreatePreferences = () => {
     });
   };
 
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      auth.refreshCurrentUser();
+      if (!auth.user.preferences?._id) {
+        throw new Error("Preferences not created");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      setToastError(error?.response?.data?.error || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", mt: 2, p: 2 }}>
+      <Toast
+        open={!!toastError}
+        handleClose={() => setToastError()}
+        message={toastError}
+        variant="error"
+      />
       <ImagesAccordianForm
         expanded={expanded}
         handleChange={handleChange}
@@ -43,12 +68,11 @@ const CreatePreferences = () => {
       />
       <Button
         variant="contained"
-        component={Link}
-        to="/home"
+        onClick={fetchUser}
         sx={{ mt: 2 }}
         color="secondary"
         fullWidth
-        disabled={auth.user.preferences?._id ? false : true}
+        disabled={loading}
       >
         Done
       </Button>
