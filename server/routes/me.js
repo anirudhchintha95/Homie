@@ -98,10 +98,13 @@ router
   .patch(updatePasswordRouteValidator, async (req, res) => {
     try {
       const { currentPassword, newPassword } = req.body;
+      const cleanCurrentPassword = xss(currentPassword);
+      const cleanNewPassword = xss(newPassword);
+
       const passwordUpdated = await userData.updatePassword(
         req.currentUser,
-        currentPassword,
-        newPassword
+        cleanCurrentPassword,
+        cleanNewPassword
       );
 
       if (!passwordUpdated) {
