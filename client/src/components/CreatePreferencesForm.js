@@ -5,7 +5,6 @@ import {
   Grid,
   Paper,
   Select,
-  TextField,
   Stack,
   Switch,
   Typography,
@@ -14,9 +13,7 @@ import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { useNavigate, useLocation, Link } from "react-router-dom";
 
-import useAuth from "../useAuth";
 import { SubmitButton } from "../components";
 import CityStatePicker from "./CityStatePicker";
 import RentSlider from "./RentSlider";
@@ -24,10 +21,6 @@ import AgeSlider from "./AgeSlider";
 import { createPreferencesApi } from "../api/preferences";
 
 export default function CreatePreferencesForm() {
-  const auth = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { from } = location.state || { from: { pathname: "/" } };
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
@@ -212,12 +205,6 @@ export default function CreatePreferencesForm() {
 
       setLoading(true);
 
-      // await auth.signIn(res?.accesstoken, () => {
-      //   navigate(from || "/", {
-      //     replace: true,
-      //   });
-      // });
-
       let createPreferences = {};
       if (typeof smoking.value === "boolean") {
         createPreferences.smoking = smoking.value;
@@ -260,7 +247,6 @@ export default function CreatePreferencesForm() {
       }
 
       if (Object.keys(createPreferences).length > 0) {
-        //console.log(createPreferences);
         await createPreferencesApi(createPreferences);
       }
     } catch (error) {
@@ -357,100 +343,6 @@ export default function CreatePreferencesForm() {
               </Select>
             </FormControl>
           </Grid>
-
-          {/* <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Minimum Rent"
-              value={rentMin.value}
-              onChange={(e) => {
-                setRentMin({
-                  error: false,
-                  value: e.target.value,
-                });
-              }}
-              onBlur={() => {
-                setRentMin({
-                  error: false,
-                  value: rentMin.value.trim(),
-                });
-              }}
-              error={!!rentMin.error}
-              helperText={rentMin.error}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Maximum Rent"
-              value={rentMax.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setRentMax({
-                  error: false,
-                  value,
-                });
-              }}
-              onBlur={() => {
-                setRentMax({
-                  error: false,
-                  value: rentMax.value.trim(),
-                });
-              }}
-              error={!!rentMax.error}
-              helperText={rentMax.error}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Minimum Age"
-              value={ageMin.value}
-              onChange={(e) => {
-                setAgeMin({
-                  error: false,
-                  value: e.target.value,
-                });
-              }}
-              //   onBlur={() => {
-              //     setAgeMin({
-              //       error: false,
-              //       value: ageMin.value.trim(),
-              //     });
-              //   }}
-              error={!!ageMin.error}
-              helperText={ageMin.error}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Maximum Age"
-              value={ageMax.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setAgeMax({
-                  error: false,
-                  value,
-                });
-              }}
-              onBlur={() => {
-                setAgeMax({
-                  error: false,
-                  value: ageMax.value.trim(),
-                });
-              }}
-              error={!!ageMax.error}
-              helperText={ageMax.error}
-              fullWidth
-            />
-          </Grid> */}
 
           <Grid item xs={12}>
             <Stack direction="row" spacing={1} alignItems="center">

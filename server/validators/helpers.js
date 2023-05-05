@@ -197,6 +197,227 @@ const validateGender = (value, name) => {
   return value;
 };
 
+const validatePreferencesBE = (preferences) => {
+  const {
+    city,
+    state,
+    smoking,
+    drinking,
+    pets,
+    rentMin,
+    rentMax,
+    ageMin,
+    ageMax,
+    genders,
+  } = preferences;
+
+  if (!city) {
+    throw {
+      status: 400,
+      message: "Error: City is required!",
+    };
+  }
+
+  if (!state) {
+    throw {
+      status: 400,
+      message: "Error: State is required!",
+    };
+  }
+
+  if (typeof city !== "undefined") {
+    if (!/^[a-zA-Z\s]*$/.test(city)) {
+      throw {
+        status: 400,
+        message: "Error: City should contain only alphabets",
+      };
+    }
+  }
+
+  if (typeof smoking !== "undefined") {
+    if (smoking !== "" && smoking !== true && smoking !== false) {
+      throw {
+        status: 400,
+        message: "Error: form Smoking should be either true or false or None",
+      };
+    }
+  }
+
+  if (typeof drinking !== "undefined") {
+    if (drinking !== "" && drinking !== true && drinking !== false) {
+      throw {
+        status: 400,
+        message: "Error: form Drinking should be either true or false or None",
+      };
+    }
+  }
+
+  if (typeof pets !== "undefined") {
+    if (pets !== "" && pets !== true && pets !== false) {
+      throw {
+        status: 400,
+        message: "Error: Pets should be either true or false or None",
+      };
+    }
+  }
+
+  if (
+    (rentMin !== undefined && rentMax === undefined) ||
+    (rentMin !== undefined && rentMax === undefined)
+  ) {
+    if (rentMin === undefined) {
+      throw {
+        status: 400,
+        message: "Error: Both Minimum and Maximum Rent should be specified",
+      };
+    }
+    if (rentMax === undefined) {
+      throw {
+        status: 400,
+        message: "Error: Both Minimum and Maximum Rent should be specified",
+      };
+    }
+  }
+
+  if (rentMin !== undefined && typeof rentMin === "number") {
+    if (!/^\d+$/.test(rentMin)) {
+      throw {
+        status: 400,
+        message: "Error: Minimum Rent should be a number greater than 0",
+      };
+    }
+    if (rentMin < 0) {
+      throw {
+        status: 400,
+        message: "Error: Minimum Rent should be a number greater than 0",
+      };
+    }
+  }
+
+  if (rentMax !== undefined && typeof rentMin === "number") {
+    if (!/^\d+$/.test(rentMax)) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Rent should be a number greater than 0",
+      };
+    }
+    if (rentMax < 0) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Rent should be a number greater than 0",
+      };
+    }
+
+    //TODO: Check the max value for rentMax
+  }
+
+  if (rentMin !== undefined && rentMax !== undefined && rentMin > rentMax) {
+    throw {
+      status: 400,
+      message: "Error: Maximum Rent should be greater than Minimum Rent",
+    };
+  }
+  if (
+    typeof rentMin === "number" &&
+    typeof rentMax === "number" &&
+    rentMin === rentMax
+  ) {
+    throw {
+      status: 400,
+      message: "Error: Minimum Rent and Maximum Rent cannot be the same values",
+    };
+  }
+
+  if ((ageMin && !ageMax) || (!ageMin && ageMax)) {
+    if (!ageMin) {
+      throw {
+        status: 400,
+        message: "Error: Both Minimum and Maximum Age should be specified",
+      };
+    }
+    if (!ageMax) {
+      throw {
+        status: 400,
+        message: "Error: Both Minimum and Maximum Age should be specified",
+      };
+    }
+  }
+
+  if (ageMin) {
+    if (!/^\d+$/.test(ageMin)) {
+      throw {
+        status: 400,
+        message: "Error: Minimum Age should be a number between 18 and 100",
+      };
+    }
+    if (parseInt(ageMin) < 18) {
+      throw {
+        status: 400,
+        message: "Error: Minimum Age should be a number between 18 and 100",
+      };
+    }
+    if (parseInt(ageMin) > 100) {
+      throw {
+        status: 400,
+        message: "Error: Minimum Age should be a number between 18 and 100",
+      };
+    }
+  }
+
+  if (ageMax) {
+    if (!/^\d+$/.test(ageMax)) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Age should be a number between 18 and 100",
+      };
+    }
+    if (parseInt(ageMax) < 18) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Age should be a number between 18 and 100",
+      };
+    }
+    if (parseInt(ageMax) > 100) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Age should be a number between 18 and 100",
+      };
+    }
+  }
+
+  if (ageMin && ageMax && parseInt(ageMin) > parseInt(ageMax)) {
+    throw {
+      status: 400,
+      message: "Error: Maximum Age should be greater than Minimum Age",
+    };
+  }
+
+  if (ageMin && ageMax && parseInt(ageMin) === parseInt(ageMax)) {
+    throw {
+      status: 400,
+      message: "Error: Minimum Age and Maximum Age cannot be the same values",
+    };
+  }
+
+  if (genders) {
+    if (!Array.isArray(genders)) {
+      throw {
+        status: 400,
+        message: "Genders be an array!",
+      };
+    }
+
+    const gendersArr = ["Male", "Female", "Non-Binary"];
+    if (!genders.every((elem) => gendersArr.includes(elem))) {
+      throw {
+        status: 400,
+        message:
+          "Each element in gender must be either Male, Female or Non-Binary.",
+      };
+    }
+  }
+};
+
 export {
   isValidEmail,
   isValidPassword,
