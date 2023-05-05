@@ -371,7 +371,7 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
               />
               <Typography>
                 {hasRent
-                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  ? `Min: $${rentMin?.value}, Max: $${rentMax?.value}`
                   : "--None--"}
               </Typography>
             </Stack>

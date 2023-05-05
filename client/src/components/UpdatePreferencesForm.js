@@ -535,7 +535,7 @@ export default function UpdatePreferencesForm() {
               />
               <Typography>
                 {hasRent
-                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  ? `Min: $${rentMin?.value}, Max: $${rentMax?.value}`
                   : "--None--"}
               </Typography>
             </Stack>
