@@ -1,21 +1,28 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Alert, Button, Grid, Paper, Select, TextField } from "@mui/material";
+import {
+  Alert,
+  Grid,
+  Paper,
+  Select,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import useAuth from "../useAuth";
 import { SubmitButton } from "../components";
 import { updatePreferencesApi } from "../api/preferences";
+import AgeSlider from "./AgeSlider";
+import RentSlider from "./RentSlider";
 
 export default function UpdatePreferencesForm() {
   const auth = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { from } = location.state || { from: { pathname: "/" } };
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
@@ -99,6 +106,12 @@ export default function UpdatePreferencesForm() {
         ? auth?.user?.preferences?.genders
         : "",
   });
+
+  const hasRent = React.useMemo(() => {
+    return (
+      typeof rentMin.value === "number" && typeof rentMax.value === "number"
+    );
+  }, [rentMin, rentMax]);
 
   const handleChange = (event) => {
     const {
@@ -405,13 +418,9 @@ export default function UpdatePreferencesForm() {
       }
       if (Object.keys(preferenceUpdates).length > 0) {
         setError("");
-        // console.log(preferenceUpdates);
         await updatePreferencesApi(preferenceUpdates);
 
-        //await auth.refreshCurrentUser();
-        // navigate(from || "/", {
-        //   replace: true,
-        // });
+        await auth.refreshCurrentUser();
       }
     } catch (error) {
       setError(
@@ -556,99 +565,93 @@ export default function UpdatePreferencesForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Minimum Rent"
-              value={rentMin.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setRentMin({
-                  error: false,
-                  value,
-                });
-              }}
-              //   onBlur={() => {
-              //     setRentMin({
-              //       error: false,
-              //       value: rentMin?.value.trim(),
-              //     });
-              //   }}
-              error={!!rentMin.error}
-              helperText={rentMin.error}
-              fullWidth
-            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>Rent Range</Typography>
+              <Switch
+                checked={hasRent}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setRentMin({
+                      error: false,
+                      value: 0,
+                    });
+                    setRentMax({
+                      error: false,
+                      value: 500,
+                    });
+                  } else {
+                    setRentMin({
+                      error: false,
+                      value: "",
+                    });
+                    setRentMax({
+                      error: false,
+                      value: "",
+                    });
+                  }
+                }}
+              />
+              <Typography>
+                {hasRent
+                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  : "--None--"}
+              </Typography>
+            </Stack>
+            {hasRent ? (
+              <RentSlider
+                minRent={rentMin}
+                maxRent={rentMax}
+                onMaxRentChange={setRentMax}
+                onMinRentChange={setRentMin}
+              />
+            ) : (
+              <> </>
+            )}
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Maximum Rent"
-              value={rentMax.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setRentMax({
-                  error: false,
-                  value,
-                });
-              }}
-              //   onBlur={() => {
-              //     setRentMax({
-              //       error: false,
-              //       value: rentMax?.value?.trim(),
-              //     });
-              //   }}
-              error={!!rentMax.error}
-              helperText={rentMax.error}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Minimum Age"
-              value={ageMin.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setAgeMin({
-                  error: false,
-                  value,
-                });
-              }}
-              onBlur={() => {
-                setAgeMin({
-                  error: false,
-                  value: ageMin.value.trim(),
-                });
-              }}
-              error={!!ageMin.error}
-              helperText={ageMin.error}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              label="Maximum Age"
-              value={ageMax.value}
-              onChange={(e) => {
-                const value = e.target.value;
-                setAgeMax({
-                  error: false,
-                  value,
-                });
-              }}
-              onBlur={() => {
-                setAgeMax({
-                  error: false,
-                  value: ageMax.value.trim(),
-                });
-              }}
-              error={!!ageMax.error}
-              helperText={ageMax.error}
-              fullWidth
-            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>Age Range</Typography>
+              <Switch
+                checked={!!(ageMin?.value && ageMax?.value)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setAgeMin({
+                      error: false,
+                      value: 18,
+                    });
+                    setAgeMax({
+                      error: false,
+                      value: 24,
+                    });
+                  } else {
+                    setAgeMin({
+                      error: false,
+                      value: "",
+                    });
+                    setAgeMax({
+                      error: false,
+                      value: "",
+                    });
+                  }
+                }}
+              />
+              <Typography>
+                {ageMin?.value && ageMax?.value
+                  ? `Min: ${ageMin?.value}, Max: ${ageMax?.value}`
+                  : "--None--"}
+              </Typography>
+            </Stack>
+            {ageMin?.value && ageMax?.value ? (
+              <AgeSlider
+                minAge={ageMin}
+                maxAge={ageMax}
+                onMaxAgeChange={setAgeMax}
+                onMinAgeChange={setAgeMin}
+              />
+            ) : (
+              <> </>
+            )}
           </Grid>
 
           <Grid item xs={12}>
