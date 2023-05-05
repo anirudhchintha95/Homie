@@ -1,8 +1,20 @@
 import Image from "../models/image.js";
 import User from "../models/user.js";
 import PasswordService from "../services/password-service.js";
-import { isValidEmail } from "../validators/helpers.js";
+import {
+  isValidEmail,
+  isValidPassword,
+  checkBoolean,
+  validateNumber,
+  validateNumberRange,
+  validateString,
+  validateId,
+  validateDOB,
+  validatePhone,
+  validateGender,
+} from "../validators/helpers.js";
 import { updatePasswordValidator } from "../validators/updatePasswordValidator.js";
+import { isValidObjectId } from "mongoose";
 
 export const getUserProfile = async (email) => {
   if (!isValidEmail(email))
@@ -16,14 +28,15 @@ export const getUserProfile = async (email) => {
   if (!userProfile) throw { status: 404, message: "User not found" };
 
   userProfile._id = userProfile._id.toString();
+  userProfile.dateOfBirth = new Date(userProfile.dateOfBirth);
   return userProfile._doc;
 };
 
-export const getImages = async (currentUser) => {
-  if (!currentUser) throw { status: 401, message: "Unauthorized" };
+export const getImages = async (currentUserId) => {
+  if (!currentUserId) throw { status: 401, message: "Unauthorized" };
 
   const images = await Image.find({
-    imageableId: currentUser._id,
+    imageableId: currentUserId,
     imageableType: "User",
   });
 
@@ -63,4 +76,63 @@ export const updatePassword = async (
   );
 
   return result.acknowledged && result.modifiedCount !== 0;
+};
+
+export const updateUserProfile = async (
+  firstName,
+  lastName,
+  email,
+  dob,
+  phoneNumber,
+  gender
+) => {
+  firstName = validateString(firstName, "firstName");
+  lastName = validateString(lastName, "lastName");
+  dob = validateDOB(dob, "dob");
+  phoneNumber = validatePhone(phoneNumber, "phoneNumber");
+  gender = validateGender(gender, "gender");
+
+  const updatedUser = {
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    dateOfBirth: dob,
+    phone: phoneNumber,
+    gender: gender,
+  };
+
+  const modifiedUser = await User.findOneAndUpdate(
+    { email: email },
+    updatedUser,
+    {
+      projection: {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        dateOfBirth: 1,
+        phone: 1,
+        gender: 1,
+      },
+      returnDocument: "after",
+      rawResult: true,
+    }
+  );
+
+  if (modifiedUser.lastErrorObject.n === 0)
+    throw { status: 404, message: "Error: User not found" };
+
+  modifiedUser.value._doc.dateOfBirth = new Date(
+    modifiedUser.value._doc.dateOfBirth
+  );
+  return modifiedUser.value._doc;
+};
+
+export const deleteUser = async (userId) => {
+  if (!isValidObjectId(userId))
+    throw { status: 400, message: "Error: Invaild User Id" };
+  const userDeleted = await User.findOneAndDelete(
+    { _id: userId },
+    { projection: { _id: 1 } }
+  );
+  return userDeleted;
 };

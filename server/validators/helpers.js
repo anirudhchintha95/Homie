@@ -1,4 +1,6 @@
 import { isValidObjectId } from "mongoose";
+import { GENDERS } from "../constants.js";
+import { DateTime } from "luxon";
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -7,7 +9,13 @@ function isValidEmail(email) {
 }
 
 function isValidPassword(password) {
-  if (!password || password.length < 5) return false;
+  if (
+    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
+      password
+    )
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -67,6 +75,12 @@ const validateString = (value, name, opts = {}) => {
       message: `${name} must be no more than ${maxLength} characters long!`,
     };
   }
+  if (["firstName", "lastName"].includes(name) && value.match(/[0-9]/g)) {
+    throw {
+      status: 400,
+      message: `${name} must not contain numbers`,
+    };
+  }
   return value;
 };
 
@@ -117,225 +131,70 @@ const validateId = (value, name) => {
   return value;
 };
 
-const validatePreferencesBE = (preferences) => {
-  const {
-    city,
-    state,
-    smoking,
-    drinking,
-    pets,
-    rentMin,
-    rentMax,
-    ageMin,
-    ageMax,
-    genders,
-  } = preferences;
+const validateDOB = (dob, name) => {
+  if (!dob) {
+    throw { status: 400, message: "Date of birth is required." };
+  }
 
-  if (!city) {
+  if (dob > DateTime.now()) {
     throw {
       status: 400,
-      message: "Error: City is required!",
+      message: "Date of birth cannot be in the future.",
+    };
+  }
+  // dob must be at least 18 years ago using luxon
+  const eighteenYearsAgo = DateTime.now().minus({ years: 18 });
+  if (dob > eighteenYearsAgo) {
+    throw {
+      status: 400,
+      message: "You must be at least 18 years old to register.",
     };
   }
 
-  if (!state) {
+  // dob must be at max 100 years ago
+  const oneHundredYearsAgo = DateTime.now().minus({ years: 100 });
+  if (dob < oneHundredYearsAgo) {
     throw {
       status: 400,
-      message: "Error: State is required!",
+      message: "You must be less than 100 years old to register.",
     };
   }
+  return dob;
+};
 
-  if (typeof city !== "undefined") {
-    if (!/^[a-zA-Z\s]*$/.test(city)) {
-      throw {
-        status: 400,
-        message: "Error: City should contain only alphabets",
-      };
-    }
-  }
-
-  if (typeof smoking !== "undefined") {
-    if (smoking !== "" && smoking !== true && smoking !== false) {
-      throw {
-        status: 400,
-        message: "Error: form Smoking should be either true or false or None",
-      };
-    }
-  }
-
-  if (typeof drinking !== "undefined") {
-    if (drinking !== "" && drinking !== true && drinking !== false) {
-      throw {
-        status: 400,
-        message: "Error: form Drinking should be either true or false or None",
-      };
-    }
-  }
-
-  if (typeof pets !== "undefined") {
-    if (pets !== "" && pets !== true && pets !== false) {
-      throw {
-        status: 400,
-        message: "Error: Pets should be either true or false or None",
-      };
-    }
-  }
-
-  if (
-    (rentMin !== undefined && rentMax === undefined) ||
-    (rentMin !== undefined && rentMax === undefined)
-  ) {
-    if (rentMin === undefined) {
-      throw {
-        status: 400,
-        message: "Error: Both Minimum and Maximum Rent should be specified",
-      };
-    }
-    if (rentMax === undefined) {
-      throw {
-        status: 400,
-        message: "Error: Both Minimum and Maximum Rent should be specified",
-      };
-    }
-  }
-
-  if (rentMin !== undefined && typeof rentMin === "number") {
-    if (!/^\d+$/.test(rentMin)) {
-      throw {
-        status: 400,
-        message: "Error: Minimum Rent should be a number greater than 0",
-      };
-    }
-    if (rentMin < 0) {
-      throw {
-        status: 400,
-        message: "Error: Minimum Rent should be a number greater than 0",
-      };
-    }
-  }
-
-  if (rentMax !== undefined && typeof rentMin === "number") {
-    if (!/^\d+$/.test(rentMax)) {
-      throw {
-        status: 400,
-        message: "Error: Maximum Rent should be a number greater than 0",
-      };
-    }
-    if (rentMax < 0) {
-      throw {
-        status: 400,
-        message: "Error: Maximum Rent should be a number greater than 0",
-      };
-    }
-
-    //TODO: Check the max value for rentMax
-  }
-
-  if (rentMin !== undefined && rentMax !== undefined && rentMin > rentMax) {
+const validatePhone = (value, name) => {
+  if (!value) {
     throw {
       status: 400,
-      message: "Error: Maximum Rent should be greater than Minimum Rent",
+      message: `${name} is required!`,
     };
   }
-  if (
-    typeof rentMin === "number" &&
-    typeof rentMax === "number" &&
-    rentMin === rentMax
-  ) {
+  value = value.trim();
+  if (isNaN(value))
+    throw { status: 400, message: `${name} must only contain numbers` };
+  if (value.length != 10) {
     throw {
       status: 400,
-      message: "Error: Minimum Rent and Maximum Rent cannot be the same values",
+      message: `${name} must contain 10 digits`,
     };
   }
+  return value;
+};
 
-  if ((ageMin && !ageMax) || (!ageMin && ageMax)) {
-    if (!ageMin) {
-      throw {
-        status: 400,
-        message: "Error: Both Minimum and Maximum Age should be specified",
-      };
-    }
-    if (!ageMax) {
-      throw {
-        status: 400,
-        message: "Error: Both Minimum and Maximum Age should be specified",
-      };
-    }
-  }
-
-  if (ageMin) {
-    if (!/^\d+$/.test(ageMin)) {
-      throw {
-        status: 400,
-        message: "Error: Minimum Age should be a number between 18 and 100",
-      };
-    }
-    if (parseInt(ageMin) < 18) {
-      throw {
-        status: 400,
-        message: "Error: Minimum Age should be a number between 18 and 100",
-      };
-    }
-    if (parseInt(ageMin) > 100) {
-      throw {
-        status: 400,
-        message: "Error: Minimum Age should be a number between 18 and 100",
-      };
-    }
-  }
-
-  if (ageMax) {
-    if (!/^\d+$/.test(ageMax)) {
-      throw {
-        status: 400,
-        message: "Error: Maximum Age should be a number between 18 and 100",
-      };
-    }
-    if (parseInt(ageMax) < 18) {
-      throw {
-        status: 400,
-        message: "Error: Maximum Age should be a number between 18 and 100",
-      };
-    }
-    if (parseInt(ageMax) > 100) {
-      throw {
-        status: 400,
-        message: "Error: Maximum Age should be a number between 18 and 100",
-      };
-    }
-  }
-
-  if (ageMin && ageMax && parseInt(ageMin) > parseInt(ageMax)) {
+const validateGender = (value, name) => {
+  if (!value) {
     throw {
       status: 400,
-      message: "Error: Maximum Age should be greater than Minimum Age",
+      message: `${name} is required!`,
     };
   }
-
-  if (ageMin && ageMax && parseInt(ageMin) === parseInt(ageMax)) {
+  if (!Object.values(GENDERS).includes(value)) {
     throw {
       status: 400,
-      message: "Error: Minimum Age and Maximum Age cannot be the same values",
+      message: `Invalid ${name}`,
     };
   }
-
-  if (genders) {
-    if (!Array.isArray(genders)) {
-      throw {
-        status: 400,
-        message: "Genders be an array!",
-      };
-    }
-
-    const gendersArr = ["Male", "Female", "Non-Binary"];
-    if (!genders.every((elem) => gendersArr.includes(elem))) {
-      throw {
-        status: 400,
-        message:
-          "Each element in gender must be either Male, Female or Non-Binary.",
-      };
-    }
-  }
+  return value;
 };
 
 export {
@@ -346,6 +205,9 @@ export {
   validateNumberRange,
   validateString,
   validateId,
+  validateDOB,
+  validatePhone,
+  validateGender,
   validatePassword,
   validatePreferencesBE,
 };

@@ -38,15 +38,15 @@ export const validateDOB = (dob) => {
       error: "Date of birth cannot be in the future.",
     };
   }
-  // dob must be at least 13 years ago using luxon
-  const thirteenYearsAgo = DateTime.now().minus({ years: 13 });
-  if (dob > thirteenYearsAgo) {
+  // dob must be at least 18 years ago using luxon
+  const eighteenYearsAgo = DateTime.now().minus({ years: 18 });
+  if (dob > eighteenYearsAgo) {
     return {
       isValid: false,
       error: "You must be at least 13 years old to register.",
     };
   }
-  
+
   // dob must be at max 100 years ago
   const oneHundredYearsAgo = DateTime.now().minus({ years: 100 });
   if (dob < oneHundredYearsAgo) {

@@ -1,18 +1,54 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { clearFromStorage, getFromStorage, setToStorage } from "../utils";
 import { getCurrentUserApi } from "../api/users";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 
 import AuthContext from "../AuthContext";
 import Loader from "./Loader";
+import Toast from "./Toast";
 
 const userAccessTokenKey = process.env.REACT_APP_USER_ACCESS_TOKEN_KEY;
 
 const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState(null);
+  const [toastError, setToastError] = useState(null);
   const [appLoaded, setAppLoaded] = useState(false);
+
+  const signOut = useCallback(async (callback) => {
+    setUser();
+    setIsLoggedIn(false);
+    clearFromStorage(userAccessTokenKey);
+    callback();
+  }, []);
+
+  useEffect(() => {
+    const authResponseInterceptor = axiosInstance.interceptors.response.use(
+      async (response) => {
+        return response;
+      },
+      (error) => {
+        const status = error.response.status;
+
+        if (
+          (status === 401 || status === 403) &&
+          getFromStorage(userAccessTokenKey)
+        ) {
+          signOut(() => {
+            navigate("/login");
+          });
+          setToastError("Your session has expired. Please login again.");
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      axiosInstance.interceptors.response.eject(authResponseInterceptor);
+    };
+  }, [navigate, signOut]);
 
   const getCurrentUser = useCallback(async () => {
     try {
@@ -28,7 +64,7 @@ const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log(
         err?.response?.data?.message ||
-          err.message ||
+          err?.message ||
           "Could not fetch your details"
       );
       setError("Could not fetch your details");
@@ -45,7 +81,7 @@ const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log(
         err?.response?.data?.message ||
-          err.message ||
+          err?.message ||
           "Could not fetch your details"
       );
       setError("Could not fetch your details");
@@ -69,13 +105,6 @@ const AuthProvider = ({ children }) => {
     [getCurrentUser]
   );
 
-  const signOut = useCallback(async (callback) => {
-    setUser();
-    setIsLoggedIn(false);
-    clearFromStorage(userAccessTokenKey);
-    callback();
-  }, []);
-
   const authValues = useMemo(
     () => ({
       user,
@@ -97,33 +126,14 @@ const AuthProvider = ({ children }) => {
     ]
   );
 
-  useEffect(() => {
-    const authResponseInterceptor = axiosInstance.interceptors.response.use(
-      async (response) => {
-        return response;
-      },
-      async (error) => {
-        const status = error.response.status;
-
-        if (
-          (status === 401 || status === 403) &&
-          getFromStorage(userAccessTokenKey)
-        ) {
-          signOut(() => {
-            window.location.href = "/login";
-          });
-        } else {
-          return Promise.reject(error);
-        }
-      }
-    );
-    return () => {
-      axiosInstance.interceptors.response.eject(authResponseInterceptor);
-    };
-  }, [signOut]);
-
   return (
     <AuthContext.Provider value={authValues}>
+      <Toast
+        open={!!toastError}
+        handleClose={() => setToastError()}
+        message={toastError}
+        variant="error"
+      />
       {appLoaded ? children : <Loader />}
     </AuthContext.Provider>
   );
