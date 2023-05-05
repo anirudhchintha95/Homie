@@ -2,39 +2,25 @@ import React, { useEffect } from "react";
 import MessageForm from "./MessageForm";
 import {
   Avatar,
-  Box,
-  CssBaseline,
   IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Modal,
-  Paper,
+  Dialog,
   Tooltip,
   Typography,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+
 import { getFullName } from "../utils";
 import { sendMessageApi } from "../api/homies";
+
 import Toast from "./Toast";
 import NameAvatar from "./NameAvatar";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: { xs: "90%", sm: 400 },
-  bgcolor: "background.paper",
-  border: "2px solid",
-  borderColor: "primary.main",
-  boxShadow: 24,
-  mt: 7,
-  mb: 7,
-  maxHeight: "75vh",
-  overflow: "scroll",
-};
 
 const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
   const listRef = React.useRef(null);
@@ -74,42 +60,34 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
   }, [open, messages]);
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
-        <Paper
-          sx={{
-            position: "sticky",
-            top: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "background.paper",
-            zIndex: 99,
-            textAlign: "center",
-            p: 1,
-            borderRadius: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-          elevation={3}
-        >
-          <NameAvatar user={user} isLarge />
-          <Typography variant="h3" color="primary">
-            Chat History
-          </Typography>
-          <Tooltip title="Close">
-            <IconButton onClick={onClose}>
-              <CloseIcon />
-            </IconButton>
-          </Tooltip>
-        </Paper>
-        <Toast
-          open={Boolean(toastError)}
-          handleClose={() => setToastError(null)}
-          message={toastError}
-          variant="error"
-        />
-        <CssBaseline />
+    <Dialog open={open} onClose={onClose} scroll="paper">
+      <DialogTitle
+        component="div"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: { xs: "90%", sm: 400 },
+          p: "10px",
+        }}
+      >
+        <NameAvatar user={user} isLarge />
+        <Typography variant="h3" color="primary">
+          Chat History
+        </Typography>
+        <Tooltip title="Close">
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
+      </DialogTitle>
+      <Toast
+        open={Boolean(toastError)}
+        handleClose={() => setToastError(null)}
+        message={toastError}
+        variant="error"
+      />
+      <DialogContent dividers sx={{ width: { xs: "90%", sm: 400 }, p: "10px" }}>
         <List ref={listRef}>
           {messages?.length ? (
             messages.map(({ _id, sentByUserId, message }) => (
@@ -122,6 +100,10 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
                     sentByUserId === user?._id ? getFullName(user) : "Me"
                   }
                   secondary={message}
+                  sx={{
+                    textAlign: sentByUserId === user?._id ? "right" : "left",
+                    overflowWrap: "break-word",
+                  }}
                 />
               </ListItem>
             ))
@@ -131,25 +113,16 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
             </ListItem>
           )}
         </List>
-        <Paper
-          sx={{
-            position: "sticky",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            bg: "background.paper",
-          }}
-          elevation={3}
-        >
-          <MessageForm
-            value={message}
-            onInputChange={setMessage}
-            onSubmit={handleSubmit}
-            disabled={loading}
-          />
-        </Paper>
-      </Box>
-    </Modal>
+      </DialogContent>
+      <DialogActions sx={{ padding: 0, width: { xs: "90%", sm: 400 }, p: "10px" }}>
+        <MessageForm
+          value={message}
+          onInputChange={setMessage}
+          onSubmit={handleSubmit}
+          disabled={loading}
+        />
+      </DialogActions>
+    </Dialog>
   );
 };
 

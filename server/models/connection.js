@@ -92,32 +92,34 @@ const ConnectionSchema = new Schema(
         if (!currentUserId || !otherUserId)
           throw new Error("Invalid user ids!");
 
-        const query = this.findOne({
-          $and: [
-            {
-              users: {
-                $elemMatch: {
-                  userId: currentUserId,
+        const queryObjs = [
+          {
+            $and: [
+              {
+                users: {
+                  $elemMatch: {
+                    userId: currentUserId,
+                  },
                 },
               },
-            },
-            {
-              users: {
-                $elemMatch: {
-                  userId: otherUserId,
+              {
+                users: {
+                  $elemMatch: {
+                    userId: otherUserId,
+                  },
                 },
               },
-            },
-            {
-              users: {
-                $size: 2,
+              {
+                users: {
+                  $size: 2,
+                },
               },
-            },
-          ],
-        });
+            ],
+          },
+        ];
 
         if (display) {
-          return await query.projection({
+          queryObjs.push({
             _id: 1,
             currentUser: {
               $cond: {
@@ -149,7 +151,7 @@ const ConnectionSchema = new Schema(
           });
         }
 
-        return await query;
+        return await this.findOne(...queryObjs);
       },
     },
   }
