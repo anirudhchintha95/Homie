@@ -85,7 +85,10 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
             currentUser: {
               $cond: {
                 if: {
-                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUser._id],
+                  $eq: [
+                    { $arrayElemAt: ["$users.userId", 0] },
+                    currentUser._id,
+                  ],
                 },
                 then: {
                   $arrayElemAt: ["$users", 0],
@@ -98,7 +101,10 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
             otherUser: {
               $cond: {
                 if: {
-                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUser._id],
+                  $eq: [
+                    { $arrayElemAt: ["$users.userId", 0] },
+                    currentUser._id,
+                  ],
                 },
                 then: {
                   $arrayElemAt: ["$users", 1],
@@ -158,12 +164,13 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
   pipeline.push({
     $lookup: {
       from: "images",
+      let: { userId: "$_id" },
       pipeline: [
         {
           $match: {
             $expr: {
               $and: [
-                { $eq: ["$imageableId", currentUser._id] },
+                { $eq: ["$imageableId", "$$userId"] },
                 { $eq: ["$imageableType", "User"] },
               ],
             },

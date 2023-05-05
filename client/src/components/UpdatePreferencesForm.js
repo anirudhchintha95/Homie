@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
 import useAuth from "../useAuth";
-import { SubmitButton } from "../components";
+import { SubmitButton, Toast } from "../components";
 import CityStatePicker from "./CityStatePicker";
 import RentSlider from "./RentSlider";
 import { updatePreferencesApi } from "../api/preferences";
@@ -25,6 +25,7 @@ export default function UpdatePreferencesForm({ onPreferencesUpdate }) {
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState();
   const [city, setCity] = useState({
     error: false,
@@ -413,7 +414,11 @@ export default function UpdatePreferencesForm({ onPreferencesUpdate }) {
       setError("");
       await updatePreferencesApi(preferenceUpdates);
       await auth.refreshCurrentUser();
-      onPreferencesUpdate();
+      if (onPreferencesUpdate) {
+        onPreferencesUpdate();
+      } else {
+        setSuccessMessage("Preferences updated successfully");
+      }
     } catch (error) {
       setError(
         error?.response?.data?.error ||
@@ -427,6 +432,12 @@ export default function UpdatePreferencesForm({ onPreferencesUpdate }) {
 
   return (
     <Box sx={{ maxWidth: { xs: "90%", sm: 400 }, mx: "auto" }} ref={headerRef}>
+      <Toast
+        open={!!successMessage}
+        onClose={() => setSuccessMessage("")}
+        message={successMessage}
+        variant="success"
+      />
       <Paper
         component="form"
         onSubmit={handleSubmit}

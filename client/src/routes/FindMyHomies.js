@@ -11,6 +11,32 @@ import {
 import { fetchHomiesApi } from "../api/homies";
 import { Button, Paper, Typography } from "@mui/material";
 
+const getMatchedPreferences = (user) => {
+  const matched = [];
+
+  if (user.smokingScore) {
+    matched.push("Smoking");
+  }
+
+  if (user.drinkingScore) {
+    matched.push("Drinking");
+  }
+
+  if (user.petsScore) {
+    matched.push("Pets");
+  }
+
+  if (user.ageScore) {
+    matched.push("Age");
+  }
+
+  if (user.genderScore) {
+    matched.push("Gender");
+  }
+
+  return matched;
+};
+
 const FindMyHomies = () => {
   const [homies, setHomies] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -76,7 +102,11 @@ const FindMyHomies = () => {
         ) : (
           homies.map((user) => (
             <Grid xs={12} md={8} key={user._id}>
-              <HomieCard user={user} onActionsClick={fetchHomies} />
+              <HomieCard
+                user={user}
+                onActionsClick={fetchHomies}
+                matchedPreferences={getMatchedPreferences(user)}
+              />
             </Grid>
           ))
         )}
