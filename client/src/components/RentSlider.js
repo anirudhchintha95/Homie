@@ -28,9 +28,9 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "90%" }} m="auto">
       <Slider
-        getAriaLabel="Rent Slider"
+        getAriaLabel={() => "Rent Slider"}
         value={[minRent.value / 100, maxRent.value / 100]}
         onChange={handleChange}
         valueLabelDisplay="auto"

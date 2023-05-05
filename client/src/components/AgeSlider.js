@@ -28,9 +28,9 @@ const AgeSlider = ({ minAge, maxAge, onMinAgeChange, onMaxAgeChange }) => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "90%" }} m="auto">
       <Slider
-        getAriaLabel="Rent Slider"
+        getAriaLabel={() => "Age Slider"}
         min={18}
         max={60}
         value={[minAge.value, maxAge.value]}

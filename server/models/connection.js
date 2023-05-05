@@ -1,16 +1,31 @@
 import { model, Schema } from "mongoose";
 import { CONNECTION_STATUSES } from "../constants.js";
+import { validateString } from "../validators/helpers.js";
 
 const MessageSchema = new Schema(
   {
     sentByUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "Sent by user is required!"],
     },
     message: {
       type: Schema.Types.String,
-      required: true,
+      required: [true, "Message is required!"],
+      validate: {
+        validator: function (v) {
+          try {
+            validateString(v, "message", {
+              minLength: 1,
+              maxLength: 250,
+            });
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        message: () => `Message length should be between 1 and 250 chars!`,
+      },
     },
   },
   {
@@ -24,7 +39,7 @@ const ConnectedUserSchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "User is required!"],
     },
     status: {
       type: Schema.Types.String,
@@ -46,7 +61,7 @@ const ConnectionSchema = new Schema(
     users: {
       type: [ConnectedUserSchema],
       default: [],
-      required: true,
+      required: [true, "Users are required!"],
       validate: {
         validator: function (v) {
           return v.length === 2;
@@ -107,10 +122,7 @@ const ConnectionSchema = new Schema(
             currentUser: {
               $cond: {
                 if: {
-                  $eq: [
-                    { $arrayElemAt: ["$users.userId", 0] },
-                    currentUserId,
-                  ],
+                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUserId],
                 },
                 then: {
                   $arrayElemAt: ["$users", 0],
@@ -123,10 +135,7 @@ const ConnectionSchema = new Schema(
             otherUser: {
               $cond: {
                 if: {
-                  $eq: [
-                    { $arrayElemAt: ["$users.userId", 0] },
-                    currentUserId,
-                  ],
+                  $eq: [{ $arrayElemAt: ["$users.userId", 0] }, currentUserId],
                 },
                 then: {
                   $arrayElemAt: ["$users", 1],

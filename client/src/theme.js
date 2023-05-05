@@ -8,6 +8,7 @@ const theme = createTheme({
     secondary: {
       main: "#D9E2D5",
     },
+    contrastThreshold: 4.5,
   },
   typography: {
     fontFamily: [

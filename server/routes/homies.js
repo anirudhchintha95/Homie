@@ -59,8 +59,10 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
   try {
     let { id } = req.params;
     let { message } = req.body;
+
     id = validateId(id, "homieId");
-    message = validateString(message, "message", { maxLength: 20 });
+    message = validateString(message, "message", { maxLength: 250 });
+
     const connection = await homiesData.sendMessage(
       req.currentUser,
       id,

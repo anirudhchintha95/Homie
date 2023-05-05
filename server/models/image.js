@@ -4,23 +4,29 @@ const ImageSchema = new Schema(
   {
     name: {
       type: Schema.Types.String,
-      required: true,
+      required: [true, "Name is required!"],
     },
     filename: {
       type: Schema.Types.String,
-      required: true,
+      required: [true, "Filename is required!"],
     },
     type: {
       type: Schema.Types.String,
-      required: true,
+      required: [true, "File Type is required!"],
     },
     imageableType: {
       type: Schema.Types.String,
-      required: true,
+      required: [true, "Imageable type is required!"],
+      validate: {
+        validator: function (v) {
+          return ["User", "Home"].includes(v);
+        },
+        message: (props) => `${props.value} is not a valid imageable type!`,
+      },
     },
     imageableId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: [true, "Imageable id is required!"],
     },
   },
   {

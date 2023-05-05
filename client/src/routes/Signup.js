@@ -62,6 +62,43 @@ const Signup = () => {
   });
 
   const validateForm = () => {
+    if (!firstName.value) {
+      //errorFields.push("firstName");
+      setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
+      return;
+    }
+    if (!lastName.value) {
+      setLastName((prev) => ({ ...prev, error: "Last Name is required" }));
+      return;
+    }
+    if (!email.value) {
+      setEmail((prev) => ({ ...prev, error: "Email is required" }));
+      return;
+    }
+    if (!password.value) {
+      setPassword((prev) => ({ ...prev, error: "Password is required" }));
+      return;
+    }
+    if (!confirmPassword.value) {
+      setconfirmPassword((prev) => ({
+        ...prev,
+        error: "Confirm Password is required",
+      }));
+      return;
+    }
+
+    // if (!dob.value) {
+    //   setDob((prev) => ({ ...prev, error: "Date of Birth is required" }));
+    //   return;
+    // }
+    if (!phoneNumber.value) {
+      setPhoneNumber((prev) => ({
+        ...prev,
+        error: "Phone Number is required",
+      }));
+      return;
+    }
+
     if (
       !firstName.value ||
       !lastName.value ||
@@ -77,56 +114,6 @@ const Signup = () => {
 
     if (password.value !== confirmPassword.value) {
       setError("Passwords do not match");
-      return;
-    }
-    if (!firstName.value) {
-      setFirstName({
-        ...firstName,
-        error: true,
-      });
-      return;
-    }
-    if (!lastName.value) {
-      setLastName({
-        ...lastName,
-        error: true,
-      });
-      return;
-    }
-    if (!email.value) {
-      setEmail({
-        ...email,
-        error: true,
-      });
-      return;
-    }
-    if (!password.value) {
-      setPassword({
-        ...password,
-        error: true,
-      });
-      return;
-    }
-    if (!confirmPassword.value) {
-      setconfirmPassword({
-        ...confirmPassword,
-        error: true,
-      });
-      return;
-    }
-
-    if (!dob.value) {
-      setDob({
-        ...dob,
-        error: true,
-      });
-      return;
-    }
-    if (!phoneNumber.value) {
-      setPhoneNumber({
-        ...phoneNumber,
-        error: true,
-      });
       return;
     }
 
@@ -207,7 +194,7 @@ const Signup = () => {
                   value: firstName.value.trim(),
                 });
               }}
-              error={firstName.error}
+              error={!!firstName.error}
               helperText={firstName.error}
               fullWidth
             />
@@ -231,7 +218,8 @@ const Signup = () => {
                   value: lastName.value.trim(),
                 });
               }}
-              error={lastName.error}
+              error={!!lastName.error}
+              helperText={lastName.error}
               fullWidth
             />
           </Grid>
@@ -254,7 +242,8 @@ const Signup = () => {
                   value: email.value.trim(),
                 });
               }}
-              error={email.error}
+              error={!!email.error}
+              helperText={email.error}
               fullWidth
             />
           </Grid>
@@ -278,7 +267,8 @@ const Signup = () => {
                   value: password.value.trim(),
                 });
               }}
-              error={password.error}
+              error={!!password.error}
+              helperText={password.error}
               fullWidth
             />
           </Grid>
@@ -302,7 +292,8 @@ const Signup = () => {
                   value: confirmPassword.value.trim(),
                 });
               }}
-              error={confirmPassword.error}
+              error={!!confirmPassword.error}
+              helperText={confirmPassword.error}
               fullWidth
             />
           </Grid>
@@ -321,7 +312,8 @@ const Signup = () => {
               maxDate={
                 new Date(new Date().setFullYear(new Date().getFullYear() - 18))
               }
-              error={dob.error}
+              error={!!dob.error}
+              helperText={dob.error}
             />
           </Grid>
 
@@ -342,7 +334,8 @@ const Signup = () => {
                   value: phoneNumber.value.trim(),
                 });
               }}
-              error={phoneNumber.error}
+              error={!!phoneNumber.error}
+              helperText={phoneNumber.error}
               type="tel"
               fullWidth
             />
@@ -359,7 +352,7 @@ const Signup = () => {
                     value: e.target.value,
                   })
                 }
-                error={gender.error}
+                error={!!gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>
                 <MenuItem value={"Female"}>Female</MenuItem>
@@ -368,12 +361,13 @@ const Signup = () => {
             </FormControl>
           </Grid>
         </Grid>
-        {/* add a gender selection field */}
 
-        <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
-          Create Account
-        </SubmitButton>
-        <Box textAlign="center">
+        <Grid item xs={12}>
+          <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
+            Create Account
+          </SubmitButton>
+        </Grid>
+        <Grid item xs={12}>
           <Button
             variant="contained"
             component={Link}
@@ -384,7 +378,7 @@ const Signup = () => {
           >
             Login
           </Button>
-        </Box>
+        </Grid>
       </Paper>
     </Box>
   );
