@@ -1,5 +1,6 @@
 import { Router } from "express";
 import User from "../models/user.js";
+import xss from "xss";
 
 import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
@@ -9,12 +10,16 @@ const router = Router();
 router.route("/login").post(loginValidator, async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+
+    const cleanEmail = xss(email);
+    const cleanPassword = xss(password);
+
+    const user = await User.findOne({ email: cleanEmail });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isPasswordCorrect = await user.verifyPassword(password);
+    const isPasswordCorrect = await user.verifyPassword(cleanPassword);
 
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
