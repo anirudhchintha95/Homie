@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
@@ -426,7 +425,7 @@ export default function UpdatePreferencesForm() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", p: 2 }} ref={headerRef}>
+    <Box sx={{ maxWidth: 400, mx: "auto" }} ref={headerRef}>
       <Paper
         component="form"
         onSubmit={handleSubmit}
@@ -437,14 +436,12 @@ export default function UpdatePreferencesForm() {
             {error ? <Alert severity="error">{error}</Alert> : <></>}
           </Grid>
 
-          <Grid item xs={12}>
-            <CityStatePicker
-              city={city}
-              state={state}
-              onCityChange={setCity}
-              onStateChange={setState}
-            />
-          </Grid>
+          <CityStatePicker
+            city={city}
+            state={state}
+            onCityChange={setCity}
+            onStateChange={setState}
+          />
 
           <Grid item xs={12}>
             <FormControl fullWidth>
@@ -600,14 +597,13 @@ export default function UpdatePreferencesForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <FormControl fullWidth>
+            <FormControl fullWidth variant="filled">
               <InputLabel>Gender</InputLabel>
               <Select
                 label="Gender"
                 multiple
                 value={gender.value}
                 onChange={handleChange}
-                input={<OutlinedInput label="Gender" />}
                 error={gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>

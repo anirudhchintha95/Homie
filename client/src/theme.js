@@ -25,6 +25,37 @@ const theme = createTheme({
       '"Segoe UI Symbol"',
     ].join(","),
   },
+  components: {
+    MuiTypography: {
+      styleOverrides: {
+        h1: {
+          fontWeight: 400,
+          fontSize: "3rem",
+          lineHeight: 1.167,
+        },
+        h2: {
+          fontWeight: 400,
+          fontSize: "2rem",
+          lineHeight: 1.2,
+        },
+        h3: {
+          fontWeight: 500,
+          fontSize: "1.25rem",
+          lineHeight: 1.6,
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: "filled",
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        variant: "filled",
+      },
+    },
+  },
 });
 
 export default theme;

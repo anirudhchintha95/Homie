@@ -33,7 +33,7 @@ const Account = () => {
 
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", mt: 2, p: 2 }} ref={headerRef}>
-      <Typography variant="h4" align="center" mb={4} color="primary">
+      <Typography variant="h1" align="center" mb={4} color="primary">
         Account
       </Typography>
 

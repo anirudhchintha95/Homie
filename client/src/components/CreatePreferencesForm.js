@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
@@ -441,7 +440,6 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
                 multiple
                 value={gender.value}
                 onChange={handleChange}
-                input={<OutlinedInput label="Gender" />}
                 error={gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>

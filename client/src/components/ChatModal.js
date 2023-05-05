@@ -11,6 +11,7 @@ import {
   ListItemText,
   Modal,
   Paper,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -93,12 +94,14 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
           elevation={3}
         >
           <NameAvatar user={user} isLarge />
-          <Typography variant="h6" color="primary">
+          <Typography variant="h3" color="primary">
             Chat History
           </Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
+          <Tooltip title="Close">
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
         </Paper>
         <Toast
           open={Boolean(toastError)}
