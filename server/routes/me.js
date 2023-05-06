@@ -15,6 +15,7 @@ import {
   validateGender,
 } from "../validators/helpers.js";
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
+import xss from "xss";
 
 const router = Router();
 
@@ -44,14 +45,21 @@ router
         .json({ error: "There are no fields in the request body" });
     }
     let { firstName, lastName, dob, phoneNumber, gender } = req.body;
+    dob = xss(dob);
     dob = new Date(dob);
     const sessionEmail = req.currentUser.email;
     try {
+      firstName = xss(firstName);
+      lastName = xss(lastName);
+      phoneNumber = xss(phoneNumber);
+      gender = xss(gender);
+
       firstName = validateString(firstName, "firstName");
       lastName = validateString(lastName, "lastName");
       dob = validateDOB(dob, "dob");
       phoneNumber = validatePhone(phoneNumber, "phoneNumber");
       gender = validateGender(gender, "gender");
+
       // if (sessionEmail != email)
       //   throw { status: 400, message: 'Email mismatch' };
     } catch (e) {
@@ -90,10 +98,13 @@ router
   .patch(updatePasswordRouteValidator, async (req, res) => {
     try {
       const { currentPassword, newPassword } = req.body;
+      const cleanCurrentPassword = xss(currentPassword);
+      const cleanNewPassword = xss(newPassword);
+
       const passwordUpdated = await userData.updatePassword(
         req.currentUser,
-        currentPassword,
-        newPassword
+        cleanCurrentPassword,
+        cleanNewPassword
       );
 
       if (!passwordUpdated) {
