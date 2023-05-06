@@ -434,7 +434,7 @@ const validateSignUp = (preferences) => {
     throw { status: 400, message: "Email must be a non-empty string" };
   }
 
-  if (!password.trim()) {
+  if (!password) {
     throw { status: 400, message: "Password must be a non-empty string" };
   }
 
@@ -482,7 +482,7 @@ const validateSignUp = (preferences) => {
     throw { status: 400, message: "Email must be a valid email address" };
   }
 
-  if (!isValidPassword(password.trim())) {
+  if (!isValidPassword(password)) {
     throw {
       status: 400,
       message:
