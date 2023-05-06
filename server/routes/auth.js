@@ -4,6 +4,7 @@ import User from "../models/user.js";
 import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
 import { signupValidator } from "../validators/signupValidator.js";
+import { validateSignUp } from "../validators/helpers.js";
 
 const router = Router();
 router.route("/login").post(loginValidator, async (req, res) => {
@@ -28,10 +29,20 @@ router.route("/login").post(loginValidator, async (req, res) => {
   }
 });
 
-router.route("/signup").post(signupValidator, async (req, res) => {
+router.route("/signup").post(async (req, res) => {
   try {
     const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
+
+    validateSignUp({
+      firstName,
+      lastName,
+      email,
+      password,
+      dateOfBirth,
+      phone,
+      gender,
+    });
 
     const user = await auth.signup(
       firstName,

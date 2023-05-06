@@ -13,6 +13,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { validateDOB } from "../helpers";
 
 import useAuth from "../useAuth";
 import { sigunpApi } from "../api/auth";
@@ -63,7 +64,6 @@ const Signup = () => {
 
   const validateForm = () => {
     if (!firstName.value) {
-      //errorFields.push("firstName");
       setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
       return;
     }
@@ -87,15 +87,26 @@ const Signup = () => {
       return;
     }
 
-    // if (!dob.value) {
-    //   setDob((prev) => ({ ...prev, error: "Date of Birth is required" }));
-    //   return;
-    // }
+    if (!dob.value) {
+      setDob((prev) => ({ ...prev, error: true }));
+      setError("Date of Birth is required");
+      return;
+    }
     if (!phoneNumber.value) {
       setPhoneNumber((prev) => ({
         ...prev,
         error: "Phone Number is required",
       }));
+      return;
+    }
+
+    if (
+      gender.value !== "Male" &&
+      gender.value !== "Female" &&
+      gender.value !== "Non-Binary"
+    ) {
+      setGender((prev) => ({ ...prev, error: true }));
+      setError("Error: Gender should be either Male, Female or Non-Binary");
       return;
     }
 
@@ -112,11 +123,89 @@ const Signup = () => {
       return;
     }
 
-    if (password.value !== confirmPassword.value) {
-      setError("Passwords do not match");
+    if (!/^[a-zA-Z\s]*$/.test(firstName.value)) {
+      setFirstName((prev) => ({
+        ...prev,
+        error: "First Name should contain only alphabets",
+      }));
       return;
     }
 
+    if (!/^[a-zA-Z\s]*$/.test(lastName.value)) {
+      setLastName((prev) => ({
+        ...prev,
+        error: "Last Name should contain only alphabets",
+      }));
+      return;
+    }
+
+    if (firstName.value.length > 25) {
+      setFirstName((prev) => ({
+        ...prev,
+        error: "First Name should be less than 25 characters",
+      }));
+      return;
+    }
+
+    if (lastName.value.length > 25) {
+      setLastName((prev) => ({
+        ...prev,
+        error: "Last Name should be less than 25 characters",
+      }));
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+      setEmail((prev) => ({ ...prev, error: "Invalid Email" }));
+      return;
+    }
+
+    if (
+      !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
+        password.value
+      )
+    ) {
+      setPassword((prev) => ({
+        ...prev,
+        error:
+          "Password should contain atleast 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character",
+      }));
+      return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      setPassword((prev) => ({ ...prev, error: "Passwords do not match" }));
+      setconfirmPassword((prev) => ({
+        ...prev,
+        error: "Passwords do not match",
+      }));
+      return;
+    }
+
+    let dateValid = validateDOB(dob.value);
+    if (!dateValid.isValid) {
+      setDob((prev) => ({ ...prev, error: true }));
+      setError(dateValid.error);
+      return;
+    }
+
+    if (!/^[0-9]*$/.test(phoneNumber.value)) {
+      setPhoneNumber((prev) => ({
+        ...prev,
+        error: "Phone Number should contain only numbers",
+      }));
+      return;
+    }
+
+    if (phoneNumber.value.length !== 10) {
+      setPhoneNumber((prev) => ({
+        ...prev,
+        error: "Phone Number should be 10 digits",
+      }));
+      return;
+    }
+
+    setError("");
     return true;
   };
 

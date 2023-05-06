@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import PasswordService from "../services/password-service.js";
 import { loginValidator } from "../validators/loginValidator.js";
 import { signupValidator } from "../validators/signupValidator.js";
+import { validateSignUp } from "../validators/helpers.js";
 
 export const login = async (email, password) => {
   loginValidator(email, password);
@@ -17,7 +18,18 @@ export const signup = async (
   phone,
   gender
 ) => {
-  //signupValidator(email, password);
+  //signupValidator(firstName, lastName, email, password, dateOfBirth, phone, gender);
+
+  validateSignUp({
+    firstName,
+    lastName,
+    email,
+    password,
+    dateOfBirth,
+    phone,
+    gender,
+  });
+
   const userExists = await User.findOne({ email: email });
   if (userExists) {
     throw { status: 400, message: "User already exists" };
