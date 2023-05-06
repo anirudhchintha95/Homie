@@ -1,4 +1,16 @@
 import { DateTime } from "luxon";
+import { GENDERS } from "./contants";
+
+const genderValues = Object.values(GENDERS);
+
+export const getMinAndMaxDatesForDOB = () => {
+  const eighteenYearsAgo = DateTime.now().minus({ years: 18 });
+  const oneHundredYearsAgo = DateTime.now().minus({ years: 100 });
+  return {
+    minDate: oneHundredYearsAgo.toJSDate(),
+    maxDate: eighteenYearsAgo.toJSDate(),
+  };
+};
 
 export const validateEmail = (email) => {
   if (!email) {
@@ -55,5 +67,48 @@ export const validateDOB = (dob) => {
       error: "You must be less than 100 years old to register.",
     };
   }
+  return { isValid: true, error: "" };
+};
+
+export const validatePhoneNumber = (phoneNumber) => {
+  if (!phoneNumber) {
+    return { isValid: false, error: "Phone number is required." };
+  }
+  if (!/^[1-9]\d{9}$/.test(phoneNumber)) {
+    return {
+      isValid: false,
+      error: "Phone number must be 10 digits long and should not start with 0.",
+    };
+  }
+  return { isValid: true, error: "" };
+};
+
+export const validateName = (name, varName = "Name") => {
+  if (!name) {
+    return { isValid: false, error: `${varName} is required.` };
+  }
+
+  if (!/^[a-zA-Z\s]{2,25}$/.test(name)) {
+    return {
+      isValid: false,
+      error: `${varName} must be between 2 and 25 characters long and contain only letters.`,
+    };
+  }
+
+  return { isValid: true, error: "" };
+};
+
+export const validateGender = (gender) => {
+  if (!gender) {
+    return { isValid: false, error: "Gender is required" };
+  }
+
+  if (!genderValues.includes(gender)) {
+    return {
+      isValid: false,
+      error: `Gender must be one of ${genderValues.join(", ")}.`,
+    };
+  }
+
   return { isValid: true, error: "" };
 };

@@ -13,12 +13,20 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { validateDOB } from "../helpers";
+import {
+  getMinAndMaxDatesForDOB,
+  validateDOB,
+  validateEmail,
+  validateGender,
+  validateName,
+  validatePassword,
+  validatePhoneNumber,
+} from "../helpers";
+import { GENDERS } from "../contants";
 
 import useAuth from "../useAuth";
 import { sigunpApi } from "../api/auth";
-import { SubmitButton } from "../components";
-import DatePicker from "../components/DatePicker";
+import { SubmitButton, DatePicker } from "../components";
 
 const Signup = () => {
   const auth = useAuth();
@@ -45,7 +53,7 @@ const Signup = () => {
     error: false,
     value: "",
   });
-  const [confirmPassword, setconfirmPassword] = useState({
+  const [confirmPassword, setConfirmPassword] = useState({
     error: false,
     value: "",
   });
@@ -80,13 +88,12 @@ const Signup = () => {
       return;
     }
     if (!confirmPassword.value) {
-      setconfirmPassword((prev) => ({
+      setConfirmPassword((prev) => ({
         ...prev,
         error: "Confirm Password is required",
       }));
       return;
     }
-
     if (!dob.value) {
       setDob((prev) => ({ ...prev, error: true }));
       setError("Date of Birth is required");
@@ -99,14 +106,8 @@ const Signup = () => {
       }));
       return;
     }
-
-    if (
-      gender.value !== "Male" &&
-      gender.value !== "Female" &&
-      gender.value !== "Non-Binary"
-    ) {
-      setGender((prev) => ({ ...prev, error: true }));
-      setError("Error: Gender should be either Male, Female or Non-Binary");
+    if (!gender.value) {
+      setGender((prev) => ({ ...prev, error: "Gender is required" }));
       return;
     }
 
@@ -123,85 +124,61 @@ const Signup = () => {
       return;
     }
 
-    if (!/^[a-zA-Z\s]*$/.test(firstName.value)) {
-      setFirstName((prev) => ({
-        ...prev,
-        error: "First Name should contain only alphabets",
-      }));
+    const firstNameValidator = validateName(
+      firstName.value?.trim(),
+      "First Name"
+    );
+    if (!firstNameValidator.isValid) {
+      setFirstName((prev) => ({ ...prev, error: firstNameValidator.error }));
       return;
     }
 
-    if (!/^[a-zA-Z\s]*$/.test(lastName.value)) {
-      setLastName((prev) => ({
-        ...prev,
-        error: "Last Name should contain only alphabets",
-      }));
+    const lastNameValidaor = validateName(lastName.value?.trim(), "Last Name");
+    if (!lastNameValidaor.isValid) {
+      setLastName((prev) => ({ ...prev, error: lastNameValidaor.error }));
       return;
     }
 
-    if (firstName.value.length > 25) {
-      setFirstName((prev) => ({
-        ...prev,
-        error: "First Name should be less than 25 characters",
-      }));
+    const emailValidator = validateEmail(email.value);
+    if (!emailValidator.isValid) {
+      setEmail((prev) => ({ ...prev, error: emailValidator.error }));
       return;
     }
 
-    if (lastName.value.length > 25) {
-      setLastName((prev) => ({
-        ...prev,
-        error: "Last Name should be less than 25 characters",
-      }));
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-      setEmail((prev) => ({ ...prev, error: "Invalid Email" }));
-      return;
-    }
-
-    if (
-      !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-        password.value
-      )
-    ) {
-      setPassword((prev) => ({
-        ...prev,
-        error:
-          "Password should contain atleast 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character",
-      }));
+    const passwordValidator = validatePassword(password.value);
+    if (!passwordValidator.isValid) {
+      setPassword((prev) => ({ ...prev, error: passwordValidator.error }));
       return;
     }
 
     if (password.value !== confirmPassword.value) {
       setPassword((prev) => ({ ...prev, error: "Passwords do not match" }));
-      setconfirmPassword((prev) => ({
+      setConfirmPassword((prev) => ({
         ...prev,
         error: "Passwords do not match",
       }));
       return;
     }
 
-    let dateValid = validateDOB(dob.value);
+    const dateValid = validateDOB(dob.value);
     if (!dateValid.isValid) {
       setDob((prev) => ({ ...prev, error: true }));
       setError(dateValid.error);
       return;
     }
 
-    if (!/^[0-9]*$/.test(phoneNumber.value)) {
+    const phoneValidator = validatePhoneNumber(phoneNumber.value?.trim());
+    if (!phoneValidator.isValid) {
       setPhoneNumber((prev) => ({
         ...prev,
-        error: "Phone Number should contain only numbers",
+        error: phoneValidator.error,
       }));
       return;
     }
 
-    if (phoneNumber.value.length !== 10) {
-      setPhoneNumber((prev) => ({
-        ...prev,
-        error: "Phone Number should be 10 digits",
-      }));
+    const genderValidator = validateGender(gender.value);
+    if (!genderValidator.isValid) {
+      setGender((prev) => ({ ...prev, error: genderValidator.error }));
       return;
     }
 
@@ -365,13 +342,13 @@ const Signup = () => {
               value={confirmPassword.value}
               onChange={(e) => {
                 const value = e.target.value;
-                setconfirmPassword({
+                setConfirmPassword({
                   error: false,
                   value,
                 });
               }}
               onBlur={() => {
-                setconfirmPassword({
+                setConfirmPassword({
                   error: false,
                   value: confirmPassword.value.trim(),
                 });
@@ -392,10 +369,7 @@ const Signup = () => {
                   value: new Date(date),
                 })
               }
-              // min date is 18 years ago
-              maxDate={
-                new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-              }
+              {...getMinAndMaxDatesForDOB()}
               error={!!dob.error}
               helperText={dob.error}
             />
@@ -437,16 +411,16 @@ const Signup = () => {
                 }
                 error={!!gender.error}
               >
-                <MenuItem value={"Male"}>Male</MenuItem>
-                <MenuItem value={"Female"}>Female</MenuItem>
-                <MenuItem value={"Non-Binary"}>Non-Binary</MenuItem>
+                {Object.values(GENDERS).map((gender) => (
+                  <MenuItem value={gender}>{gender}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
 
         <Grid item xs={12}>
-          <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
+          <SubmitButton loading={loading} fullWidth>
             Create Account
           </SubmitButton>
         </Grid>
@@ -455,9 +429,9 @@ const Signup = () => {
             variant="contained"
             component={Link}
             to="/login"
-            sx={{ mt: 2 }}
             color="secondary"
             fullWidth
+            disabled={loading}
           >
             Login
           </Button>
