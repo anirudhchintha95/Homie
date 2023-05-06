@@ -444,105 +444,18 @@ const validatePreferencesBE = (preferences) => {
 };
 
 const validateSignUp = (preferences) => {
-  const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
+  let { firstName, lastName, email, password, dateOfBirth, phone, gender } =
     preferences;
 
-  if (!firstName.trim()) {
-    throw { status: 400, message: "First name must be a non-empty string" };
-  }
+  firstName = validateName(firstName, "First Name");
+  lastName = validateName(lastName, "Last Name");
+  email = validateEmail(email);
+  password = validatePassword(password);
+  dateOfBirth = validateDOB(dateOfBirth);
+  phone = validatePhone(phone);
+  gender = validateGender(gender);
 
-  if (!lastName.trim()) {
-    throw { status: 400, message: "Last name must be a non-empty string" };
-  }
-
-  if (!email.trim()) {
-    throw { status: 400, message: "Email must be a non-empty string" };
-  }
-
-  if (!password) {
-    throw { status: 400, message: "Password must be a non-empty string" };
-  }
-
-  if (!dateOfBirth) {
-    throw { status: 400, message: "Date of birth is required" };
-  }
-
-  if (!phone.trim()) {
-    throw { status: 400, message: "Phone number is required" };
-  }
-
-  if (!gender.trim()) {
-    throw { status: 400, message: "Gender is required" };
-  }
-
-  if (!/^[a-zA-Z\s]*$/.test(firstName.trim())) {
-    throw {
-      status: 400,
-      message: "First name must contain only letters and spaces",
-    };
-  }
-
-  if (!/^[a-zA-Z\s]*$/.test(lastName.trim())) {
-    throw {
-      status: 400,
-      message: "Last name must contain only letters and spaces",
-    };
-  }
-
-  if (firstName.trim().length > 25) {
-    throw {
-      status: 400,
-      message: "First name must be less than 25 characters",
-    };
-  }
-
-  if (lastName.trim().length > 25) {
-    throw {
-      status: 400,
-      message: "Last name must be less than 25 characters",
-    };
-  }
-
-  if (!isValidEmail(email.trim())) {
-    throw { status: 400, message: "Email must be a valid email address" };
-  }
-
-  if (!isValidPassword(password)) {
-    throw {
-      status: 400,
-      message:
-        "Password must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character.",
-    };
-  }
-
-  if (!validateDOB(dateOfBirth)) {
-    throw { status: 400, message: "Date of birth must be a valid date" };
-  }
-
-  if (!/^[0-9]*$/.test(phone.trim())) {
-    throw {
-      status: 400,
-      message: "Phone number must contain only numbers",
-    };
-  }
-
-  if (phone.trim().length !== 10) {
-    throw {
-      status: 400,
-      message: "Phone number must be 10 digits long",
-    };
-  }
-
-  if (
-    gender.trim() !== "Male" &&
-    gender.trim() !== "Female" &&
-    gender.trim() !== "Non-Binary"
-  ) {
-    throw {
-      status: 400,
-      message: "Gender must be Male, Female or Non-Binary",
-    };
-  }
+  return { firstName, lastName, email, password, dateOfBirth, phone, gender };
 };
 
 const validateName = (name, varName = "Name") => {

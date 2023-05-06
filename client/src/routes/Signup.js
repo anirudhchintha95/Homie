@@ -202,12 +202,12 @@ const Signup = () => {
       setLoading(true);
 
       const res = await sigunpApi(
-        firstName.value.trim(),
-        lastName.value.trim(),
-        email.value.trim().toLowerCase(),
+        firstName.value,
+        lastName.value,
+        email.value,
         password.value,
         dob.value,
-        phoneNumber.value.trim(),
+        phoneNumber.value,
         gender.value
       );
 
