@@ -73,9 +73,7 @@ const checkBoolean = (value) => {
   return false;
 };
 
-const validateString = (value, name, opts = {}) => {
-  const { minLength, maxLength } = opts || { minLength: 1 };
-
+const validateString = (value, name, { minLength = 1, maxLength } = {}) => {
   if (!value) {
     throw { status: 400, message: `${name} is required!` };
   }
@@ -547,6 +545,19 @@ const validateSignUp = (preferences) => {
   }
 };
 
+const validateName = (name, varName = "Name") => {
+  name = validateString(name, varName);
+
+  if (!/^[a-zA-Z\s]{2,25}$/.test(name)) {
+    throw {
+      status: 400,
+      message: `${varName} must be between 2 and 25 characters long and contain only letters.`,
+    };
+  }
+
+  return name;
+};
+
 export {
   isValidEmail,
   isValidPassword,
@@ -562,4 +573,5 @@ export {
   validateEmail,
   validatePreferencesBE,
   validateSignUp,
+  validateName,
 };
