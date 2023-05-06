@@ -90,7 +90,9 @@ export const sendMessage = async (currentUser, homieId, message) => {
 
   await connection.save();
 
-  return connection;
+  return await Connection.findByUserIds(homie._id, currentUser._id, {
+    display: true,
+  });
 };
 
 export const getHomie = async (currentUser, homieId) => {

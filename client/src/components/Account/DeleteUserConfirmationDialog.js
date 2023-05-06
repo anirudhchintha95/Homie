@@ -80,7 +80,6 @@ const DeleteUserConfirmationDialog = ({
             undone.
           </DialogContentText>
           <TextField
-            variant="outlined"
             type="email"
             label="Confirm Email"
             value={email.value}

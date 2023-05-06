@@ -18,9 +18,7 @@ export const createPreferences = async (preferences, email) => {
 
   let validatePref = validatePreferencesBE(preferences);
 
-  let userLocation = {};
-
-  userLocation = {
+  const userLocation = {
     city: city,
     state: state,
   };
@@ -96,15 +94,10 @@ export const updatePreferences = async (preferences, email) => {
 
   let validatePref = validatePreferencesBE(preferences);
 
-  let userLocation = {};
-
-  if (typeof city !== "undefined") {
-    userLocation.city = city;
-  }
-
-  if (typeof state !== "undefined") {
-    userLocation.state = state;
-  }
+  const userLocation = {
+    city,
+    state
+  };
 
   const newPref = {};
   const deletePref = {};

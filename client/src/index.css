@@ -126,3 +126,7 @@ code {
   color: #3E6765!important;
   text-decoration: underline;
 }
+
+input[type="file"] {
+  padding-top: 8px
+}
