@@ -112,18 +112,18 @@ export const blockUser = async (userId, userBeingBlockedId) => {
       const currentUserIndex = connection.users.findIndex(
         (user) => user.userId.toString() === userId
       );
-      if (connection.users[currentUserIndex].status === "blocked") {
+      if (connection.users[currentUserIndex].status === CONNECTION_STATUSES.BLOCKED) {
         throw {
           status: 400,
           message: "Error: Current user already has the status blocked",
         };
       }
-      connection.users[currentUserIndex].status = "blocked";
+      connection.users[currentUserIndex].status = CONNECTION_STATUSES.BLOCKED;
       await connection.save();
     } else {
       const newConnection = new Connection({
         users: [
-          { userId: userId, status: "blocked" },
+          { userId: userId, status: CONNECTION_STATUSES.BLOCKED },
           { userId: userBeingBlockedId, status: null },
         ],
       });
@@ -161,4 +161,45 @@ export const toggleShowUserData = async (currentUserId, homieId) => {
 
   await connection.save();
   return connection;
+};
+
+export const removeMatch = async (userId, userBeingViewedId) => {
+  try {
+    if (!isValidObjectId(userBeingViewedId) || !isValidObjectId(userId)) {
+      throw { status: 400, message: "Error: Invalid user ID" };
+    }
+
+    const connection = await Connection.findByUserIds(
+      userId,
+      userBeingViewedId
+    );
+
+    if (connection) {
+      const currentUserIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userId
+      );
+      const userBeingViewedIndex = connection.users.findIndex(
+        (user) => user.userId.toString() === userBeingViewedId
+      );
+      if (
+        connection.users[currentUserIndex].status === CONNECTION_STATUSES.FAVORITE &&
+        connection.users[userBeingViewedIndex].status === CONNECTION_STATUSES.FAVORITE
+      ) {
+        connection.users[currentUserIndex].status = CONNECTION_STATUSES.IGNORED;
+        connection.users[currentUserIndex].showUserData = false;
+        connection.users[userBeingViewedIndex].showUserData = false;
+        await connection.save();
+      } else {
+        throw {
+          status: 400,
+          message:
+            "Error: Both users must have the status favorite to be a match",
+        };
+      }
+    } else {
+      throw { status: 400, message: "Error: Connection not found" };
+    }
+  } catch (err) {
+    throw err;
+  }
 };

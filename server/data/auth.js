@@ -18,6 +18,10 @@ export const signup = async (
   gender
 ) => {
   //signupValidator(email, password);
+  const userExists = await User.findOne({ email: email });
+  if (userExists) {
+    throw { status: 400, message: "User already exists" };
+  }
   try {
     const encryptedPassword = await new PasswordService(password).encrypt();
     const user = await User.create({
@@ -32,6 +36,6 @@ export const signup = async (
 
     return user;
   } catch (error) {
-    throw { status: 400, message: error.toString() };
+    throw { status: 400, message: error.message };
   }
 };

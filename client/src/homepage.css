@@ -1,0 +1,159 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.description {
+  font-family: Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 50rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.description:hover:after {
+  content: "✅";
+  font-size: 1.5rem;
+  position: fixed;
+}
+
+.first-paragraph {
+  font-family: Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 50rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.first-paragraph:hover:after {
+  content: "🤝";
+  font-size: 1.5rem;
+  position: fixed;
+}
+
+.second-paragraph {
+  font-family: Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 50rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.second-paragraph:hover:after {
+  content: "🔍";
+  font-size: 1.5rem;
+  position: fixed;
+}
+
+.third-paragraph {
+  font-family: Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 50rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.third-paragraph:hover:after {
+  content: "🚪";
+  font-size: 1.5rem;
+  position: fixed;
+}
+
+.fourth-paragraph {
+  font-family: Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 50rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.fourth-paragraph:hover:after {
+  content: "\1F6AA";
+  font-size: 1.5rem;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.signup-button {
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #a2f8a2;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.signup-button:active {
+  background-color: #f29f05;
+  transform: translateY(5px);
+}
+
+.signup-button:hover {
+  background-color: #f2b705;
+}
+
+.login-button {
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #3d9970;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.login-button:active {
+  background-color: #f29f05;
+  transform: translateY(5px);
+}
+
+.login-button:hover {
+  background-color: #f2b705;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  padding: 2rem;
+}
+
+.footer-text {
+  font-size: 1.25rem;
+}
+
+.footer-link {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-link:hover {
+  color: #f2b705;
+}

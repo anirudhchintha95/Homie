@@ -18,12 +18,12 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ChatIcon from "@mui/icons-material/Chat";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
-import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import LockIcon from "@mui/icons-material/Lock";
 
-import { fetchHomieApi } from "../api/homies";
+import { fetchHomieApi, toggleContactInfoApi } from "../api/homies";
 import { getFullName } from "../utils";
 
 import {
@@ -32,6 +32,8 @@ import {
   ChatModal,
   PageError,
   DisplayImage,
+  ConnectionIcon,
+  Toast,
 } from "../components";
 import { CONNECTION_STATUSES } from "../contants";
 
@@ -46,6 +48,7 @@ const HomieInfo = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const [toastError, setToastError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openChatModal, setOpenChatModal] = useState(false);
 
@@ -81,12 +84,32 @@ const HomieInfo = () => {
     return user.connection?.currentUser?.status;
   }, [user]);
 
+  const handleToggleContactsVisibility = async () => {
+    try {
+      const data = await toggleContactInfoApi(id);
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...data,
+      }));
+    } catch (err) {
+      setToastError(
+        err?.response?.data?.message || err.message || "Could not fetch user"
+      );
+    }
+  };
+
   return loading ? (
     <Loader />
   ) : error ? (
-    <PageError onRefresh={fetchUser}>{error}</PageError>
+    <PageError onRefresh={() => fetchUser(id)}>{error}</PageError>
   ) : (
     <Box>
+      <Toast
+        open={!!toastError}
+        handleClose={() => setToastError()}
+        message={toastError}
+        variant="error"
+      />
       <ChatModal
         user={user}
         messages={user?.connection?.messages}
@@ -126,9 +149,12 @@ const HomieInfo = () => {
         alignItems="center"
       >
         <Box textAlign="center" marginBottom={2}>
-          <Typography variant="h3" color="primary">
-            {getFullName(user)}
-          </Typography>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h3" color="primary" mr={1}>
+              {getFullName(user)}
+            </Typography>
+            <ConnectionIcon status={status} />
+          </Box>
           <Typography variant="h6" color="primary.light">
             {user.gender} | {user.age} YO
           </Typography>
@@ -141,45 +167,136 @@ const HomieInfo = () => {
           alignItems="center"
           flexDirection="column"
         >
-          <Box display="flex" alignItems="center" marginBottom={2}>
-            <Box display="flex" alignItems="center">
-              <Tooltip title="Location">
-                <StyledAvatar>
-                  <EmailIcon />
-                </StyledAvatar>
-              </Tooltip>
-              <Typography
-                variant="h6"
-                color="primary"
-                marginLeft={1}
-                sx={{ display: { xs: "none", sm: "inline" } }}
+          {user.email && user.phone ? (
+            <>
+              <Box
+                display="flex"
+                flexDirection="column"
+                sx={{ display: { xs: "flex", sm: "none" } }}
               >
-                Email:
-              </Typography>
-              <Typography variant="h6" color="primary" marginLeft={0.5}>
-                {user.email || "N/A"}
-              </Typography>
-            </Box>
-            <Divider sx={{ height: 28, m: 1 }} orientation="vertical" />
-            <Box display="flex" alignItems="center">
-              <Tooltip title="Location">
-                <StyledAvatar>
-                  <PhoneIcon />
-                </StyledAvatar>
-              </Tooltip>
-              <Typography
-                variant="h6"
-                color="primary"
-                marginLeft={1}
-                sx={{ display: { xs: "none", sm: "inline" } }}
+                <Box display="flex" alignItems="center" marginBottom={2}>
+                  <Tooltip title="Email">
+                    <StyledAvatar>
+                      <EmailIcon />
+                    </StyledAvatar>
+                  </Tooltip>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    marginLeft={1}
+                    sx={{ display: { xs: "none", sm: "inline" } }}
+                  >
+                    Email:
+                  </Typography>
+                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                    {user.email}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Phone">
+                    <StyledAvatar>
+                      <PhoneIcon />
+                    </StyledAvatar>
+                  </Tooltip>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    marginLeft={1}
+                    sx={{ display: { xs: "none", sm: "inline" } }}
+                  >
+                    Phone:
+                  </Typography>
+                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                    {user.phone}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom={2}
+                sx={{ display: { xs: "none", sm: "flex" } }}
               >
-                Phone:
-              </Typography>
-              <Typography variant="h6" color="primary" marginLeft={0.5}>
-                {user.phone || "N/A"}
-              </Typography>
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Email">
+                    <StyledAvatar>
+                      <EmailIcon />
+                    </StyledAvatar>
+                  </Tooltip>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    marginLeft={1}
+                    sx={{ display: { xs: "none", sm: "inline" } }}
+                  >
+                    Email:
+                  </Typography>
+                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                    {user.email || "N/A"}
+                  </Typography>
+                </Box>
+                <Divider sx={{ height: 28, m: 1 }} orientation="vertical" />
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Phone">
+                    <StyledAvatar>
+                      <PhoneIcon />
+                    </StyledAvatar>
+                  </Tooltip>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    marginLeft={1}
+                    sx={{ display: { xs: "none", sm: "inline" } }}
+                  >
+                    Phone:
+                  </Typography>
+                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                    {user.phone || "N/A"}
+                  </Typography>
+                </Box>
+              </Box>
+            </>
+          ) : (
+            <Box display="flex" alignItems="center" marginBottom={2}>
+              <Box display="flex" alignItems="center">
+                <Tooltip title="Email">
+                  <StyledAvatar>
+                    <EmailIcon />
+                  </StyledAvatar>
+                </Tooltip>
+                <Typography
+                  variant="h6"
+                  color="primary"
+                  marginLeft={1}
+                  sx={{ display: { xs: "none", sm: "inline" } }}
+                >
+                  Email:
+                </Typography>
+                <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  {user.email || "N/A"}
+                </Typography>
+              </Box>
+              <Divider sx={{ height: 28, m: 1 }} orientation="vertical" />
+              <Box display="flex" alignItems="center">
+                <Tooltip title="Phone">
+                  <StyledAvatar>
+                    <PhoneIcon />
+                  </StyledAvatar>
+                </Tooltip>
+                <Typography
+                  variant="h6"
+                  color="primary"
+                  marginLeft={1}
+                  sx={{ display: { xs: "none", sm: "inline" } }}
+                >
+                  Phone:
+                </Typography>
+                <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  {user.phone || "N/A"}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
+          )}
           {!user.phone || !user.email ? (
             <Typography variant="overline">
               *
@@ -194,17 +311,21 @@ const HomieInfo = () => {
             <Button
               variant="outlined"
               startIcon={
-                user.myContactsVisible ? <PersonOffIcon /> : <PersonIcon />
+                user.connection?.currentUser?.showUserData ? (
+                  <LockIcon />
+                ) : (
+                  <LockOpenIcon />
+                )
               }
               sx={{
                 border: "2px solid",
                 borderColor: "primary",
                 marginTop: 2,
               }}
-              // onClick={onClick}
+              onClick={handleToggleContactsVisibility}
               disabled={loading}
             >
-              {user.myContactsVisible
+              {user.connection?.currentUser?.showUserData
                 ? "Hide my contact info"
                 : "Show my contact info"}
             </Button>

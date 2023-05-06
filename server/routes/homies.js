@@ -4,13 +4,16 @@ import { homiesData } from "../data/index.js";
 import { addFavoriteValidator } from "../validators/addFavoriteValidator.js";
 import { removeFavoriteValidator } from "../validators/removeFavoriteValidator.js";
 import linkedHomiesRouteValidator from "../validators/linkedHomiesValidator.js";
+import { removeMatchValidator } from "../validators/removeMatchValidator.js";
 import { blockUserValidator } from "../validators/blockUserValidator.js";
+
 import { formatUserListResponse, formatUserToResponse } from "../utils.js";
 import { validateId, validateString } from "../validators/helpers.js";
 import {
   removeFavorite,
   addFavorite,
   toggleShowUserData,
+  removeMatch,
   blockUser,
 } from "../data/connections.js";
 
@@ -56,8 +59,10 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
   try {
     let { id } = req.params;
     let { message } = req.body;
+
     id = validateId(id, "homieId");
-    message = validateString(message, "message", { maxLength: 20 });
+    message = validateString(message, "message", { maxLength: 250 });
+
     const connection = await homiesData.sendMessage(
       req.currentUser,
       id,
@@ -107,6 +112,24 @@ homiesRouter
     }
   });
 
+homiesRouter
+  .route("/:id/remove-match")
+  .patch(removeMatchValidator, async (req, res) => {
+    const userBeingViewed = req.params.id;
+    const currentUserId = req.currentUser._id.toString();
+
+    try {
+      await removeMatch(currentUserId, userBeingViewed);
+
+      const updatedUser = await homiesData.getHomie(
+        req.currentUser,
+        userBeingViewed
+      );
+      res.json({ user: await formatUserToResponse(req, updatedUser) });
+    } catch (error) {
+      return res.status(error.status || 500).json({ error: error.message });
+    }
+  });
 homiesRouter.route("/:id/block").post(blockUserValidator, async (req, res) => {
   const userBeingBlocked = req.params.id;
   const currentUserId = req.currentUser._id.toString();
