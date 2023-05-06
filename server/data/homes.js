@@ -22,10 +22,14 @@ export const getAllHomeImagesOfUser = async (userId) => {
     const homes = await getHomes(userId);
     const imagesArray = [];
     for (let home of homes) {
-      let tempImageArray = await Image.find({
-        imageableId: home._id,
-        imageableType: "Home",
-      });
+      let tempImageArray = await Image.aggregate([
+        {
+          $match: {
+            imageableId: home._id,
+            imageableType: "Home",
+          },
+        },
+      ]);
       imagesArray.concat(tempImageArray);
     }
     return imagesArray;

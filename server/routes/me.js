@@ -34,8 +34,8 @@ router
         .json({ user: await formatUserToResponse(req, userDetails) });
     } catch (e) {
       return e.status
-        ? res.status(e.status).json(e.message)
-        : res.status(500).json("Internal server error");
+        ? res.status(e.status).json({ error: e.message })
+        : res.status(500).json({ error: "Internal server error" });
     }
   })
   .patch(async (req, res) => {

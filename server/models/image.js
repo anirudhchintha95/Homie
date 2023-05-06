@@ -31,6 +31,18 @@ const ImageSchema = new Schema(
   },
   {
     timestamps: true,
+    statics: {
+      async ofUser(userId) {
+        return await this.aggregate([
+          {
+            $match: {
+              imageableType: "User",
+              imageableId: userId,
+            },
+          },
+        ]);
+      },
+    },
     methods: {},
   }
 );

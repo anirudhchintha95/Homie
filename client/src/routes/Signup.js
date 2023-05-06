@@ -417,24 +417,24 @@ const Signup = () => {
               </Select>
             </FormControl>
           </Grid>
-        </Grid>
 
-        <Grid item xs={12}>
-          <SubmitButton loading={loading} fullWidth>
-            Create Account
-          </SubmitButton>
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            component={Link}
-            to="/login"
-            color="secondary"
-            fullWidth
-            disabled={loading}
-          >
-            Login
-          </Button>
+          <Grid item xs={12}>
+            <SubmitButton loading={loading} fullWidth>
+              Create Account
+            </SubmitButton>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              component={Link}
+              to="/login"
+              color="secondary"
+              fullWidth
+              disabled={loading}
+            >
+              Login
+            </Button>
+          </Grid>
         </Grid>
       </Paper>
     </Box>

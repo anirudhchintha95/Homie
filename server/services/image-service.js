@@ -1,17 +1,71 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Image } from "../models/index.js";
 import { unlink } from "node:fs/promises";
+
+let _s3_client;
+
+class S3Service {
+  constructor() {
+    this.client = S3Service.getS3Client();
+  }
+
+  static getS3Client() {
+    if (!_s3_client) {
+      _s3_client = new S3Client({ region: process.env.AWS_S3_REGION });
+    }
+    return _s3_client;
+  }
+
+  async getPresignedUrl(key) {
+    if (!key) {
+      throw { status: 400, message: "Missing key field for getting URL" };
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: key,
+    });
+    try {
+      return getSignedUrl(this.client, command, { expiresIn: 3600 });
+    } catch (e) {
+      console.log({ status: 400, message: "Could not get presigned URL" });
+      return;
+    }
+  }
+
+  async deleteObject(key) {
+    if (!key) {
+      throw { status: 400, message: "Missing key field for deleting object" };
+    }
+
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: key,
+    });
+    try {
+      return await this.client.send(command);
+    } catch (e) {
+      console.log({ status: 400, message: "Could not delete object" });
+      return;
+    }
+  }
+}
 
 class ImageService {
   static s3Enabled() {
     return (
       process.env.AWS_S3_BUCKET &&
       process.env.AWS_S3_REGION &&
-      process.env.AWS_S3_ACCESS_KEY_ID &&
-      process.env.AWS_S3_SECRET_ACCESS_KEY
+      process.env.AWS_ACCESS_KEY_ID &&
+      process.env.AWS_SECRET_ACCESS_KEY
     );
   }
+
   static async createImage({ file, imageableType, imageableId }) {
     if (!file || !imageableType || !imageableId) {
       throw { status: 400, message: "Missing required fields" };
@@ -23,15 +77,16 @@ class ImageService {
       filename = file.filename;
     }
 
-    // If an image is already created for this model, delete it
-
-    const existingImages = await Image.find({
-      imageableType,
-      imageableId,
-    });
+    const existingImages = await Image.aggregate([
+      {
+        $match: {
+          imageableType,
+          imageableId,
+        },
+      },
+    ]);
 
     if (existingImages) {
-      // await Image.deleteOne({ _id: existingImage._id });
       await ImageService.deleteImages(existingImages);
     }
 
@@ -50,23 +105,6 @@ class ImageService {
     return image;
   }
 
-  static async getPresignedUrl(key) {
-    if (!ImageService.s3Enabled()) {
-      throw { status: 500, message: "AWS S3 is not configured" };
-    }
-
-    if (!key) {
-      throw { status: 400, message: "Missing key field for getting URL" };
-    }
-
-    const client = new S3Client({ region: process.env.AWS_S3_REGION });
-    const command = new GetObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET,
-      Key: key,
-    });
-    return getSignedUrl(client, command, { expiresIn: 3600 });
-  }
-
   static async getImagePresignedUrls(images) {
     if (!ImageService.s3Enabled()) {
       throw { status: 500, message: "AWS S3 is not configured" };
@@ -75,7 +113,7 @@ class ImageService {
 
     const urls = await Promise.all(
       images.map(async (image) => {
-        const url = await ImageService.getPresignedUrl(image.filename);
+        const url = await new S3Service().getPresignedUrl(image.filename);
         return { url, ...image };
       })
     );
@@ -106,7 +144,9 @@ class ImageService {
     if (!images) return [];
 
     if (ImageService.s3Enabled()) {
-      //TODO
+      for (let image of images) {
+        await new S3Service().deleteObject(image.filename);
+      }
     } else {
       const directoryPath = __basedir + "/uploads/";
       for (let i of images) {
