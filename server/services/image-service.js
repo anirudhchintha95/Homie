@@ -108,8 +108,8 @@ class ImageService {
     if (ImageService.s3Enabled()) {
       //TODO
     } else {
-      for (let i in images) {
-        const directoryPath = __basedir + "/uploads/";
+      const directoryPath = __basedir + "/uploads/";
+      for (let i of images) {
         const { filename } = i;
         const imagePath = directoryPath + filename;
         try {
