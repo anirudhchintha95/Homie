@@ -54,4 +54,4 @@ const HomieSkeletonCard = ({ variant = "large" }) => {
   );
 };
 
-export default HomieSkeletonCard;
+export default React.memo(HomieSkeletonCard);

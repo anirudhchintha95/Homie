@@ -165,7 +165,7 @@ const UserSchema = new Schema(
         trim: true,
       },
     },
-    description: {
+    bio: {
       type: String,
       trim: true,
     },

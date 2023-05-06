@@ -13,11 +13,20 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  getMinAndMaxDatesForDOB,
+  validateDOB,
+  validateEmail,
+  validateGender,
+  validateName,
+  validatePassword,
+  validatePhoneNumber,
+} from "../helpers";
+import { GENDERS } from "../contants";
 
 import useAuth from "../useAuth";
 import { sigunpApi } from "../api/auth";
-import { SubmitButton } from "../components";
-import DatePicker from "../components/DatePicker";
+import { SubmitButton, DatePicker } from "../components";
 
 const Signup = () => {
   const auth = useAuth();
@@ -44,7 +53,7 @@ const Signup = () => {
     error: false,
     value: "",
   });
-  const [confirmPassword, setconfirmPassword] = useState({
+  const [confirmPassword, setConfirmPassword] = useState({
     error: false,
     value: "",
   });
@@ -63,7 +72,6 @@ const Signup = () => {
 
   const validateForm = () => {
     if (!firstName.value) {
-      //errorFields.push("firstName");
       setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
       return;
     }
@@ -80,22 +88,26 @@ const Signup = () => {
       return;
     }
     if (!confirmPassword.value) {
-      setconfirmPassword((prev) => ({
+      setConfirmPassword((prev) => ({
         ...prev,
         error: "Confirm Password is required",
       }));
       return;
     }
-
-    // if (!dob.value) {
-    //   setDob((prev) => ({ ...prev, error: "Date of Birth is required" }));
-    //   return;
-    // }
+    if (!dob.value) {
+      setDob((prev) => ({ ...prev, error: true }));
+      setError("Date of Birth is required");
+      return;
+    }
     if (!phoneNumber.value) {
       setPhoneNumber((prev) => ({
         ...prev,
         error: "Phone Number is required",
       }));
+      return;
+    }
+    if (!gender.value) {
+      setGender((prev) => ({ ...prev, error: "Gender is required" }));
       return;
     }
 
@@ -112,11 +124,65 @@ const Signup = () => {
       return;
     }
 
-    if (password.value !== confirmPassword.value) {
-      setError("Passwords do not match");
+    const firstNameValidator = validateName(
+      firstName.value?.trim(),
+      "First Name"
+    );
+    if (!firstNameValidator.isValid) {
+      setFirstName((prev) => ({ ...prev, error: firstNameValidator.error }));
       return;
     }
 
+    const lastNameValidaor = validateName(lastName.value?.trim(), "Last Name");
+    if (!lastNameValidaor.isValid) {
+      setLastName((prev) => ({ ...prev, error: lastNameValidaor.error }));
+      return;
+    }
+
+    const emailValidator = validateEmail(email.value?.trim());
+    if (!emailValidator.isValid) {
+      setEmail((prev) => ({ ...prev, error: emailValidator.error }));
+      return;
+    }
+
+    const passwordValidator = validatePassword(password.value);
+    if (!passwordValidator.isValid) {
+      setPassword((prev) => ({ ...prev, error: passwordValidator.error }));
+      return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      setPassword((prev) => ({ ...prev, error: "Passwords do not match" }));
+      setConfirmPassword((prev) => ({
+        ...prev,
+        error: "Passwords do not match",
+      }));
+      return;
+    }
+
+    const dateValid = validateDOB(dob.value);
+    if (!dateValid.isValid) {
+      setDob((prev) => ({ ...prev, error: true }));
+      setError(dateValid.error);
+      return;
+    }
+
+    const phoneValidator = validatePhoneNumber(phoneNumber.value?.trim());
+    if (!phoneValidator.isValid) {
+      setPhoneNumber((prev) => ({
+        ...prev,
+        error: phoneValidator.error,
+      }));
+      return;
+    }
+
+    const genderValidator = validateGender(gender.value);
+    if (!genderValidator.isValid) {
+      setGender((prev) => ({ ...prev, error: genderValidator.error }));
+      return;
+    }
+
+    setError("");
     return true;
   };
 
@@ -136,12 +202,12 @@ const Signup = () => {
       setLoading(true);
 
       const res = await sigunpApi(
-        firstName.value,
-        lastName.value,
-        email.value,
+        firstName.value.trim(),
+        lastName.value.trim(),
+        email.value.trim().toLowerCase(),
         password.value,
         dob.value,
-        phoneNumber.value,
+        phoneNumber.value.trim(),
         gender.value
       );
 
@@ -163,7 +229,7 @@ const Signup = () => {
 
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }} ref={headerRef}>
-      <Typography variant="h4" align="center" mb={4} color="primary">
+      <Typography variant="h1" align="center" mb={4} color="primary">
         Signup
       </Typography>
 
@@ -178,7 +244,6 @@ const Signup = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="First Name"
               value={firstName.value}
               onChange={(e) => {
@@ -202,7 +267,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Last Name"
               value={lastName.value}
               onChange={(e) => {
@@ -226,7 +290,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Email"
               value={email.value}
               onChange={(e) => {
@@ -250,7 +313,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               type="password"
               label="Password"
               value={password.value}
@@ -275,19 +337,18 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               type="password"
               label="Confirm Password"
               value={confirmPassword.value}
               onChange={(e) => {
                 const value = e.target.value;
-                setconfirmPassword({
+                setConfirmPassword({
                   error: false,
                   value,
                 });
               }}
               onBlur={() => {
-                setconfirmPassword({
+                setConfirmPassword({
                   error: false,
                   value: confirmPassword.value.trim(),
                 });
@@ -308,10 +369,7 @@ const Signup = () => {
                   value: new Date(date),
                 })
               }
-              // min date is 18 years ago
-              maxDate={
-                new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-              }
+              {...getMinAndMaxDatesForDOB()}
               error={!!dob.error}
               helperText={dob.error}
             />
@@ -319,7 +377,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Phone Number"
               value={phoneNumber.value}
               onChange={(e) =>
@@ -354,16 +411,16 @@ const Signup = () => {
                 }
                 error={!!gender.error}
               >
-                <MenuItem value={"Male"}>Male</MenuItem>
-                <MenuItem value={"Female"}>Female</MenuItem>
-                <MenuItem value={"Non-Binary"}>Non-Binary</MenuItem>
+                {Object.values(GENDERS).map((gender) => (
+                  <MenuItem value={gender}>{gender}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
 
         <Grid item xs={12}>
-          <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
+          <SubmitButton loading={loading} fullWidth>
             Create Account
           </SubmitButton>
         </Grid>
@@ -372,9 +429,9 @@ const Signup = () => {
             variant="contained"
             component={Link}
             to="/login"
-            sx={{ mt: 2 }}
             color="secondary"
             fullWidth
+            disabled={loading}
           >
             Login
           </Button>

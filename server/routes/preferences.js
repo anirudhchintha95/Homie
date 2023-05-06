@@ -2,14 +2,46 @@ import { Router } from "express";
 import User from "../models/user.js";
 import { preferenceData } from "../data/index.js";
 import { validatePreferencesBE } from "../validators/helpers.js";
+import xss from "xss";
 
 const router = Router();
 
 router.route("/").post(async (req, res) => {
   try {
-    const validatePref = validatePreferencesBE(req.body);
+    const {
+      smoking,
+      drinking,
+      pets,
+      city,
+      state,
+      rentMin,
+      rentMax,
+      ageMin,
+      ageMax,
+      genders,
+    } = req.body;
+
+    const cleanCity = xss(city);
+    const cleanState = xss(state);
+    const cleanGenders = req.body.genders.map((gender) => xss(gender));
+
+    const cleanReqBody = {
+      smoking,
+      drinking,
+      pets,
+      city: cleanCity,
+      state: cleanState,
+      rentMin,
+      rentMax,
+      ageMin,
+      ageMax,
+      genders: cleanGenders,
+    };
+
+    const validatedPref = validatePreferencesBE(cleanReqBody);
+
     const user = await preferenceData.createPreferences(
-      req.body,
+      validatedPref,
       req.currentUser.email.toLowerCase()
     );
     return res.status(200).json({ user });
@@ -20,9 +52,19 @@ router.route("/").post(async (req, res) => {
 
 router.route("/").patch(async (req, res) => {
   try {
-    const validatePref = validatePreferencesBE(req.body);
+    var cleanReqBody = {};
+    for (const key in req.body) {
+      if (key == "city" || key == "state")
+        cleanReqBody[key] = xss(req.body[key]);
+      else if (key == "genders")
+        cleanReqBody[key] = req.body.genders.map((gender) => xss(gender));
+      else cleanReqBody[key] = req.body[key];
+    }
+
+    const validatedPref = validatePreferencesBE(cleanReqBody);
+
     const user = await preferenceData.updatePreferences(
-      req.body,
+      validatedPref,
       req.currentUser.email.toLowerCase()
     );
     return res.status(200).json({ user });

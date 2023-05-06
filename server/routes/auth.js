@@ -1,47 +1,50 @@
 import { Router } from "express";
-import User from "../models/user.js";
+import xss from "xss";
 
 import { auth } from "../data/index.js";
-import { loginValidator } from "../validators/loginValidator.js";
-import { signupValidator } from "../validators/signupValidator.js";
+import {
+  validateEmail,
+  validatePassword,
+  validateSignUp,
+} from "../validators/helpers.js";
 
 const router = Router();
-router.route("/login").post(loginValidator, async (req, res) => {
+router.route("/login").post(async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+    let cleanEmail = xss(email);
+    let cleanPassword = xss(password);
 
-    const isPasswordCorrect = await user.verifyPassword(password);
+    cleanEmail = validateEmail(cleanEmail);
+    cleanPassword = validatePassword(cleanPassword);
 
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
+    const user = await auth.login(cleanEmail, cleanPassword);
     const accesstoken = user.generateToken();
 
     res.json({ message: "Login successful", accesstoken });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(error.status || 500).json({ error: error.message });
   }
 });
 
-router.route("/signup").post(signupValidator, async (req, res) => {
+router.route("/signup").post(async (req, res) => {
   try {
-    const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
+    let { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
 
-    const user = await auth.signup(
-      firstName,
-      lastName,
-      email,
-      password,
-      dateOfBirth,
-      phone,
-      gender
-    );
+    firstName = xss(firstName);
+    lastName = xss(lastName);
+    email = xss(email);
+    password = xss(password);
+    dateOfBirth = xss(dateOfBirth);
+    phone = xss(phone);
+    gender = xss(gender);
+
+    let signUpDetails = validateSignUp({
+      firstName, lastName, email, password, dateOfBirth, phone, gender
+    });
+
+    const user = await auth.signup(signUpDetails);
 
     const accesstoken = user.generateToken();
     res.json({ accesstoken });

@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
@@ -20,7 +19,7 @@ import RentSlider from "./RentSlider";
 import AgeSlider from "./AgeSlider";
 import { createPreferencesApi } from "../api/preferences";
 
-export default function CreatePreferencesForm({ onCreatePreferences }) {
+const CreatePreferencesForm = ({ onCreatePreferences }) => {
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
@@ -372,7 +371,7 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
               />
               <Typography>
                 {hasRent
-                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  ? `Min: $${rentMin?.value}, Max: $${rentMax?.value}`
                   : "--None--"}
               </Typography>
             </Stack>
@@ -441,7 +440,6 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
                 multiple
                 value={gender.value}
                 onChange={handleChange}
-                input={<OutlinedInput label="Gender" />}
                 error={gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>
@@ -459,4 +457,6 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
       </Paper>
     </Box>
   );
-}
+};
+
+export default React.memo(CreatePreferencesForm);

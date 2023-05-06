@@ -20,7 +20,7 @@ const Login = () => {
 
     const login = async (e) => {
         e.preventDefault();
-        const emailInput = e.target.email.value.trim();
+        const emailInput = e.target.email.value.trim().toLowerCase();
         const passwordInput = e.target.password.value.trim();
 
         var hasError = false;
@@ -81,7 +81,7 @@ const Login = () => {
     return (
         <div>
             <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }}>
-                <Typography variant="h4" align="center" mb={4} color="primary">
+                <Typography variant="h1" align="center" mb={4} color="primary">
                     Login
                 </Typography>
                 <Paper component="form" onSubmit={login} sx={{ p: 2 }}>
@@ -97,7 +97,6 @@ const Login = () => {
                                 id="email"
                                 name="email"
                                 label="Email"
-                                variant="outlined"
                                 onChange={handleEmailChange}
                                 error={Boolean(emailError)}
                                 helperText={emailError}
@@ -111,7 +110,6 @@ const Login = () => {
                                 id="password"
                                 name="password"
                                 label="Password"
-                                variant="outlined"
                                 onChange={handlePasswordChange}
                                 error={Boolean(passwordError)}
                                 helperText={passwordError}

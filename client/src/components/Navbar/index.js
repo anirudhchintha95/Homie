@@ -113,11 +113,10 @@ const Navbar = () => {
               {pages.map((page) => (
                 <MenuItem
                   key={page.name}
-                  component={Link}
-                  to={page.path}
                   onClick={handleCloseNavMenu}
+                  sx={{ textAlign: "center" }}
                 >
-                  <Typography textAlign="center">{page.name}</Typography>
+                  <Link to={page.path}>{page.name}</Link>
                 </MenuItem>
               ))}
             </Menu>
