@@ -150,12 +150,12 @@ const HomieInfo = () => {
       >
         <Box textAlign="center" marginBottom={2}>
           <Box display="flex" justifyContent="center" alignItems="center">
-            <Typography variant="h3" color="primary" mr={1}>
+            <Typography variant="h1" color="primary" mr={1}>
               {getFullName(user)}
             </Typography>
             <ConnectionIcon status={status} />
           </Box>
-          <Typography variant="h6" color="primary.light">
+          <Typography variant="h2" color="primary">
             {user.gender} | {user.age} YO
           </Typography>
         </Box>
@@ -181,14 +181,14 @@ const HomieInfo = () => {
                     </StyledAvatar>
                   </Tooltip>
                   <Typography
-                    variant="h6"
+                    variant="h3"
                     color="primary"
                     marginLeft={1}
                     sx={{ display: { xs: "none", sm: "inline" } }}
                   >
                     Email:
                   </Typography>
-                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  <Typography variant="h3" color="primary" marginLeft={0.5}>
                     {user.email}
                   </Typography>
                 </Box>
@@ -199,14 +199,14 @@ const HomieInfo = () => {
                     </StyledAvatar>
                   </Tooltip>
                   <Typography
-                    variant="h6"
+                    variant="h3"
                     color="primary"
                     marginLeft={1}
                     sx={{ display: { xs: "none", sm: "inline" } }}
                   >
                     Phone:
                   </Typography>
-                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  <Typography variant="h3" color="primary" marginLeft={0.5}>
                     {user.phone}
                   </Typography>
                 </Box>
@@ -224,14 +224,14 @@ const HomieInfo = () => {
                     </StyledAvatar>
                   </Tooltip>
                   <Typography
-                    variant="h6"
+                    variant="h3"
                     color="primary"
                     marginLeft={1}
                     sx={{ display: { xs: "none", sm: "inline" } }}
                   >
                     Email:
                   </Typography>
-                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  <Typography variant="h3" color="primary" marginLeft={0.5}>
                     {user.email || "N/A"}
                   </Typography>
                 </Box>
@@ -243,14 +243,14 @@ const HomieInfo = () => {
                     </StyledAvatar>
                   </Tooltip>
                   <Typography
-                    variant="h6"
+                    variant="h3"
                     color="primary"
                     marginLeft={1}
                     sx={{ display: { xs: "none", sm: "inline" } }}
                   >
                     Phone:
                   </Typography>
-                  <Typography variant="h6" color="primary" marginLeft={0.5}>
+                  <Typography variant="h3" color="primary" marginLeft={0.5}>
                     {user.phone || "N/A"}
                   </Typography>
                 </Box>
@@ -265,14 +265,14 @@ const HomieInfo = () => {
                   </StyledAvatar>
                 </Tooltip>
                 <Typography
-                  variant="h6"
+                  variant="h3"
                   color="primary"
                   marginLeft={1}
                   sx={{ display: { xs: "none", sm: "inline" } }}
                 >
                   Email:
                 </Typography>
-                <Typography variant="h6" color="primary" marginLeft={0.5}>
+                <Typography variant="h3" color="primary" marginLeft={0.5}>
                   {user.email || "N/A"}
                 </Typography>
               </Box>
@@ -284,14 +284,14 @@ const HomieInfo = () => {
                   </StyledAvatar>
                 </Tooltip>
                 <Typography
-                  variant="h6"
+                  variant="h3"
                   color="primary"
                   marginLeft={1}
                   sx={{ display: { xs: "none", sm: "inline" } }}
                 >
                   Phone:
                 </Typography>
-                <Typography variant="h6" color="primary" marginLeft={0.5}>
+                <Typography variant="h3" color="primary" marginLeft={0.5}>
                   {user.phone || "N/A"}
                 </Typography>
               </Box>
@@ -350,14 +350,14 @@ const HomieInfo = () => {
             </StyledAvatar>
           </Tooltip>
           <Typography
-            variant="h6"
+            variant="h3"
             color="primary"
             marginLeft={1}
             sx={{ display: { xs: "none", sm: "inline" } }}
           >
             Location:
           </Typography>
-          <Typography variant="h6" color="primary" marginLeft={0.5}>
+          <Typography variant="h3" color="primary" marginLeft={0.5}>
             {user.location.city}, {user.location.state}
           </Typography>
         </Box>
@@ -368,10 +368,10 @@ const HomieInfo = () => {
               <ApartmentIcon />
             </StyledAvatar>
           </Tooltip>
-          <Typography variant="h6" color="primary" marginLeft={1}>
+          <Typography variant="h3" color="primary" marginLeft={1}>
             Home Offered:
           </Typography>
-          <Typography variant="h6" color="primary" marginLeft={0.5}>
+          <Typography variant="h3" color="primary" marginLeft={0.5}>
             {user.homes?.length ? "Yes" : "No"}
           </Typography>
         </Box>
@@ -395,14 +395,14 @@ const HomieInfo = () => {
               </StyledAvatar>
             </Tooltip>
             <Typography
-              variant="h6"
+              variant="h3"
               color="primary"
               marginLeft={1}
               sx={{ display: { xs: "none", sm: "inline" } }}
             >
               Smoking:
             </Typography>
-            <Typography variant="h6" color="primary" marginLeft={0.5}>
+            <Typography variant="h3" color="primary" marginLeft={0.5}>
               {user.preferences.smoking ? "Yes" : "No"}
             </Typography>
           </Box>
@@ -414,14 +414,14 @@ const HomieInfo = () => {
               </StyledAvatar>
             </Tooltip>
             <Typography
-              variant="h6"
+              variant="h3"
               color="primary"
               marginLeft={1}
               sx={{ display: { xs: "none", sm: "inline" } }}
             >
               Drinking:
             </Typography>
-            <Typography variant="h6" color="primary" marginLeft={0.5}>
+            <Typography variant="h3" color="primary" marginLeft={0.5}>
               {user.preferences.drinking ? "Yes" : "No"}
             </Typography>
           </Box>
@@ -433,14 +433,14 @@ const HomieInfo = () => {
               </StyledAvatar>
             </Tooltip>
             <Typography
-              variant="h6"
+              variant="h3"
               color="primary"
               marginLeft={1}
               sx={{ display: { xs: "none", sm: "inline" } }}
             >
               Pets:
             </Typography>
-            <Typography variant="h6" color="primary" marginLeft={0.5}>
+            <Typography variant="h3" color="primary" marginLeft={0.5}>
               {user.preferences.pets ? "Yes" : "No"}
             </Typography>
           </Box>
@@ -452,10 +452,10 @@ const HomieInfo = () => {
               <AttachMoneyIcon />
             </StyledAvatar>
           </Tooltip>
-          <Typography variant="h6" color="primary" marginLeft={1}>
+          <Typography variant="h3" color="primary" marginLeft={1}>
             Rent:
           </Typography>
-          <Typography variant="h6" color="primary" marginLeft={0.5}>
+          <Typography variant="h3" color="primary" marginLeft={0.5}>
             {!Object.keys(user.preferences.rent || {}).length ? (
               "N/A"
             ) : (

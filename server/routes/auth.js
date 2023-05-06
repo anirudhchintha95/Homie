@@ -1,5 +1,6 @@
 import { Router } from "express";
 import User from "../models/user.js";
+import xss from "xss";
 
 import { auth } from "../data/index.js";
 import { loginValidator } from "../validators/loginValidator.js";
@@ -10,21 +11,23 @@ const router = Router();
 router.route("/login").post(async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email.trim() || !password) {
+    const cleanEmail = xss(email);
+    const cleanPassword = xss(password);
+
+    if (!cleanEmail.trim() || !cleanPassword) {
       throw { status: 400, message: "Invalid credentials" };
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail.trim())) {
       throw { status: 400, message: "Invalid credentials" };
     }
     if (
       !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-        password
+        cleanPassword
       )
     ) {
       throw { status: 400, message: "Invalid credentials" };
-    }
 
-    const user = await auth.login(email, password);
+    const user = await auth.login(cleanEmail, cleanPassword);
     const accesstoken = user.generateToken();
 
     res.json({ message: "Login successful", accesstoken });
@@ -38,24 +41,33 @@ router.route("/signup").post(async (req, res) => {
     const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
 
+
+    const cleanFirstName = xss(firstName);
+    const cleanLastName = xss(lastName);
+    const cleanEmail = xss(email);
+    const cleanPassword = xss(password);
+    const cleanDateOfBirth = xss(dateOfBirth);
+    const cleanPhone = xss(phone);
+    const cleanGender = xss(gender);
+    
     validateSignUp({
-      firstName,
-      lastName,
-      email,
-      password,
-      dateOfBirth,
-      phone,
-      gender,
+      cleanFirstName,
+      cleanLastName,
+      cleanEmail,
+      cleanPassword,
+      cleanDateOfBirth,
+      cleanPhone,
+      cleanGender,
     });
 
     const user = await auth.signup(
-      firstName,
-      lastName,
-      email,
-      password,
-      dateOfBirth,
-      phone,
-      gender
+      cleanFirstName,
+      cleanLastName,
+      cleanEmail,
+      cleanPassword,
+      cleanDateOfBirth,
+      cleanPhone,
+      cleanGender
     );
 
     const accesstoken = user.generateToken();

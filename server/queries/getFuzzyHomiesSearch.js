@@ -98,8 +98,8 @@ const buildScoreColumns = (preference) => {
       $cond: {
         if: {
           $and: [
-            { $gte: ["age", preference.age.min] },
-            { $lte: ["age", preference.age.max] },
+            { $gte: ["$age", preference.age.min] },
+            { $lte: ["$age", preference.age.max] },
           ],
         },
         then: 1,

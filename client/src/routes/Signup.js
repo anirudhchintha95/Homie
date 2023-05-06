@@ -252,7 +252,7 @@ const Signup = () => {
 
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", mt: 10, p: 2 }} ref={headerRef}>
-      <Typography variant="h4" align="center" mb={4} color="primary">
+      <Typography variant="h1" align="center" mb={4} color="primary">
         Signup
       </Typography>
 
@@ -267,7 +267,6 @@ const Signup = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="First Name"
               value={firstName.value}
               onChange={(e) => {
@@ -291,7 +290,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Last Name"
               value={lastName.value}
               onChange={(e) => {
@@ -315,7 +313,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Email"
               value={email.value}
               onChange={(e) => {
@@ -339,7 +336,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               type="password"
               label="Password"
               value={password.value}
@@ -364,7 +360,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               type="password"
               label="Confirm Password"
               value={confirmPassword.value}
@@ -408,7 +403,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
               label="Phone Number"
               value={phoneNumber.value}
               onChange={(e) =>

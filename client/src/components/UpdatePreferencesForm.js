@@ -10,22 +10,22 @@ import {
   Typography,
 } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
 import useAuth from "../useAuth";
-import { SubmitButton } from "../components";
+import { SubmitButton, Toast } from "../components";
 import CityStatePicker from "./CityStatePicker";
 import RentSlider from "./RentSlider";
 import { updatePreferencesApi } from "../api/preferences";
 import AgeSlider from "./AgeSlider";
 
-export default function UpdatePreferencesForm() {
+export default function UpdatePreferencesForm({ onPreferencesUpdate }) {
   const auth = useAuth();
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState();
   const [city, setCity] = useState({
     error: false,
@@ -414,6 +414,11 @@ export default function UpdatePreferencesForm() {
       setError("");
       await updatePreferencesApi(preferenceUpdates);
       await auth.refreshCurrentUser();
+      if (onPreferencesUpdate) {
+        onPreferencesUpdate();
+      } else {
+        setSuccessMessage("Preferences updated successfully");
+      }
     } catch (error) {
       setError(
         error?.response?.data?.error ||
@@ -426,7 +431,13 @@ export default function UpdatePreferencesForm() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", p: 2 }} ref={headerRef}>
+    <Box sx={{ maxWidth: { xs: "90%", sm: 400 }, mx: "auto" }} ref={headerRef}>
+      <Toast
+        open={!!successMessage}
+        onClose={() => setSuccessMessage("")}
+        message={successMessage}
+        variant="success"
+      />
       <Paper
         component="form"
         onSubmit={handleSubmit}
@@ -437,14 +448,12 @@ export default function UpdatePreferencesForm() {
             {error ? <Alert severity="error">{error}</Alert> : <></>}
           </Grid>
 
-          <Grid item xs={12}>
-            <CityStatePicker
-              city={city}
-              state={state}
-              onCityChange={setCity}
-              onStateChange={setState}
-            />
-          </Grid>
+          <CityStatePicker
+            city={city}
+            state={state}
+            onCityChange={setCity}
+            onStateChange={setState}
+          />
 
           <Grid item xs={12}>
             <FormControl fullWidth>
@@ -538,7 +547,7 @@ export default function UpdatePreferencesForm() {
               />
               <Typography>
                 {hasRent
-                  ? `Min: ${rentMin?.value}, Max: ${rentMax?.value}`
+                  ? `Min: $${rentMin?.value}, Max: $${rentMax?.value}`
                   : "--None--"}
               </Typography>
             </Stack>
@@ -600,14 +609,13 @@ export default function UpdatePreferencesForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <FormControl fullWidth>
+            <FormControl fullWidth variant="filled">
               <InputLabel>Gender</InputLabel>
               <Select
                 label="Gender"
                 multiple
                 value={gender.value}
                 onChange={handleChange}
-                input={<OutlinedInput label="Gender" />}
                 error={gender.error}
               >
                 <MenuItem value={"Male"}>Male</MenuItem>

@@ -21,7 +21,12 @@ import HomieActions from "./HomieActions";
 import NameAvatar from "./NameAvatar";
 import DisplayImage from "./DisplayImage";
 
-const HomieCard = ({ user, variant = "large", onActionsClick }) => {
+const HomieCard = ({
+  user,
+  variant = "large",
+  matchedPreferences,
+  onActionsClick,
+}) => {
   const isLarge = variant === "large";
 
   const { error, resetError, handleActionClick } = useHomieInteractions({
@@ -58,17 +63,13 @@ const HomieCard = ({ user, variant = "large", onActionsClick }) => {
       />
       <CardHeader
         avatar={<NameAvatar user={user} isLarge={isLarge} />}
-        // action={
-        //   <IconButton aria-label="settings">
-        //     <MoreVertIcon />
-        //   </IconButton>
-        // }
         title={
           <Link component={RouterLink} to={`/homies/${user._id}`}>
             {getFullName(user)}
           </Link>
         }
         subheader={isLarge ? `${user.gender} | ${user.age} YO` : null}
+        titleTypographyProps={{ variant: "body1" }}
       />
       {isLarge ? (
         <Box
@@ -153,10 +154,10 @@ const HomieCard = ({ user, variant = "large", onActionsClick }) => {
         />
       )}
 
-      {isLarge ? (
+      {isLarge && matchedPreferences?.length ? (
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {user.description || "Description unavailable"}
+          <Typography variant="body1" color="primary">
+            Matched Preferences: {matchedPreferences.join(", ")}
           </Typography>
         </CardContent>
       ) : (

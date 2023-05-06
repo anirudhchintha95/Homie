@@ -170,7 +170,6 @@ const AccountAccordianForm = ({
             </Grid>
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="First Name"
                 value={firstName.value}
                 onChange={(e) => {
@@ -194,7 +193,6 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="Last Name"
                 value={lastName.value}
                 onChange={(e) => {
@@ -217,7 +215,6 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="Email"
                 value={auth?.user?.email}
                 disabled
@@ -247,7 +244,6 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="Phone Number"
                 value={phoneNumber.value}
                 onChange={(e) =>

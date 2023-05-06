@@ -188,7 +188,6 @@ const PasswordAccordionForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 type="password"
                 label="Current Password"
                 value={currentPassword.value}
@@ -213,7 +212,6 @@ const PasswordAccordionForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 type="password"
                 label="New Password"
                 value={newPassword.value}
@@ -238,7 +236,6 @@ const PasswordAccordionForm = ({
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 type="password"
                 label="Confirm New Password"
                 value={confirmNewPassword.value}
