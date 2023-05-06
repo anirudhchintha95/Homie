@@ -35,10 +35,7 @@ export const getUserProfile = async (email) => {
 export const getImages = async (currentUserId) => {
   if (!currentUserId) throw { status: 401, message: "Unauthorized" };
 
-  const images = await Image.find({
-    imageableId: currentUserId,
-    imageableType: "User",
-  });
+  const images = await Image.ofUser(currentUserId);
 
   return images;
 };
