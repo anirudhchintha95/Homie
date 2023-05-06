@@ -28,39 +28,29 @@ export const login = async (email, password) => {
   }
 };
 
-export const signup = async (
-  firstName,
-  lastName,
-  email,
-  password,
-  dateOfBirth,
-  phone,
-  gender
-) => {
-  validateSignUp({
-    firstName,
-    lastName,
-    email,
-    password,
-    dateOfBirth,
-    phone,
-    gender,
-  });
+export const signup = async (signupBody) => {
+  let userSignup = validateSignUp(signupBody);
 
-  const userExists = await User.findOne({ email: email });
+  const userExists = await User.findOne({ email: userSignup.email });
   if (userExists) {
     throw { status: 400, message: "User already exists" };
   }
+  const phoneExists = await User.findOne({ phone: userSignup.phone });
+  if (phoneExists) {
+    throw { status: 400, message: "User with the phone number already exists" };
+  }
   try {
-    const encryptedPassword = await new PasswordService(password).encrypt();
+    const encryptedPassword = await new PasswordService(
+      userSignup.password
+    ).encrypt();
     const user = await User.create({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim().toLowerCase(),
+      firstName: userSignup.firstName,
+      lastName: userSignup.lastName,
+      email: userSignup.email,
       encryptedPassword: encryptedPassword,
-      dateOfBirth: new Date(dateOfBirth),
-      phone: phone.trim(),
-      gender: gender,
+      dateOfBirth: new Date(userSignup.dateOfBirth),
+      phone: userSignup.phone,
+      gender: userSignup.gender,
     });
 
     return user;

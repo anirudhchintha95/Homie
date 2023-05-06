@@ -29,36 +29,22 @@ router.route("/login").post(async (req, res) => {
 
 router.route("/signup").post(async (req, res) => {
   try {
-    const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
+    let { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
 
-    const cleanFirstName = xss(firstName);
-    const cleanLastName = xss(lastName);
-    const cleanEmail = xss(email);
-    const cleanPassword = xss(password);
-    const cleanDateOfBirth = xss(dateOfBirth);
-    const cleanPhone = xss(phone);
-    const cleanGender = xss(gender);
+    firstName = xss(firstName);
+    lastName = xss(lastName);
+    email = xss(email);
+    password = xss(password);
+    dateOfBirth = xss(dateOfBirth);
+    phone = xss(phone);
+    gender = xss(gender);
 
-    validateSignUp({
-      cleanFirstName,
-      cleanLastName,
-      cleanEmail,
-      cleanPassword,
-      cleanDateOfBirth,
-      cleanPhone,
-      cleanGender,
+    let signUpDetails = validateSignUp({
+      firstName, lastName, email, password, dateOfBirth, phone, gender
     });
 
-    const user = await auth.signup(
-      cleanFirstName,
-      cleanLastName,
-      cleanEmail,
-      cleanPassword,
-      cleanDateOfBirth,
-      cleanPhone,
-      cleanGender
-    );
+    const user = await auth.signup(signUpDetails);
 
     const accesstoken = user.generateToken();
     res.json({ accesstoken });

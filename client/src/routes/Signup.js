@@ -139,7 +139,7 @@ const Signup = () => {
       return;
     }
 
-    const emailValidator = validateEmail(email.value);
+    const emailValidator = validateEmail(email.value?.trim());
     if (!emailValidator.isValid) {
       setEmail((prev) => ({ ...prev, error: emailValidator.error }));
       return;
