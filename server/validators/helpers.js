@@ -1,6 +1,29 @@
 import { isValidObjectId } from "mongoose";
 import { GENDERS } from "../constants.js";
 import { DateTime } from "luxon";
+import { City, State, Country } from "country-state-city";
+
+const COUNTRY_CODE = "US";
+
+const validateStateAndCity = (state, city) => {
+  state = validateString(state, "State");
+  city = validateString(city, "City");
+
+  const stateObj = State.getStateByCodeAndCountry(state, COUNTRY_CODE);
+  if (!stateObj) {
+    throw { status: 400, message: "Invalid State" };
+  }
+  const cityObj = City.getCitiesOfState(COUNTRY_CODE, state)?.find(
+    (c) => c.name === city && c.stateCode === state
+  );
+  if (!cityObj) {
+    throw { status: 400, message: "Invalid City" };
+  }
+  return {
+    state: cityObj.stateCode,
+    city: cityObj.name,
+  };
+};
 
 function isValidEmail(email) {
   const emailRegex = /^\S+@\S+\.\S+$/;
@@ -223,7 +246,7 @@ const validateGender = (value, name) => {
 };
 
 const validatePreferencesBE = (preferences) => {
-  const {
+  let {
     city,
     state,
     smoking,
@@ -236,28 +259,12 @@ const validatePreferencesBE = (preferences) => {
     genders,
   } = preferences;
 
-  if (!city) {
-    throw {
-      status: 400,
-      message: "Error: City is required!",
-    };
-  }
-
-  if (!state) {
-    throw {
-      status: 400,
-      message: "Error: State is required!",
-    };
-  }
-
-  if (typeof city !== "undefined") {
-    if (!/^[a-zA-Z\s]*$/.test(city)) {
-      throw {
-        status: 400,
-        message: "Error: City should contain only alphabets",
-      };
-    }
-  }
+  const { city: validatedCity, state: validatedState } = validateStateAndCity(
+    state,
+    city
+  );
+  city = validatedCity;
+  state = validatedState;
 
   if (typeof smoking !== "undefined") {
     if (smoking !== "" && smoking !== true && smoking !== false) {
@@ -431,8 +438,9 @@ const validatePreferencesBE = (preferences) => {
         message: "Genders be an array!",
       };
     }
+    genders = genders.map((elem, idx) => validateString(elem, `Gender ${idx}`));
 
-    const gendersArr = ["Male", "Female", "Non-Binary"];
+    const gendersArr = Object.values(GENDERS);
     if (!genders.every((elem) => gendersArr.includes(elem))) {
       throw {
         status: 400,
@@ -441,6 +449,19 @@ const validatePreferencesBE = (preferences) => {
       };
     }
   }
+
+  return {
+    smoking,
+    drinking,
+    pets,
+    rentMin,
+    rentMax,
+    ageMin,
+    ageMax,
+    genders,
+    state,
+    city,
+  };
 };
 
 const validateSignUp = (preferences) => {

@@ -38,10 +38,10 @@ router.route("/").post(async (req, res) => {
       genders: cleanGenders,
     };
 
-    const validatePref = validatePreferencesBE(cleanReqBody);
+    const validatedPref = validatePreferencesBE(cleanReqBody);
 
     const user = await preferenceData.createPreferences(
-      cleanReqBody,
+      validatedPref,
       req.currentUser.email.toLowerCase()
     );
     return res.status(200).json({ user });
@@ -61,10 +61,10 @@ router.route("/").patch(async (req, res) => {
       else cleanReqBody[key] = req.body[key];
     }
 
-    const validatePref = validatePreferencesBE(cleanReqBody);
+    const validatedPref = validatePreferencesBE(cleanReqBody);
 
     const user = await preferenceData.updatePreferences(
-      cleanReqBody,
+      validatedPref,
       req.currentUser.email.toLowerCase()
     );
     return res.status(200).json({ user });

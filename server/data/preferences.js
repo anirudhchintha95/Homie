@@ -3,6 +3,8 @@ import { userData } from "../data/index.js";
 import { validatePreferencesBE } from "../validators/helpers.js";
 
 export const createPreferences = async (preferences, email) => {
+  const validatedPref = validatePreferencesBE(preferences);
+
   const {
     city,
     state,
@@ -14,9 +16,7 @@ export const createPreferences = async (preferences, email) => {
     ageMin,
     ageMax,
     genders,
-  } = preferences;
-
-  let validatePref = validatePreferencesBE(preferences);
+  } = validatedPref;
 
   const userLocation = {
     city: city,
@@ -79,7 +79,9 @@ export const createPreferences = async (preferences, email) => {
 };
 
 export const updatePreferences = async (preferences, email) => {
-  let {
+  const validatedPref = validatePreferencesBE(preferences);
+
+  const {
     city,
     state,
     smoking,
@@ -90,13 +92,11 @@ export const updatePreferences = async (preferences, email) => {
     ageMin,
     ageMax,
     genders,
-  } = preferences;
-
-  let validatePref = validatePreferencesBE(preferences);
+  } = validatedPref;
 
   const userLocation = {
     city,
-    state
+    state,
   };
 
   const newPref = {};
