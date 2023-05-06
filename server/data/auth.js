@@ -1,26 +1,16 @@
 import User from "../models/user.js";
 import PasswordService from "../services/password-service.js";
-import { loginValidator } from "../validators/loginValidator.js";
-import { signupValidator } from "../validators/signupValidator.js";
-import { validateSignUp } from "../validators/helpers.js";
+import {
+  validateEmail,
+  validatePassword,
+  validateSignUp,
+} from "../validators/helpers.js";
 
 export const login = async (email, password) => {
-  if (!email.trim() || !password) {
-    throw { status: 400, message: "Invalid credentials" };
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-    throw { status: 400, message: "Invalid credentials" };
-  }
-  if (
-    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-      password
-    )
-  ) {
-    throw { status: 400, message: "Invalid credentials" };
-  }
+  email = validateEmail(email);
+  password = validatePassword(password);
 
   try {
-    email = email.trim().toLowerCase();
     const user = await User.findOne({ email });
     if (!user) {
       throw { status: 401, message: "Invalid credentials" };
@@ -47,8 +37,6 @@ export const signup = async (
   phone,
   gender
 ) => {
-  //signupValidator(firstName, lastName, email, password, dateOfBirth, phone, gender);
-
   validateSignUp({
     firstName,
     lastName,

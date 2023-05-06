@@ -1,31 +1,22 @@
 import { Router } from "express";
-import User from "../models/user.js";
 import xss from "xss";
 
 import { auth } from "../data/index.js";
-import { loginValidator } from "../validators/loginValidator.js";
-import { signupValidator } from "../validators/signupValidator.js";
-import { validateSignUp } from "../validators/helpers.js";
+import {
+  validateEmail,
+  validatePassword,
+  validateSignUp,
+} from "../validators/helpers.js";
 
 const router = Router();
 router.route("/login").post(async (req, res) => {
   try {
     const { email, password } = req.body;
-    const cleanEmail = xss(email);
-    const cleanPassword = xss(password);
+    let cleanEmail = xss(email);
+    let cleanPassword = xss(password);
 
-    if (!cleanEmail.trim() || !cleanPassword) {
-      throw { status: 400, message: "Invalid credentials" };
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail.trim())) {
-      throw { status: 400, message: "Invalid credentials" };
-    }
-    if (
-      !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-        cleanPassword
-      )
-    ) {
-      throw { status: 400, message: "Invalid credentials" };
+    cleanEmail = validateEmail(cleanEmail);
+    cleanPassword = validatePassword(cleanPassword);
 
     const user = await auth.login(cleanEmail, cleanPassword);
     const accesstoken = user.generateToken();
@@ -41,7 +32,6 @@ router.route("/signup").post(async (req, res) => {
     const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
       req.body;
 
-
     const cleanFirstName = xss(firstName);
     const cleanLastName = xss(lastName);
     const cleanEmail = xss(email);
@@ -49,7 +39,7 @@ router.route("/signup").post(async (req, res) => {
     const cleanDateOfBirth = xss(dateOfBirth);
     const cleanPhone = xss(phone);
     const cleanGender = xss(gender);
-    
+
     validateSignUp({
       cleanFirstName,
       cleanLastName,

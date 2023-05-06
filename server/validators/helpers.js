@@ -19,6 +19,33 @@ function isValidPassword(password) {
   return true;
 }
 
+const validateEmail = (email, variableName = "Email") => {
+  if (typeof email !== "string") {
+    throw {
+      status: 400,
+      message: `${variableName} must be a string!`,
+    };
+  }
+  if (!email) {
+    throw {
+      status: 400,
+      message: `${variableName} is required!`,
+    };
+  }
+  email = email?.trim()?.toLowerCase();
+  if (!email?.length) {
+    throw {
+      status: 400,
+      message: `${variableName} must not be empty!`,
+    };
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw { status: 400, message: `Invalid ${variableName}` };
+  }
+  return email;
+};
+
 const validatePassword = (password, variableName = "Password") => {
   if (!password) {
     throw {
@@ -532,6 +559,7 @@ export {
   validatePhone,
   validateGender,
   validatePassword,
+  validateEmail,
   validatePreferencesBE,
   validateSignUp,
 };
