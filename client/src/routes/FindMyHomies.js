@@ -5,11 +5,12 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {
   HomieCard,
   HomieSkeletonCard,
+  NoHomiesCard,
   PageError,
   UpdatePreferencesModal,
 } from "../components";
 import { fetchHomiesApi } from "../api/homies";
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, Card, CardContent, Typography } from "@mui/material";
 
 const getMatchedPreferences = (user) => {
   const matched = [];
@@ -66,24 +67,25 @@ const FindMyHomies = () => {
     <Box sx={{ width: "100%" }} marginTop={2} marginBottom={2}>
       <Grid container spacing={2} display="flex" justifyContent="center">
         <Grid xs={12} md={8} key="Update_Preferences">
-          <Paper
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: 2,
-            }}
-          >
-            <Typography color="primary">
-              You can update and save your filters directly.
-            </Typography>
-            <Button
-              onClick={() => setShowPreferencesModal(true)}
-              variant="contained"
+          <Card elevation={4}>
+            <CardContent
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              Update Filters
-            </Button>
-          </Paper>
+              <Typography variant="h3-esque" color="primary">
+                You can update and save your filters here.
+              </Typography>
+              <Button
+                onClick={() => setShowPreferencesModal(true)}
+                variant="contained"
+              >
+                Update Filters
+              </Button>
+            </CardContent>
+          </Card>
           <UpdatePreferencesModal
             open={showPreferencesModal}
             onClose={() => setShowPreferencesModal(false)}
@@ -99,7 +101,7 @@ const FindMyHomies = () => {
           </Grid>
         ) : error ? (
           <PageError onRefresh={fetchHomies}>{error}</PageError>
-        ) : (
+        ) : homies?.length ? (
           homies.map((user) => (
             <Grid xs={12} md={8} key={user._id}>
               <HomieCard
@@ -109,6 +111,10 @@ const FindMyHomies = () => {
               />
             </Grid>
           ))
+        ) : (
+          <Grid xs={12} md={8}>
+            <NoHomiesCard body={"Change your preferences to find homies"} />
+          </Grid>
         )}
       </Grid>
     </Box>

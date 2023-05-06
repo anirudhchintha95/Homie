@@ -19,7 +19,7 @@ import RentSlider from "./RentSlider";
 import AgeSlider from "./AgeSlider";
 import { createPreferencesApi } from "../api/preferences";
 
-export default function CreatePreferencesForm({ onCreatePreferences }) {
+const CreatePreferencesForm = ({ onCreatePreferences }) => {
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
@@ -457,4 +457,6 @@ export default function CreatePreferencesForm({ onCreatePreferences }) {
       </Paper>
     </Box>
   );
-}
+};
+
+export default React.memo(CreatePreferencesForm);

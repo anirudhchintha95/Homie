@@ -15,4 +15,4 @@ const DisplayImage = ({ image, height = "300", ...rest }) => {
   );
 };
 
-export default DisplayImage;
+export default React.memo(DisplayImage);

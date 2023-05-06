@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 import { Avatar, Tooltip } from "@mui/material";
 import React from "react";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import DoneIcon from '@mui/icons-material/Done';
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
-import RemoveIcon from '@mui/icons-material/Remove';
+import LinkOffIcon from "@mui/icons-material/LinkOff";
+import DoneIcon from "@mui/icons-material/Done";
+import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 import { CONNECTION_STATUSES } from "../contants";
 
@@ -16,7 +17,15 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 const ConnectionIcon = ({ status }) => {
-  if (!status) return null;
+  if (!status) {
+    return (
+      <Tooltip title="Not Linked">
+        <StyledAvatar>
+          <LinkOffIcon />
+        </StyledAvatar>
+      </Tooltip>
+    );
+  }
 
   if (status === CONNECTION_STATUSES.FAVORITE) {
     return (
@@ -61,4 +70,4 @@ const ConnectionIcon = ({ status }) => {
   return null;
 };
 
-export default ConnectionIcon;
+export default React.memo(ConnectionIcon);
