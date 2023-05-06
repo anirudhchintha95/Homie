@@ -28,12 +28,8 @@ export const login = async (email, password) => {
   }
 };
 
-export const signup = async (
- preferences
-) => {
-  let userSignup = validateSignUp(
-   preferences
-  );
+export const signup = async (signupBody) => {
+  let userSignup = validateSignUp(signupBody);
 
   const userExists = await User.findOne({ email: userSignup.email });
   if (userExists) {
