@@ -422,19 +422,19 @@ const validateSignUp = (preferences) => {
   const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
     preferences;
 
-  if (!firstName) {
+  if (!firstName.trim()) {
     throw { status: 400, message: "First name must be a non-empty string" };
   }
 
-  if (!lastName) {
+  if (!lastName.trim()) {
     throw { status: 400, message: "Last name must be a non-empty string" };
   }
 
-  if (!email) {
+  if (!email.trim()) {
     throw { status: 400, message: "Email must be a non-empty string" };
   }
 
-  if (!password) {
+  if (!password.trim()) {
     throw { status: 400, message: "Password must be a non-empty string" };
   }
 
@@ -442,47 +442,47 @@ const validateSignUp = (preferences) => {
     throw { status: 400, message: "Date of birth is required" };
   }
 
-  if (!phone) {
+  if (!phone.trim()) {
     throw { status: 400, message: "Phone number is required" };
   }
 
-  if (!gender) {
+  if (!gender.trim()) {
     throw { status: 400, message: "Gender is required" };
   }
 
-  if (!/^[a-zA-Z\s]*$/.test(firstName)) {
+  if (!/^[a-zA-Z\s]*$/.test(firstName.trim())) {
     throw {
       status: 400,
       message: "First name must contain only letters and spaces",
     };
   }
 
-  if (!/^[a-zA-Z\s]*$/.test(lastName)) {
+  if (!/^[a-zA-Z\s]*$/.test(lastName.trim())) {
     throw {
       status: 400,
       message: "Last name must contain only letters and spaces",
     };
   }
 
-  if (firstName.length > 25) {
+  if (firstName.trim().length > 25) {
     throw {
       status: 400,
       message: "First name must be less than 25 characters",
     };
   }
 
-  if (lastName.length > 25) {
+  if (lastName.trim().length > 25) {
     throw {
       status: 400,
       message: "Last name must be less than 25 characters",
     };
   }
 
-  if (!isValidEmail(email)) {
+  if (!isValidEmail(email.trim())) {
     throw { status: 400, message: "Email must be a valid email address" };
   }
 
-  if (!isValidPassword(password)) {
+  if (!isValidPassword(password.trim())) {
     throw {
       status: 400,
       message:
@@ -494,21 +494,25 @@ const validateSignUp = (preferences) => {
     throw { status: 400, message: "Date of birth must be a valid date" };
   }
 
-  if (!/^[0-9]*$/.test(phone)) {
+  if (!/^[0-9]*$/.test(phone.trim())) {
     throw {
       status: 400,
       message: "Phone number must contain only numbers",
     };
   }
 
-  if (phone.length !== 10) {
+  if (phone.trim().length !== 10) {
     throw {
       status: 400,
       message: "Phone number must be 10 digits long",
     };
   }
 
-  if (gender !== "Male" && gender !== "Female" && gender !== "Non-Binary") {
+  if (
+    gender.trim() !== "Male" &&
+    gender.trim() !== "Female" &&
+    gender.trim() !== "Non-Binary"
+  ) {
     throw {
       status: 400,
       message: "Gender must be Male, Female or Non-Binary",
