@@ -5,11 +5,16 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { fetchMyHomiesApi } from "../api/homies";
-import { CONNECTION_TYPES } from "../contants";
+import {
+  CONNECTION_TYPES,
+  CONNECTION_TYPES_DISPLAY,
+  CONNECTION_TYPES_MAP,
+} from "../contants";
 
 import {
   HomieCard,
   HomieSkeletonCard,
+  NoHomiesCard,
   PageError,
   SearchInputForm,
 } from "../components";
@@ -89,16 +94,33 @@ const MyHomies = () => {
       ) : error ? (
         <PageError onRefresh={fetchMyHomies}>{error}</PageError>
       ) : (
-        <Grid container spacing={2}>
-          {myHomies.map((user) => (
-            <Grid xs={12} sm={6} md={4} lg={3} key={user._id}>
-              <HomieCard
-                onActionsClick={fetchMyHomies}
-                user={user}
-                variant="small"
+        <Grid
+          container
+          spacing={2}
+          justifyContent={myHomies?.length ? "flex-start" : "center"}
+        >
+          {myHomies?.length ? (
+            myHomies.map((user) => (
+              <Grid xs={12} sm={6} md={4} lg={3} key={user._id}>
+                <HomieCard
+                  onActionsClick={fetchMyHomies}
+                  user={user}
+                  variant="small"
+                />
+              </Grid>
+            ))
+          ) : (
+            <Grid xs={12} md={8}>
+              <NoHomiesCard
+                title={`No ${
+                  CONNECTION_TYPES_DISPLAY[connectionTypes[connectionTypeIdx]]
+                } found.`}
+                status={
+                  CONNECTION_TYPES_MAP[connectionTypes[connectionTypeIdx]]
+                }
               />
             </Grid>
-          ))}
+          )}
         </Grid>
       )}
     </Box>

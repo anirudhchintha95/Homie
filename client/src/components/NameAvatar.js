@@ -18,4 +18,4 @@ const NameAvatar = ({ user, isLarge = false }) => {
   );
 };
 
-export default NameAvatar;
+export default React.memo(NameAvatar);

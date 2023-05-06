@@ -145,4 +145,4 @@ const HomieActions = ({
   );
 };
 
-export default HomieActions;
+export default React.memo(HomieActions);

@@ -5,11 +5,25 @@ export const CONNECTION_TYPES = {
   ADMIRERS: "Admirers",
 };
 
+export const CONNECTION_TYPES_DISPLAY = {
+  Matched: "Matched Users",
+  Favorites: "Favorites",
+  Ignored: "Ignored Users",
+  Admirers: "Admirers",
+};
+
 export const CONNECTION_STATUSES = {
   FAVORITE: "favorite",
   MATCHED: "matched",
   IGNORED: "ignored",
   BLOCKED: "blocked",
+};
+
+export const CONNECTION_TYPES_MAP = {
+  Matched: CONNECTION_STATUSES.MATCHED,
+  Favorites: CONNECTION_STATUSES.FAVORITE,
+  Ignored: CONNECTION_STATUSES.IGNORED,
+  Admirers: null,
 };
 
 export const ACCOUNT_PANELS = {

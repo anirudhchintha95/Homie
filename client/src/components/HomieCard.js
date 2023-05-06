@@ -170,4 +170,4 @@ const HomieCard = ({
   );
 };
 
-export default HomieCard;
+export default React.memo(HomieCard);

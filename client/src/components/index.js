@@ -18,3 +18,4 @@ export { default as DisplayImage } from "./DisplayImage";
 export { default as ConnectionIcon } from "./ConnectionIcon";
 export { default as UpdatePreferencesModal } from "./UpdatePreferencesModal";
 export { default as DatePicker } from "./DatePicker";
+export { default as NoHomiesCard } from "./NoHomiesCard";

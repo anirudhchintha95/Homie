@@ -130,3 +130,8 @@ code {
 input[type="file"] {
   padding-top: 8px
 }
+
+a {
+  color: black;
+  text-decoration: none; /* no underline */
+}
