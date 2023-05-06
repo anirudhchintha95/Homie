@@ -19,6 +19,33 @@ function isValidPassword(password) {
   return true;
 }
 
+const validateEmail = (email, variableName = "Email") => {
+  if (typeof email !== "string") {
+    throw {
+      status: 400,
+      message: `${variableName} must be a string!`,
+    };
+  }
+  if (!email) {
+    throw {
+      status: 400,
+      message: `${variableName} is required!`,
+    };
+  }
+  email = email?.trim()?.toLowerCase();
+  if (!email?.length) {
+    throw {
+      status: 400,
+      message: `${variableName} must not be empty!`,
+    };
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw { status: 400, message: `Invalid ${variableName}` };
+  }
+  return email;
+};
+
 const validatePassword = (password, variableName = "Password") => {
   if (!password) {
     throw {
@@ -46,9 +73,7 @@ const checkBoolean = (value) => {
   return false;
 };
 
-const validateString = (value, name, opts = {}) => {
-  const { minLength, maxLength } = opts || { minLength: 1 };
-
+const validateString = (value, name, { minLength = 1, maxLength } = {}) => {
   if (!value) {
     throw { status: 400, message: `${name} is required!` };
   }
@@ -418,6 +443,121 @@ const validatePreferencesBE = (preferences) => {
   }
 };
 
+const validateSignUp = (preferences) => {
+  const { firstName, lastName, email, password, dateOfBirth, phone, gender } =
+    preferences;
+
+  if (!firstName.trim()) {
+    throw { status: 400, message: "First name must be a non-empty string" };
+  }
+
+  if (!lastName.trim()) {
+    throw { status: 400, message: "Last name must be a non-empty string" };
+  }
+
+  if (!email.trim()) {
+    throw { status: 400, message: "Email must be a non-empty string" };
+  }
+
+  if (!password) {
+    throw { status: 400, message: "Password must be a non-empty string" };
+  }
+
+  if (!dateOfBirth) {
+    throw { status: 400, message: "Date of birth is required" };
+  }
+
+  if (!phone.trim()) {
+    throw { status: 400, message: "Phone number is required" };
+  }
+
+  if (!gender.trim()) {
+    throw { status: 400, message: "Gender is required" };
+  }
+
+  if (!/^[a-zA-Z\s]*$/.test(firstName.trim())) {
+    throw {
+      status: 400,
+      message: "First name must contain only letters and spaces",
+    };
+  }
+
+  if (!/^[a-zA-Z\s]*$/.test(lastName.trim())) {
+    throw {
+      status: 400,
+      message: "Last name must contain only letters and spaces",
+    };
+  }
+
+  if (firstName.trim().length > 25) {
+    throw {
+      status: 400,
+      message: "First name must be less than 25 characters",
+    };
+  }
+
+  if (lastName.trim().length > 25) {
+    throw {
+      status: 400,
+      message: "Last name must be less than 25 characters",
+    };
+  }
+
+  if (!isValidEmail(email.trim())) {
+    throw { status: 400, message: "Email must be a valid email address" };
+  }
+
+  if (!isValidPassword(password)) {
+    throw {
+      status: 400,
+      message:
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character.",
+    };
+  }
+
+  if (!validateDOB(dateOfBirth)) {
+    throw { status: 400, message: "Date of birth must be a valid date" };
+  }
+
+  if (!/^[0-9]*$/.test(phone.trim())) {
+    throw {
+      status: 400,
+      message: "Phone number must contain only numbers",
+    };
+  }
+
+  if (phone.trim().length !== 10) {
+    throw {
+      status: 400,
+      message: "Phone number must be 10 digits long",
+    };
+  }
+
+  if (
+    gender.trim() !== "Male" &&
+    gender.trim() !== "Female" &&
+    gender.trim() !== "Non-Binary"
+  ) {
+    throw {
+      status: 400,
+      message: "Gender must be Male, Female or Non-Binary",
+    };
+  }
+};
+
+const validateName = (name, varName = "Name") => {
+  name = validateString(name, varName);
+
+  if (!/^[a-zA-Z\s]{2,25}$/.test(name)) {
+    throw {
+      status: 400,
+      message: `${varName} must be between 2 and 25 characters long and contain only letters.`,
+    };
+  }
+
+  return name;
+};
+
 export {
   isValidEmail,
   isValidPassword,
@@ -430,5 +570,8 @@ export {
   validatePhone,
   validateGender,
   validatePassword,
+  validateEmail,
   validatePreferencesBE,
+  validateSignUp,
+  validateName,
 };

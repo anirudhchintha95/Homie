@@ -20,7 +20,7 @@ const Login = () => {
 
     const login = async (e) => {
         e.preventDefault();
-        const emailInput = e.target.email.value.trim();
+        const emailInput = e.target.email.value.trim().toLowerCase();
         const passwordInput = e.target.password.value.trim();
 
         var hasError = false;
