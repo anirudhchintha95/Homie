@@ -9,6 +9,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
@@ -57,7 +58,9 @@ const RightSideMenu = () => {
     <Box sx={{ flexGrow: 0 }}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt="Remy Sharp" src="" />
+          <AccountCircleIcon
+            sx={{ color: "white", height: "40px", width: "40px" }}
+          />
         </IconButton>
       </Tooltip>
       <Menu
@@ -83,24 +86,29 @@ const RightSideMenu = () => {
               : "Homie"}
           </Typography>
         </MenuItem>
-        <Divider />
-        {settings.map((setting) => (
-          <MenuItem
-            key={setting.name}
-            {...(setting.path
-              ? {
-                  component: Link,
-                  to: setting.path,
-                  onClick: handleCloseUserMenu,
-                }
-              : { onClick: setting.onClick })}
-          >
-            <ListItemIcon>
-              <setting.Icon fontSize="small" />
-            </ListItemIcon>
-            {setting.name}
-          </MenuItem>
-        ))}
+        <Divider component="li" />
+        {settings.map((setting) =>
+          setting.path ? (
+            <MenuItem key={setting.name}>
+              <Link to={setting.path} onClick={handleCloseUserMenu}>
+                <ListItemIcon>
+                  <setting.Icon fontSize="small" />
+                </ListItemIcon>
+                {setting.name}
+              </Link>
+            </MenuItem>
+          ) : (
+            <MenuItem
+              key={setting.name}
+              onClick={setting.onClick || handleCloseUserMenu}
+            >
+              <ListItemIcon>
+                <setting.Icon fontSize="small" />
+              </ListItemIcon>
+              {setting.name}
+            </MenuItem>
+          )
+        )}
       </Menu>
     </Box>
   );

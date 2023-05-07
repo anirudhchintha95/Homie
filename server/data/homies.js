@@ -72,15 +72,36 @@ export const sendMessage = async (currentUser, homieId, message) => {
     throw { status: 400, message: "User not found" };
   }
 
-  const connection = await Connection.findByUserIds(homie._id, currentUser._id);
+  const connection = await Connection.findByUserIds(currentUser._id, homie._id);
 
-  // Only matched connections can send messages to each other
+  if (!connection) {
+    throw { status: 400, message: "Connection not found" };
+  }
+
+  const currentUserIdx = connection.users.findIndex(
+    ({ userId }) => userId.toString() === currentUser._id.toString()
+  );
+
+  if (currentUserIdx === -1) {
+    throw { status: 400, message: "User not found in connection" };
+  }
+
   if (
-    !connection?.users?.every(
-      ({ status }) => status === CONNECTION_STATUSES.FAVORITE
-    )
+    connection.users[currentUserIdx].status !== CONNECTION_STATUSES.FAVORITE
   ) {
-    throw { status: 400, message: "Connection not active" };
+    throw {
+      status: 400,
+      message: "You have to add them as your favorite to send a message",
+    };
+  }
+
+  const otherUserIdx = currentUserIdx === 0 ? 1 : 0;
+
+  if (connection.users[otherUserIdx].status === CONNECTION_STATUSES.BLOCKED) {
+    throw {
+      status: 400,
+      message: "You have been blocked to send messages to this user",
+    };
   }
 
   connection.messages.push({
@@ -88,9 +109,11 @@ export const sendMessage = async (currentUser, homieId, message) => {
     sentByUserId: currentUser._id,
   });
 
+  connection.users[otherUserIdx].hasUnreadMessages = true;
+
   await connection.save();
 
-  return await Connection.findByUserIds(homie._id, currentUser._id, {
+  return await Connection.findByUserIds(currentUser._id, homie._id, {
     display: true,
   });
 };
