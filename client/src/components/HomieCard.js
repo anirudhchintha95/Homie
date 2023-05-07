@@ -112,7 +112,7 @@ const HomieCard = ({
                 ? user.images[0]
                 : { url: NoImage, id: "no-image" }
             }
-            height={isLarge ? "350" : "100"}
+            height={isLarge ? 350 : 100}
           />
           {!status || status === CONNECTION_STATUSES.IGNORED ? (
             <Box

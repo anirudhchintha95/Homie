@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import MessageForm from "./MessageForm";
 import {
   Avatar,
@@ -17,7 +17,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 import { getFullName } from "../utils";
-import { sendMessageApi } from "../api/homies";
+import { sendMessageApi, markMessagesAsSeenApi } from "../api/homies";
+import { CONNECTION_STATUSES } from "../contants";
 
 import Toast from "./Toast";
 import NameAvatar from "./NameAvatar";
@@ -44,7 +45,7 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
     }
   };
 
-  React.useLayoutEffect(() => {
+  useEffect(() => {
     if (shouldScrollIntoView) {
       if (listRef.current) {
         listRef.current?.lastElementChild?.scrollIntoView({
@@ -58,6 +59,27 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
   useEffect(() => {
     setShouldScrollIntoView(true);
   }, [open, messages]);
+
+  useEffect(() => {
+    const markMessagesAsSeen = async () => {
+      try {
+        const connection = await markMessagesAsSeenApi(user._id);
+        onConnectionUpdate(connection);
+      } catch (err) {
+        // Not going to throw an error here as it just marks it as seen
+        console.log(err);
+      }
+    };
+    if (open) {
+      markMessagesAsSeen();
+    }
+  }, [open, user, onConnectionUpdate]);
+
+  const canSendMessage = useMemo(
+    () =>
+      user?.connection?.currentUser?.status === CONNECTION_STATUSES.FAVORITE,
+    [user]
+  );
 
   return (
     <Dialog open={open} onClose={onClose} scroll="paper">
@@ -100,10 +122,7 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
                     sentByUserId === user?._id ? getFullName(user) : "Me"
                   }
                   secondary={message}
-                  sx={{
-                    textAlign: sentByUserId === user?._id ? "right" : "left",
-                    overflowWrap: "break-word",
-                  }}
+                  sx={{ overflowWrap: "break-word" }}
                 />
               </ListItem>
             ))
@@ -114,13 +133,30 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
           )}
         </List>
       </DialogContent>
-      <DialogActions sx={{ padding: 0, width: { xs: "90%", sm: 400 }, p: "10px" }}>
-        <MessageForm
-          value={message}
-          onInputChange={setMessage}
-          onSubmit={handleSubmit}
-          disabled={loading}
-        />
+      <DialogActions
+        sx={{
+          padding: 0,
+          width: { xs: "90%", sm: 400 },
+          p: "10px",
+          justifyContent: "center",
+        }}
+      >
+        {canSendMessage ? (
+          <MessageForm
+            value={message}
+            onInputChange={setMessage}
+            onSubmit={handleSubmit}
+            disabled={loading}
+          />
+        ) : (
+          <Typography
+            variant="body1"
+            color="primary"
+            sx={{ textDecoration: "underline" }}
+          >
+            You can only chat or send messages with your favorites
+          </Typography>
+        )}
       </DialogActions>
     </Dialog>
   );
