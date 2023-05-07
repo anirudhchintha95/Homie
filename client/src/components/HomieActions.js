@@ -120,7 +120,7 @@ const HomieActions = ({
                 startIcon={<Icon color="primary" />}
                 sx={{
                   border: "2px solid",
-                  borderColor: "primary",
+                  borderColor: "primary.main",
                 }}
                 onClick={onClick}
                 disabled={loading}

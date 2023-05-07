@@ -107,6 +107,7 @@ const getUserDetails = async (currentUser, homieId) => {
                 },
               },
               messages: 1,
+              hasUnreadMessages: 1,
             },
           },
         ],

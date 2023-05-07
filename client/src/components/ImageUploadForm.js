@@ -12,7 +12,7 @@ const ImageUploadForm = ({
   buttonContinuationText,
 }) => {
   return (
-    <Box component="form" onSubmit={onSubmit} sx={{ borderColor: "primary" }}>
+    <Box component="form" onSubmit={onSubmit} sx={{ borderColor: "primary.main" }}>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         {error ? (
           <Grid item xs={12}>

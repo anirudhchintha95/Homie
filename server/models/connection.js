@@ -49,6 +49,10 @@ const ConnectedUserSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
+    hasUnreadMessages: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -148,6 +152,7 @@ const ConnectionSchema = new Schema(
               },
             },
             messages: 1,
+            hasUnreadMessages: 1,
           });
         }
 

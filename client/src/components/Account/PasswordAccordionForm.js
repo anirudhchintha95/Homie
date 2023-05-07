@@ -176,7 +176,7 @@ const PasswordAccordionForm = ({
         <Box
           component="form"
           onSubmit={handlePasswordFormSubmit}
-          sx={{ borderColor: "primary" }}
+          sx={{ borderColor: "primary.main" }}
         >
           <Grid container spacing={2} sx={{ mb: 2 }}>
             {passwordFormError ? (
