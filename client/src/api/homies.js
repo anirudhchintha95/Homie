@@ -53,6 +53,14 @@ export const sendMessageApi = async (userId, message) => {
   return response?.data?.connection || {};
 };
 
+export const markMessagesAsSeenApi = async (userId, message) => {
+  const response = await axiosInstance.post(`/homies/${userId}/mark-read`, {
+    message,
+  });
+
+  return response?.data?.connection || {};
+};
+
 export const toggleContactInfoApi = async (userId) => {
   const response = await axiosInstance.patch(
     `/homies/${userId}/toggle-contact-info`

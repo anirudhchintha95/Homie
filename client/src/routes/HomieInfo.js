@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Divider,
@@ -9,7 +10,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import SmokingRoomsIcon from "@mui/icons-material/SmokingRooms";
 import LiquorIcon from "@mui/icons-material/Liquor";
@@ -84,6 +85,25 @@ const HomieInfo = () => {
     return user.connection?.currentUser?.status;
   }, [user]);
 
+  const showMessageButton = useMemo(() => {
+    if (!user) return false;
+    if (!user.connection) return false;
+
+    // If either one of them is blocked then false
+    if (
+      user.connection.currentUser.status === CONNECTION_STATUSES.BLOCKED ||
+      user.connection.otherUser.status === CONNECTION_STATUSES.BLOCKED
+    ) {
+      return false;
+    }
+
+    // If either one of them is favorite then true
+    return (
+      user.connection.currentUser.status === CONNECTION_STATUSES.FAVORITE ||
+      user.connection.otherUser.status === CONNECTION_STATUSES.FAVORITE
+    );
+  }, [user]);
+
   const handleToggleContactsVisibility = async () => {
     try {
       const data = await toggleContactInfoApi(id);
@@ -97,6 +117,13 @@ const HomieInfo = () => {
       );
     }
   };
+
+  const handleConnectionUpdate = useCallback((connection) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      connection,
+    }));
+  }, []);
 
   return loading ? (
     <Loader />
@@ -115,14 +142,9 @@ const HomieInfo = () => {
         messages={user?.connection?.messages}
         open={openChatModal}
         onClose={() => setOpenChatModal(false)}
-        onConnectionUpdate={(connection) => {
-          setUser((prevUser) => ({
-            ...prevUser,
-            connection,
-          }));
-        }}
+        onConnectionUpdate={handleConnectionUpdate}
       />
-      {status === CONNECTION_STATUSES.MATCHED ? (
+      {showMessageButton ? (
         <Fab
           sx={{
             position: "fixed",
@@ -133,7 +155,13 @@ const HomieInfo = () => {
           color="secondary"
           onClick={() => setOpenChatModal(true)}
         >
-          <ChatIcon color="primary" />
+          <Badge
+            color="warning"
+            variant="dot"
+            invisible={!user?.connection?.currentUser?.hasUnreadMessages}
+          >
+            <ChatIcon color="primary" />
+          </Badge>
         </Fab>
       ) : (
         <></>
