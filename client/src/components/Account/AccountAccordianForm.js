@@ -18,6 +18,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ACCOUNT_PANELS } from "../../contants";
 import { updateAccountApi } from "../../api/users";
 import useAuth from "../../useAuth";
+import useToast from "../../useToast";
 
 import DatePicker from "../DatePicker";
 import SubmitButton from "../SubmitButton";
@@ -29,9 +30,9 @@ const AccountAccordianForm = ({
   loading,
   setLoading,
   scrollToTop,
-  setSuccessMsg,
 }) => {
   const auth = useAuth();
+  const toast = useToast();
   const [accountFormError, setAccountFormError] = useState();
   const [firstName, setFirstName] = useState({
     error: false,
@@ -113,7 +114,7 @@ const AccountAccordianForm = ({
       });
 
       await auth.refreshCurrentUser();
-      setSuccessMsg("Account details updated successfully.");
+      toast.showToast("Account details updated successfully.");
     } catch (error) {
       setAccountFormError(
         error?.response?.data?.error ||

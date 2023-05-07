@@ -15,6 +15,7 @@ import { validatePassword } from "../../helpers";
 import { updatePasswordApi } from "../../api/users";
 import { ACCOUNT_PANELS } from "../../contants";
 import useAuth from "../../useAuth";
+import useToast from "../../useToast";
 
 import SubmitButton from "../SubmitButton";
 
@@ -24,9 +25,9 @@ const PasswordAccordionForm = ({
   loading,
   setLoading,
   scrollToTop,
-  setSuccessMsg
 }) => {
   const auth = useAuth();
+  const toast = useToast();
   const [currentPassword, setCurrentPassword] = useState({
     error: false,
     value: "",
@@ -129,7 +130,7 @@ const PasswordAccordionForm = ({
       });
 
       await auth.refreshCurrentUser();
-      setSuccessMsg("Password updated successfully.");
+      toast.showToast("Password updated successfully.");
     } catch (error) {
       setPasswordFormError(
         error?.response?.data?.error ||

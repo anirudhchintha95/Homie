@@ -10,6 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { updateImageApi } from "../../api/users";
 import { ACCOUNT_PANELS } from "../../contants";
 import useAuth from "../../useAuth";
+import useToast from "../../useToast";
 
 import ImageUploadForm from "../ImageUploadForm";
 
@@ -19,9 +20,9 @@ const ImagesAccordianForm = ({
   loading,
   setLoading,
   scrollToTop,
-  setSuccessMsg,
 }) => {
   const auth = useAuth();
+  const toast = useToast();
   const [image, setImage] = useState();
   const [imageFormError, setImageFormError] = useState();
 
@@ -37,7 +38,7 @@ const ImagesAccordianForm = ({
       setLoading(true);
       await updateImageApi(auth.user._id, image);
       await auth.refreshCurrentUser();
-      setSuccessMsg("Image updated successfully.");
+      toast.showToast("Image updated successfully.");
     } catch (error) {
       setImageFormError(
         error?.response?.data?.error ||

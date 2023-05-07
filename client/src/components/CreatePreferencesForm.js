@@ -13,14 +13,19 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
+import { createPreferencesApi } from "../api/preferences";
+
 import { SubmitButton } from "../components";
 import CityStatePicker from "./CityStatePicker";
 import RentSlider from "./RentSlider";
 import AgeSlider from "./AgeSlider";
-import { createPreferencesApi } from "../api/preferences";
+import useAuth from "../useAuth";
+import useToast from "../useToast";
 
 const CreatePreferencesForm = ({ onCreatePreferences }) => {
   const headerRef = React.useRef();
+  const auth = useAuth();
+  const toast = useToast();
 
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
@@ -247,7 +252,8 @@ const CreatePreferencesForm = ({ onCreatePreferences }) => {
 
       if (Object.keys(createPreferences).length > 0) {
         await createPreferencesApi(createPreferences);
-        onCreatePreferences();
+        await auth.refreshCurrentUser();
+        toast.showToast("Preferences created successfully");
       }
     } catch (error) {
       setError(

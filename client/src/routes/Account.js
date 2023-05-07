@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-import { SubmitButton, Toast } from "../components";
+import { SubmitButton } from "../components";
 import {
   AccountAccordianForm,
   DeleteUserConfirmationDialog,
@@ -16,7 +16,6 @@ const Account = () => {
   const [open, setOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState();
   const [loading, setLoading] = useState();
-  const [successMsg, setSuccessMsg] = useState();
 
   const handleChange = (panel) => (_, isExpanded) => {
     if (loading) return;
@@ -44,20 +43,12 @@ const Account = () => {
         setLoading={setLoading}
       />
 
-      <Toast
-        open={!!successMsg}
-        handleClose={() => setSuccessMsg()}
-        message={successMsg}
-        variant="success"
-      />
-
       <AccountAccordianForm
         expanded={expanded}
         handleChange={handleChange}
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
-        setSuccessMsg={setSuccessMsg}
       />
       <PasswordAccordionForm
         expanded={expanded}
@@ -65,7 +56,6 @@ const Account = () => {
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
-        setSuccessMsg={setSuccessMsg}
       />
       <ImagesAccordianForm
         expanded={expanded}
@@ -73,7 +63,6 @@ const Account = () => {
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
-        setSuccessMsg={setSuccessMsg}
       />
       <Button
         variant="contained"

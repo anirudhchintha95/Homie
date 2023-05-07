@@ -19,3 +19,4 @@ export { default as ConnectionIcon } from "./ConnectionIcon";
 export { default as UpdatePreferencesModal } from "./UpdatePreferencesModal";
 export { default as DatePicker } from "./DatePicker";
 export { default as NoHomiesCard } from "./NoHomiesCard";
+export { default as ToastProvider } from "./ToastProvider";

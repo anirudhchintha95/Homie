@@ -1,11 +1,13 @@
-import { AuthProvider } from "./components";
+import { AuthProvider, ToastProvider } from "./components";
 import Routes from "./routes";
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 

@@ -6,14 +6,11 @@ import {
 } from "@mui/material";
 import React from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ErrorIcon from "@mui/icons-material/Error";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { ACCOUNT_PANELS } from "../contants";
 import CreatePreferencesForm from "./CreatePreferencesForm";
 
 const CreatePreferencesAccordionForm = ({ expanded, handleChange }) => {
-  const [preferencesAdded, setPreferencesAdded] = React.useState(false);
   return (
     <Accordion
       expanded={expanded === ACCOUNT_PANELS.preferences}
@@ -26,10 +23,7 @@ const CreatePreferencesAccordionForm = ({ expanded, handleChange }) => {
       >
         <Typography
           sx={{
-            width:
-              expanded === ACCOUNT_PANELS.preferences
-                ? "calc(100% - 24px)"
-                : "33%",
+            width: expanded === ACCOUNT_PANELS.preferences ? "100%" : "33%",
             textAlign:
               expanded === ACCOUNT_PANELS.preferences ? "center" : "inherit",
             flexShrink: 0,
@@ -46,14 +40,9 @@ const CreatePreferencesAccordionForm = ({ expanded, handleChange }) => {
         >
           Create Preferences
         </Typography>
-        {preferencesAdded ? (
-          <CheckCircleIcon sx={{ marginLeft: "auto" }} color="success" />
-        ) : (
-          <ErrorIcon sx={{ marginLeft: "auto" }} color="error" />
-        )}
       </AccordionSummary>
       <AccordionDetails>
-        <CreatePreferencesForm onCreatePreferences={() => setPreferencesAdded(true)} />
+        <CreatePreferencesForm />
       </AccordionDetails>
     </Accordion>
   );
