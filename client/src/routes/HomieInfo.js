@@ -319,7 +319,7 @@ const HomieInfo = () => {
               }
               sx={{
                 border: "2px solid",
-                borderColor: "primary",
+                borderColor: "primary.main",
                 marginTop: 2,
               }}
               onClick={handleToggleContactsVisibility}
