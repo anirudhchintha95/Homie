@@ -19,16 +19,17 @@ import { SubmitButton } from "../components";
 import CityStatePicker from "./CityStatePicker";
 import RentSlider from "./RentSlider";
 import AgeSlider from "./AgeSlider";
-import useAuth from "../useAuth";
 import useToast from "../useToast";
 
-const CreatePreferencesForm = ({ onCreatePreferences }) => {
+const CreatePreferencesForm = ({
+  loading,
+  setLoading,
+  onCreatePreferences,
+}) => {
   const headerRef = React.useRef();
-  const auth = useAuth();
   const toast = useToast();
 
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
   const [city, setCity] = useState({
     error: false,
     value: "",
@@ -252,8 +253,9 @@ const CreatePreferencesForm = ({ onCreatePreferences }) => {
 
       if (Object.keys(createPreferences).length > 0) {
         await createPreferencesApi(createPreferences);
-        await auth.refreshCurrentUser();
         toast.showToast("Preferences created successfully");
+        await onCreatePreferences();
+        setLoading(false);
       }
     } catch (error) {
       setError(
@@ -261,7 +263,6 @@ const CreatePreferencesForm = ({ onCreatePreferences }) => {
           error?.message ||
           "Could not create User. Please try again later."
       );
-    } finally {
       setLoading(false);
     }
   };
@@ -465,4 +466,4 @@ const CreatePreferencesForm = ({ onCreatePreferences }) => {
   );
 };
 
-export default React.memo(CreatePreferencesForm);
+export default CreatePreferencesForm;

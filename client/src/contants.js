@@ -31,6 +31,7 @@ export const ACCOUNT_PANELS = {
   settings: "settings",
   authentication: "authentication",
   images: "images",
+  bio: "bio",
 };
 
 export const GENDERS = {

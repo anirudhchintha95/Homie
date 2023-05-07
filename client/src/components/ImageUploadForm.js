@@ -9,6 +9,7 @@ const ImageUploadForm = ({
   onImageChange,
   onSubmit,
   loading,
+  buttonContinuationText,
 }) => {
   return (
     <Box component="form" onSubmit={onSubmit} sx={{ borderColor: "primary" }}>
@@ -23,7 +24,7 @@ const ImageUploadForm = ({
 
         {images?.length > 0 ? (
           <Grid item xs={12}>
-            <DisplayImage image={images[0]} height="300" />
+            <DisplayImage image={images[0]} height="300" elevation={2} />
           </Grid>
         ) : (
           <></>
@@ -41,6 +42,7 @@ const ImageUploadForm = ({
         <Grid item xs={12}>
           <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
             {images?.length ? "Update" : "Upload"} Image
+            {buttonContinuationText ? ` ${buttonContinuationText}` : ""}
           </SubmitButton>
         </Grid>
       </Grid>

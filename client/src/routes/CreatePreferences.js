@@ -1,62 +1,130 @@
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import React from "react";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import Typography from "@mui/material/Typography";
+import { Button, Paper, StepButton } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { useNavigate } from "react-router-dom";
+
 import useAuth from "../useAuth";
-import { ImagesAccordianForm } from "../components/Account";
-import CreatePreferencesAccordionForm from "../components/CreatePeferencesAccordion";
-import { ACCOUNT_PANELS } from "../contants";
-import useToast from "../useToast";
 
-const CreatePreferences = () => {
+import { CreatePreferencesForm } from "../components";
+import CreatePreferencesImageUploadForm from "../components/CreatePreferences/ImageUploadForm";
+import BioForm from "../components/BioForm";
+
+const steps = ["Add your bio", "Add your image", "Create Preferences"];
+
+const getCurrentIndex = (user) => {
+  if (!user) return 0;
+  if (!user.bio) return 0;
+  if (!user.images?.length) return 1;
+  return 2;
+};
+
+export default function HorizontalLinearStepper() {
   const auth = useAuth();
-  const toast = useToast();
-  const headerRef = React.useRef();
-  const [expanded, setExpanded] = React.useState();
-  const [loading, setLoading] = useState();
+  const navigate = useNavigate();
+  const [activeStep, setActiveStep] = React.useState(
+    getCurrentIndex(auth.user)
+  );
+  const [loading, setLoading] = React.useState(false);
 
-  const handleChange = (panel) => (_, isExpanded) => {
-    if (loading) return;
-
-    if (panel !== ACCOUNT_PANELS.images && auth?.user?.images?.length === 0) {
-      toast.showToast("Please add profile image first", { variant: "error" });
-      return;
+  const stepsCompletedCheck = (index) => {
+    if (index === 0) {
+      return !!auth.user.bio;
+    } else if (index === 1) {
+      return !!auth.user.images?.length;
+    } else if (index === 2) {
+      return !!auth.user.preferences?._id;
     }
-
-    setExpanded(isExpanded ? panel : null);
   };
 
-  const scrollToTop = () => {
-    headerRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  const refreshCurrentUser = async () => {
+    try {
+      await auth.refreshCurrentUser();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleNext = async () => {
+    const refreshed = await refreshCurrentUser();
+    if (refreshed) {
+      activeStep === steps.length - 1
+        ? navigate("/")
+        : setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
+  const handleStep = (step) => () => {
+    if (loading) return;
+
+    setActiveStep(step);
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", mt: 2, p: 2, textAlign: "center" }}>
+    <Paper
+      sx={{
+        maxWidth: { xs: "100%", sm: "80%" },
+        mx: "auto",
+        mt: { xs: 2, sm: 4 },
+        p: 2,
+        textAlign: "center",
+      }}
+    >
       <Typography variant="h1" gutterBottom color="primary">
-        Bio and Preferences
+        Before you get started...
       </Typography>
-      <Typography variant="body1" marginBottom={2}>
-        Please add bio, profile image and preferences to get started with your
-        "homie" search
+      <Typography variant="body1" mb={2} color="primary">
+        Please take a little bit of time for the other users to get to know you.
+        This will help our algorithm in fetching you the best matches.
       </Typography>
-      <ImagesAccordianForm
-        expanded={expanded}
-        handleChange={handleChange}
-        loading={loading}
-        setLoading={setLoading}
-        scrollToTop={scrollToTop}
-      />
-      <CreatePreferencesAccordionForm
-        expanded={expanded}
-        handleChange={handleChange}
-        loading={loading}
-        setLoading={setLoading}
-        scrollToTop={scrollToTop}
-      />
-    </Box>
-  );
-};
+      <Button
+        onClick={refreshCurrentUser}
+        sx={{ mb: 2 }}
+        variant="text"
+        startIcon={<RefreshIcon />}
+        disabled={loading}
+      >
+        Refresh My Data
+      </Button>
+      <Stepper nonLinear activeStep={activeStep}>
+        {steps.map((label, index) => {
+          return (
+            <Step key={label} completed={stepsCompletedCheck(index)}>
+              <StepButton color="inherit" onClick={handleStep(index)}>
+                {label}
+              </StepButton>
+            </Step>
+          );
+        })}
+      </Stepper>
 
-export default CreatePreferences;
+      <React.Fragment>
+        <Typography sx={{ mt: 2, mb: 1 }} variant="h2" color="primary">
+          {steps[activeStep]}
+        </Typography>
+        {activeStep === 0 ? (
+          <BioForm
+            loading={loading}
+            setLoading={setLoading}
+            onBioUpdate={handleNext}
+          />
+        ) : activeStep === 1 ? (
+          <CreatePreferencesImageUploadForm
+            loading={loading}
+            setLoading={setLoading}
+            onImageUpload={handleNext}
+          />
+        ) : (
+          <CreatePreferencesForm
+            loading={loading}
+            setLoading={setLoading}
+            onCreatePreferences={handleNext}
+          />
+        )}
+      </React.Fragment>
+    </Paper>
+  );
+}

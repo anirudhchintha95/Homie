@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { SubmitButton } from "../components";
 import {
   AccountAccordianForm,
+  BioAccordianForm,
   DeleteUserConfirmationDialog,
   ImagesAccordianForm,
   PasswordAccordionForm,
@@ -49,6 +50,12 @@ const Account = () => {
         loading={loading}
         setLoading={setLoading}
         scrollToTop={scrollToTop}
+      />
+      <BioAccordianForm
+        expanded={expanded}
+        handleChange={handleChange}
+        loading={loading}
+        setLoading={setLoading}
       />
       <PasswordAccordionForm
         expanded={expanded}

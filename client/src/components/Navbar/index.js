@@ -59,7 +59,7 @@ const Navbar = () => {
           <Avatar
             alt="Homie"
             src={HomieLogo}
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1, h: "64px" }}
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
           />
 
           <Typography
@@ -124,7 +124,7 @@ const Navbar = () => {
           <Avatar
             src={HomieLogo}
             alt="Homie"
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1, h: "64px" }}
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
           />
           <Typography
             variant="h5"

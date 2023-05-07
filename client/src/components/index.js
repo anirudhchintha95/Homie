@@ -20,3 +20,4 @@ export { default as UpdatePreferencesModal } from "./UpdatePreferencesModal";
 export { default as DatePicker } from "./DatePicker";
 export { default as NoHomiesCard } from "./NoHomiesCard";
 export { default as ToastProvider } from "./ToastProvider";
+export { default as CreatePreferencesForm } from "./CreatePreferencesForm";

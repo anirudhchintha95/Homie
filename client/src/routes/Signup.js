@@ -412,7 +412,7 @@ const Signup = () => {
                 error={!!gender.error}
               >
                 {Object.values(GENDERS).map((gender) => (
-                  <MenuItem value={gender}>{gender}</MenuItem>
+                  <MenuItem value={gender} key={gender}>{gender}</MenuItem>
                 ))}
               </Select>
             </FormControl>
