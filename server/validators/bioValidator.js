@@ -1,11 +1,15 @@
-import { isValidEmail } from "./helpers.js";
+import { isValidObjectId } from "mongoose";
 
 export const bioValidator = (req, res, next) => {
   const { bio } = req.body;
-  const { email } = req.body;
+  const { id } = req.currentUser;
 
-  if (typeof email !== "string" || !isValidEmail(email)) {
-    throw { status: 400, message: "Email is invalid" };
+  if (!id || !bio) {
+    return res.status(400).json({ error: "Error: Invalid request" });
+  }
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ error: "Error: Invalid user ID" });
   }
 
   if (typeof bio !== "string") {

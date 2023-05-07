@@ -134,12 +134,11 @@ export const deleteUser = async (userId) => {
   return userDeleted;
 };
 
-export const updateBio = async (email, bio) => {
-  if (typeof email !== "string" || !isValidEmail(email)) {
-    throw { status: 400, message: "Email is invalid" };
-  }
+export const updateBio = async (userId, bio) => {
+  if (!isValidObjectId(userId))
+    throw { status: 400, message: "Error: Invaild User Id" };
 
-  const user = await User.getUserProfile(email);
+  const user = await User.findById(userId);
 
   if (typeof bio !== "string") {
     throw { status: 400, message: "Bio must be a string" };

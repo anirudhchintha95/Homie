@@ -17,6 +17,7 @@ import {
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
 import { bioValidator } from "../validators/bioValidator.js";
 import xss from "xss";
+import { updateBio } from "../data/users.js";
 
 const router = Router();
 
@@ -121,11 +122,11 @@ router
   });
 
 router.route("/bio").patch(bioValidator, async (req, res) => {
-  const { email } = req.currentUser;
+  const { id } = req.currentUser;
   const { bio } = req.body;
 
   try {
-    const user = await updateBio(email, bio);
+    const user = await updateBio(id, bio);
     return res.status(200).json(user);
   } catch (err) {
     return res
