@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { Button, Paper, StepButton } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
 
 import useAuth from "../useAuth";
 
@@ -101,7 +102,12 @@ export default function HorizontalLinearStepper() {
         })}
       </Stepper>
 
-      <React.Fragment>
+      <Box
+        display="flex"
+        justifyContent="center"
+        flexDirection={"column"}
+        alignItems={"center"}
+      >
         <Typography sx={{ mt: 2, mb: 1 }} variant="h2" color="primary">
           {steps[activeStep]}
         </Typography>
@@ -124,7 +130,7 @@ export default function HorizontalLinearStepper() {
             onCreatePreferences={handleNext}
           />
         )}
-      </React.Fragment>
+      </Box>
     </Paper>
   );
 }

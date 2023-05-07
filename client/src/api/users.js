@@ -16,6 +16,10 @@ export const updatePasswordApi = async (data) => {
   await axiosInstance.patch("/me/update-password", data);
 };
 
+export const updateBioApi = async (data) => {
+  await axiosInstance.patch("/me/bio", data);
+};
+
 export const deleteAccountApi = async () => {
   const res = await axiosInstance.delete("/me");
 

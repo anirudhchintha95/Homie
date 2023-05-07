@@ -1,36 +1,43 @@
 import { React, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
 import SubmitButton from "./SubmitButton";
 import { Alert } from "@mui/material";
 import useAuth from "../useAuth";
+import { updateBioApi } from "../api";
 
 const BioForm = ({ loading, setLoading, onBioUpdate }) => {
   const auth = useAuth();
   const [error, setError] = useState();
   const [bio, setBio] = useState({
     error: false,
-    value: "",
+    value: auth.user?.bio || "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!bio.value) {
       setBio((prev) => ({ ...prev, error: true }));
-      setError("Bio cannot be empty");
+      setError("Error: Bio cannot be empty");
       return;
     }
 
+    if (bio.value.length > 250) {
+      setBio((prev) => ({ ...prev, error: true }));
+      setError("Error: Bio cannot be more than 250 characters");
+      return;
+    }
+
+    setError("");
+
     try {
       setLoading(true);
-      console.log(bio.value);
-      //---- API CALL goes HERE -------
+      await updateBioApi({ bio: bio.value.trim().slice(0, 250) });
       await onBioUpdate();
-      //await refreshCurrentUser();
       setLoading(false);
     } catch {
       setLoading(false);
+      setError("Error: Bio update failed");
     }
   };
 
@@ -38,7 +45,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ borderColor: "primary" }}
+      sx={{ borderColor: "primary.main", width: { xs: "100%", sm: 400 } }}
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12}>
@@ -46,14 +53,33 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <TextareaAutosize
+          <TextField
             aria-label="Bio"
             placeholder="Enter you Bio here!!"
-            minRows={3}
-            onChange={(e) => setBio({ value: e.target.value, error: false })}
-            style={{ width: "100%" }}
+            minRows={5}
+            value={bio.value}
+            multiline
+            onChange={(e) =>
+              setBio({
+                value: e.target.value.slice(0, 250),
+                error: false,
+              })
+            }
+            onBlur={(e) =>
+              setBio({
+                value: e.target.value.trim(),
+                error: false,
+              })
+            }
+            fullWidth
           />
         </Grid>
+        <Grid item xs={12}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            {bio.value?.length}/250
+          </Typography>
+        </Grid>
+
         <Grid item xs={12}>
           <SubmitButton sx={{ marginTop: 2 }} loading={loading} fullWidth>
             {auth.user?.bio ? "Update" : "Add"} Bio
