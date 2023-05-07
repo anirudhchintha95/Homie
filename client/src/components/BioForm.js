@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import SubmitButton from "./SubmitButton";
 import { Alert } from "@mui/material";
 import useAuth from "../useAuth";
-import { updateBioApi } from "../api";
+import { updateBioApi } from "../api/users";
 
 const BioForm = ({ loading, setLoading, onBioUpdate }) => {
   const auth = useAuth();
