@@ -165,4 +165,17 @@ homiesRouter
     }
   });
 
+homiesRouter.route("/:id/mark-read").post(async (req, res) => {
+  try {
+    let { id } = req.params;
+
+    id = validateId(id, "homieId");
+
+    const connection = await homiesData.markMessageAsRead(req.currentUser, id);
+    res.json({ connection });
+  } catch (error) {
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
 export default homiesRouter;

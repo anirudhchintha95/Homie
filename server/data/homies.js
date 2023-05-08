@@ -132,3 +132,48 @@ export const getHomie = async (currentUser, homieId) => {
 
   return user;
 };
+
+export const markMessageAsRead = async (currentUser, homieId) => {
+  if (!currentUser) {
+    throw { status: 401, message: "Unauthorised request" };
+  }
+
+  homieId = validateId(homieId, "homieId");
+
+  const homie = await User.findById(homieId);
+
+  if (!homie) {
+    throw { status: 400, message: "User not found" };
+  }
+
+  const connection = await Connection.findByUserIds(currentUser._id, homie._id);
+
+  if (!connection) {
+    throw { status: 400, message: "Connection not found" };
+  }
+
+  const currentUserIdx = connection.users.findIndex(
+    ({ userId }) => userId.toString() === currentUser._id.toString()
+  );
+
+  if (currentUserIdx === -1) {
+    throw { status: 400, message: "User not found in connection" };
+  }
+
+  const otherUserIdx = currentUserIdx === 0 ? 1 : 0;
+
+  if (connection.users[currentUserIdx].status === CONNECTION_STATUSES.BLOCKED) {
+    throw {
+      status: 400,
+      message: "You have blocked the user from sending messages to you",
+    };
+  }
+
+  connection.users[currentUserIdx].hasUnreadMessages = false;
+
+  await connection.save();
+
+  return await Connection.findByUserIds(currentUser._id, homie._id, {
+    display: true,
+  });
+};
