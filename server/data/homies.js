@@ -171,7 +171,11 @@ export const markMessageAsRead = async (currentUser, homieId) => {
     };
   }
 
-  if (!connection.some(({status}) => status === CONNECTION_STATUSES.FAVORITE)) {
+  if (
+    !connection.users.some(
+      ({ status }) => status === CONNECTION_STATUSES.FAVORITE
+    )
+  ) {
     throw {
       status: 400,
       message: "You dont have a favorite/admirer connection with this user",
