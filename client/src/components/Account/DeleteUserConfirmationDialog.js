@@ -14,6 +14,7 @@ import useAuth from "../../useAuth";
 import SubmitButton from "../SubmitButton";
 import Toast from "../Toast";
 import { Box } from "@mui/material";
+import useToast from "../../useToast";
 
 const DeleteUserConfirmationDialog = ({
   open,
@@ -22,6 +23,7 @@ const DeleteUserConfirmationDialog = ({
   setLoading,
 }) => {
   const auth = useAuth();
+  const toast = useToast();
   const [email, setEmail] = React.useState({
     error: "",
     value: "",
@@ -54,6 +56,7 @@ const DeleteUserConfirmationDialog = ({
       await deleteAccountApi(email.value);
       setLoading(false);
       auth.signOut();
+      toast.showToast("Account deleted successfully", { variant: "success" });
     } catch (err) {
       setError(
         err?.response?.data?.error ||
