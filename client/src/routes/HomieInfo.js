@@ -60,7 +60,7 @@ const HomieInfo = () => {
       setUser(data);
     } catch (err) {
       setError(
-        err?.response?.data?.message || err.message || "Could not fetch user"
+        err?.response?.data?.error || err.message || "Could not fetch user"
       );
     } finally {
       setLoading(false);
@@ -113,7 +113,7 @@ const HomieInfo = () => {
       }));
     } catch (err) {
       setToastError(
-        err?.response?.data?.message || err.message || "Could not fetch user"
+        err?.response?.data?.error || err.message || "Could not fetch user"
       );
     }
   };

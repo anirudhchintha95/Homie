@@ -38,7 +38,7 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
       onConnectionUpdate(connection);
     } catch (err) {
       setToastError(
-        err?.response?.data?.message || err.message || "Could not send message"
+        err?.response?.data?.error || err.message || "Could not send message"
       );
     } finally {
       setLoading(false);
