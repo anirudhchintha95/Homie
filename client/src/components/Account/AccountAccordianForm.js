@@ -253,7 +253,6 @@ const AccountAccordianForm = ({
                   )
                 }
                 error={dob.error}
-                helperText={dob.error}
               />
             </Grid>
 
