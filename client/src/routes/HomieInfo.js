@@ -17,7 +17,7 @@ import LiquorIcon from "@mui/icons-material/Liquor";
 import PetsIcon from "@mui/icons-material/Pets";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ApartmentIcon from "@mui/icons-material/Apartment";
+// import ApartmentIcon from "@mui/icons-material/Apartment";
 import ChatIcon from "@mui/icons-material/Chat";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -389,7 +389,7 @@ const HomieInfo = () => {
             {user.location.city}, {user.location.state}
           </Typography>
         </Box>
-        <Divider sx={{ width: "100%" }} />
+        {/* <Divider sx={{ width: "100%" }} />
         <Box marginTop={2} marginBottom={2} display="flex" alignItems="center">
           <Tooltip title="Home Offered">
             <StyledAvatar>
@@ -402,7 +402,7 @@ const HomieInfo = () => {
           <Typography variant="h3" color="primary" marginLeft={0.5}>
             {user.homes?.length ? "Yes" : "No"}
           </Typography>
-        </Box>
+        </Box> */}
         <Divider sx={{ width: "100%" }} />
         <Typography variant="p" color="primary" marginTop={4} marginBottom={4}>
           {user.bio || "No description provided"}
