@@ -90,7 +90,11 @@ const RightSideMenu = () => {
         {settings.map((setting) =>
           setting.path ? (
             <MenuItem key={setting.name}>
-              <Link to={setting.path} onClick={handleCloseUserMenu}>
+              <Link
+                to={setting.path}
+                onClick={handleCloseUserMenu}
+                style={{ display: "flex", alignItems: "center" }}
+              >
                 <ListItemIcon>
                   <setting.Icon fontSize="small" />
                 </ListItemIcon>

@@ -32,7 +32,7 @@ const AgeSlider = ({ minAge, maxAge, onMinAgeChange, onMaxAgeChange }) => {
       <Slider
         getAriaLabel={() => "Age Slider"}
         min={18}
-        max={60}
+        max={100}
         value={[minAge.value, maxAge.value]}
         onChange={handleChange}
         valueLabelDisplay="auto"

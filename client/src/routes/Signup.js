@@ -36,7 +36,7 @@ const Signup = () => {
   const headerRef = React.useRef();
 
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
   const [firstName, setFirstName] = useState({
     error: false,
     value: "",

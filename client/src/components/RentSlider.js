@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 
 function valuetext(value) {
-  return `$${value * 100}`;
+  return `$${value}`;
 }
 
-const minDistance = 10;
+const minDistance = 500;
 
 const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
   const handleChange = (_, newValue, activeThumb) => {
@@ -16,12 +16,12 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
 
     if (activeThumb === 0) {
       onMinRentChange({
-        value: Math.min(newValue[0] * 100, maxRent.value - minDistance * 100),
+        value: Math.min(newValue[0], maxRent.value - minDistance),
         error: "",
       });
     } else {
       onMaxRentChange({
-        value: Math.max(newValue[1] * 100, minRent.value + minDistance * 100),
+        value: Math.max(newValue[1], minRent.value + minDistance),
         error: "",
       });
     }
@@ -30,11 +30,14 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
   return (
     <Box sx={{ width: "90%" }} m="auto">
       <Slider
-        getAriaLabel={() => "Rent Slider"}
-        value={[minRent.value / 100, maxRent.value / 100]}
+        min={0}
+        max={10000}
+        getAriaLabel={(index) => `Rent Slider ${index === 0 ? "min" : "max"}`}
+        value={[minRent.value, maxRent.value]}
         onChange={handleChange}
         valueLabelDisplay="auto"
         getAriaValueText={valuetext}
+        valueLabelFormat={valuetext}
         disableSwap
       />
     </Box>

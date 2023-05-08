@@ -83,6 +83,7 @@ const ImagesAccordianForm = ({
         <ImageUploadForm
           error={imageFormError}
           images={auth.user?.images}
+          imageValue={image}
           onImageChange={setImage}
           onSubmit={handleImageUpload}
           loading={loading}

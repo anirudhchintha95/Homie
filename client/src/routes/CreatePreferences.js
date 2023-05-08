@@ -71,7 +71,6 @@ export default function HorizontalLinearStepper() {
         mx: "auto",
         mt: { xs: 2, sm: 4 },
         p: 2,
-        textAlign: "center",
       }}
     >
       <Typography variant="h1" gutterBottom color="primary">
@@ -94,9 +93,7 @@ export default function HorizontalLinearStepper() {
         {steps.map((label, index) => {
           return (
             <Step key={label} completed={stepsCompletedCheck(index)}>
-              <StepButton color="inherit" onClick={handleStep(index)}>
-                {label}
-              </StepButton>
+              <StepButton onClick={handleStep(index)}>{label}</StepButton>
             </Step>
           );
         })}

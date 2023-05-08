@@ -54,7 +54,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
 
         <Grid item xs={12}>
           <TextField
-            aria-label="Bio"
+            label="Bio"
             placeholder="Enter you Bio here!!"
             minRows={5}
             value={bio.value}
