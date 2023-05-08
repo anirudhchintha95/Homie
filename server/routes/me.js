@@ -15,7 +15,9 @@ import {
   validateGender,
 } from "../validators/helpers.js";
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
+import { bioValidator } from "../validators/bioValidator.js";
 import xss from "xss";
+import { updateBio } from "../data/users.js";
 
 const router = Router();
 
@@ -118,5 +120,19 @@ router
         : res.status(500).json({ error: "Internal server error" });
     }
   });
+
+router.route("/bio").patch(bioValidator, async (req, res) => {
+  const { id } = req.currentUser;
+  const { bio } = req.body;
+
+  try {
+    const user = await updateBio(id, bio);
+    return res.status(200).json(user);
+  } catch (err) {
+    return res
+      .status(err.status || 500)
+      .json({ error: err.message || "Server error" });
+  }
+});
 
 export default router;

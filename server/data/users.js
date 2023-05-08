@@ -133,3 +133,39 @@ export const deleteUser = async (userId) => {
   );
   return userDeleted;
 };
+
+export const updateBio = async (userId, bio) => {
+  if (!isValidObjectId(userId))
+    throw { status: 400, message: "Error: Invaild User Id" };
+
+  const user = await User.findById(userId);
+
+  if (typeof bio !== "string") {
+    throw { status: 400, message: "Bio must be a string" };
+  }
+
+  bio = bio.trim();
+
+  if (!user) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  if (!bio) {
+    throw { status: 400, message: "Bio is required" };
+  }
+
+  if (bio.length > 250) {
+    throw { status: 400, message: "Bio must be less than 250 characters" };
+  }
+
+  if (bio === user.bio) {
+    throw {
+      status: 400,
+      message: "New bio cannot be the same as the current one",
+    };
+  }
+
+  user.bio = bio;
+  await user.save();
+  return user;
+};
