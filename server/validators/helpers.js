@@ -26,7 +26,7 @@ const validateStateAndCity = (state, city) => {
 };
 
 function isValidEmail(email) {
-  const emailRegex = /^\S+@\S+\.\S+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) return false;
   return true;
 }
@@ -220,10 +220,10 @@ const validatePhone = (value, name) => {
   value = value.trim();
   if (isNaN(value))
     throw { status: 400, message: `${name} must only contain numbers` };
-  if (value.length != 10) {
+  if (!/^[1-9]\d{9}$/.test(phoneNumber)) {
     throw {
       status: 400,
-      message: `${name} must contain 10 digits`,
+      message: `${name} must contain only 10 digits and not begin with 0`,
     };
   }
   return value;
