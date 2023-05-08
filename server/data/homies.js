@@ -160,12 +160,21 @@ export const markMessageAsRead = async (currentUser, homieId) => {
     throw { status: 400, message: "User not found in connection" };
   }
 
-  const otherUserIdx = currentUserIdx === 0 ? 1 : 0;
-
-  if (connection.users[currentUserIdx].status === CONNECTION_STATUSES.BLOCKED) {
+  if (
+    connection.users.some(
+      ({ status }) => status === CONNECTION_STATUSES.BLOCKED
+    )
+  ) {
     throw {
       status: 400,
-      message: "You have blocked the user from sending messages to you",
+      message: "The connection is blocked. You cannot mark messages as read",
+    };
+  }
+
+  if (!connection.some(({status}) => status === CONNECTION_STATUSES.FAVORITE)) {
+    throw {
+      status: 400,
+      message: "You dont have a favorite/admirer connection with this user",
     };
   }
 

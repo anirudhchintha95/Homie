@@ -70,7 +70,7 @@ const ChatModal = ({ open, onClose, user, messages, onConnectionUpdate }) => {
         console.log(err);
       }
     };
-    if (open) {
+    if (open && user?.connection?.currentUser?.hasUnreadMessages) {
       markMessagesAsSeen();
     }
   }, [open, user, onConnectionUpdate]);
