@@ -83,7 +83,7 @@ export const createPreferences = async (preferences, email) => {
 export const updatePreferences = async (preferences, email) => {
   const validatedPref = validatePreferencesBE(preferences);
 
-  const {
+  var {
     city,
     state,
     smoking,
@@ -95,6 +95,18 @@ export const updatePreferences = async (preferences, email) => {
     ageMax,
     genders,
   } = validatedPref;
+
+  if (city) {
+    city = xss(city);
+  }
+
+  if (state) {
+    state = xss(state);
+  }
+
+  if (genders) {
+    genders = genders.map((gender) => xss(gender));
+  }
 
   const userLocation = {
     city,
