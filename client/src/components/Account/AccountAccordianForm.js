@@ -104,6 +104,7 @@ const AccountAccordianForm = ({
 
   const handleAccountFormSubmit = async (e) => {
     e.preventDefault();
+    setAccountFormError("");
     try {
       const isFormValid = validateForm();
 

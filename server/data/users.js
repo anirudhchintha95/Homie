@@ -103,18 +103,26 @@ export const updateUserProfile = async (
   phoneNumber = validatePhone(phoneNumber, "phoneNumber");
   gender = validateGender(gender, "gender");
 
-  const updatedUser = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    dateOfBirth: dob,
-    phone: phoneNumber,
-    gender: gender,
-  };
+  let updatedUser = {};
 
   const phoneExists = await User.findOne({ phone: phoneNumber });
-  if (phoneExists) {
+  if (phoneExists && phoneExists.email !== email) {
     throw { status: 400, message: "User with the phone number already exists" };
+  } else if (phoneExists && phoneExists.email === email) {
+    updatedUser = {
+      firstName: firstName,
+      lastName: lastName,
+      dateOfBirth: dob,
+      gender: gender,
+    };
+  } else {
+    updatedUser = {
+      firstName: firstName,
+      lastName: lastName,
+      dateOfBirth: dob,
+      phone: phoneNumber,
+      gender: gender,
+    };
   }
 
   const modifiedUser = await User.findOneAndUpdate(
