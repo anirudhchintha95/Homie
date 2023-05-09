@@ -65,6 +65,41 @@ const theme = createTheme({
         variant: "filled",
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&.Mui-disabled": {
+            color: "#646464",
+            backgroundColor: "#e0e0e0",
+          },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          
+          "&.Mui-disabled": {
+            color: "#767676",
+          },
+        },
+      },
+    },
+    MuiStep: {
+      styleOverrides: {
+        root: {
+          "& .MuiStepLabel-label": {
+            color: "#767676",
+          },
+          "& .MuiStepLabel-label.Mui-completed": {
+            color: "#3E6765",
+          },
+          "& .MuiStepIcon-root": {
+            color: "#767676",
+          },
+        },
+      },
+    },
   },
 });
 

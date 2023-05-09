@@ -97,7 +97,7 @@ code {
 }
 
 .react-datepicker-popper {
-  z-index: 2!important;
+  z-index: 2 !important;
 }
 
 .react-datepicker {
@@ -108,22 +108,23 @@ code {
     sans-serif !important;
 }
 
-.react-datepicker__day--keyboard-selected, .react-datepicker__day--selected {
-  background-color: #3E6765!important;
-  color: white!important;
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--selected {
+  background-color: #3E6765 !important;
+  color: white !important;
 }
 
 .react-datepicker__header {
-  background-color: #D9E2D5!important;
+  background-color: #D9E2D5 !important;
 }
 
 .react-datepicker__day-name {
-  color: #3E6765!important;
+  color: #3E6765 !important;
   font-weight: bold;
 }
 
 .react-datepicker__current-month {
-  color: #3E6765!important;
+  color: #3E6765 !important;
   text-decoration: underline;
 }
 
@@ -133,5 +134,27 @@ input[type="file"] {
 
 a {
   color: black;
-  text-decoration: none; /* no underline */
+  text-decoration: none;
+}
+
+.react-datepicker__navigation--years-previous:after {
+  content: "\2193";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-indent: 0;
+  font-size: 1.25rem;
+}
+
+.react-datepicker__navigation--years-upcoming:after {
+  content: "\2191";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-indent: 0;
+  font-size: 1.25rem;
 }

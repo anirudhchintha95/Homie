@@ -4,12 +4,7 @@ import { Box, Button, CircularProgress } from "@mui/material";
 const SubmitButton = ({ children, loading, ...rest }) => {
   return (
     <Box sx={{ position: "relative" }}>
-      <Button
-        type="submit"
-        variant="contained"
-        disabled={loading}
-        {...rest}
-      >
+      <Button type="submit" variant="contained" disabled={loading} {...rest}>
         {children}
       </Button>
       {loading && (

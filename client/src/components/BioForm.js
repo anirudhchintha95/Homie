@@ -45,7 +45,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ borderColor: "primary.main", width: { xs: "100%", sm: 400 } }}
+      sx={{ borderColor: "primary.main" }}
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12}>
@@ -54,7 +54,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
 
         <Grid item xs={12}>
           <TextField
-            aria-label="Bio"
+            label="Bio"
             placeholder="Enter you Bio here!!"
             minRows={5}
             value={bio.value}
@@ -75,7 +75,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>
             {bio.value?.length}/250
           </Typography>
         </Grid>

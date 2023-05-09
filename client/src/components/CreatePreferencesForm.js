@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import {
   Alert,
+  FormControlLabel,
   Grid,
   Paper,
   Select,
@@ -350,33 +351,38 @@ const CreatePreferencesForm = ({
           </Grid>
 
           <Grid item xs={12}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography>Rent Range</Typography>
-              <Switch
-                checked={hasRent}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setRentMin({
-                      error: false,
-                      value: 0,
-                    });
-                    setRentMax({
-                      error: false,
-                      value: 500,
-                    });
-                  } else {
-                    setRentMin({
-                      error: false,
-                      value: undefined,
-                    });
-                    setRentMax({
-                      error: false,
-                      value: undefined,
-                    });
-                  }
-                }}
+            <Stack direction="column" spacing={1}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={hasRent}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setRentMin({
+                          error: false,
+                          value: 0,
+                        });
+                        setRentMax({
+                          error: false,
+                          value: 500,
+                        });
+                      } else {
+                        setRentMin({
+                          error: false,
+                          value: undefined,
+                        });
+                        setRentMax({
+                          error: false,
+                          value: undefined,
+                        });
+                      }
+                    }}
+                  />
+                }
+                label="Rent Range"
               />
-              <Typography>
+
+              <Typography gutterBottom>
                 {hasRent
                   ? `Min: $${rentMin?.value}, Max: $${rentMax?.value}`
                   : "--None--"}
@@ -395,33 +401,37 @@ const CreatePreferencesForm = ({
           </Grid>
 
           <Grid item xs={12}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography>Age Range</Typography>
-              <Switch
-                checked={!!(ageMin?.value && ageMax?.value)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setAgeMin({
-                      error: false,
-                      value: 18,
-                    });
-                    setAgeMax({
-                      error: false,
-                      value: 24,
-                    });
-                  } else {
-                    setAgeMin({
-                      error: false,
-                      value: "",
-                    });
-                    setAgeMax({
-                      error: false,
-                      value: "",
-                    });
-                  }
-                }}
+            <Stack direction="column" spacing={1}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={!!(ageMin?.value && ageMax?.value)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setAgeMin({
+                          error: false,
+                          value: 18,
+                        });
+                        setAgeMax({
+                          error: false,
+                          value: 24,
+                        });
+                      } else {
+                        setAgeMin({
+                          error: false,
+                          value: "",
+                        });
+                        setAgeMax({
+                          error: false,
+                          value: "",
+                        });
+                      }
+                    }}
+                  />
+                }
+                label="Age Range"
               />
-              <Typography>
+              <Typography gutterBottom>
                 {ageMin?.value && ageMax?.value
                   ? `Min: ${ageMin?.value}, Max: ${ageMax?.value}`
                   : "--None--"}
