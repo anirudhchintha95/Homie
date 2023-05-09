@@ -16,9 +16,9 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!bio.value) {
+    if ((!bio.value && !auth?.user?.bio) || bio.value === auth?.user?.bio) {
       setBio((prev) => ({ ...prev, error: true }));
-      setError("Error: Bio cannot be empty");
+      setError("No changes to bio made");
       return;
     }
 
@@ -56,7 +56,7 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
 
         <Grid item xs={12}>
           <TextField
-            label="Bio*"
+            label="Bio"
             placeholder="Enter you Bio here!!"
             minRows={5}
             value={bio.value}
