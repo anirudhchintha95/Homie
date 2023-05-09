@@ -1,0 +1,296 @@
+[
+  {
+    "firstName": "Emma",
+    "lastName": "Johnson",
+    "email": "emma.johnson@example.com",
+    "phone": "1234567890",
+    "encryptedPassword": "$2b$16$eB2wVo.F7eI4S61XCvvI.uEq1G7Sj2LtdDvXfBTHuqXdlVSct2Cl6",
+    "dateOfBirth": {
+      "$date": "1995-06-12T04:00:00.000Z"
+    },
+    "gender": "Female",
+    "role": "user",
+    "bio": "I'm a software engineer from Hoboken, NJ. I like to watch movies and bake in my free time.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": false,
+      "pets": true,
+      "rent": {
+        "min": 50000,
+        "max": 200000
+      },
+      "age": {
+        "min": 25,
+        "max": 35
+      },
+      "genders": ["Female", "Male"]
+    }
+  },
+  {
+    "firstName": "Michael",
+    "lastName": "Brown",
+    "email": "michael.brown@example.com",
+    "phone": "2345678901",
+    "encryptedPassword": "$2b$16$BAvlX8hkLekd1Ld0wcSIZ.CovtkdRA5IYY7kb/qDmkimbnrXc3.iO",
+    "dateOfBirth": {
+      "$date": "1990-09-18T04:00:00.000Z"
+    },
+    "gender": "Male",
+    "role": "user",
+    "bio": "I'm a graphic designer from Manhattan, NY. I like to go hiking and try out new coffee shops.",
+    "location": {
+      "city": "Manhattan",
+      "state": "NY"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": true,
+      "pets": false,
+      "rent": {
+        "min": 0,
+        "max": 250000
+      },
+      "age": {
+        "min": 23,
+        "max": 33
+      },
+      "genders": ["Non-Binary", "Female", "Male"]
+    }
+  },
+  {
+    "firstName": "Samantha",
+    "lastName": "Lee",
+    "email": "samantha.lee@example.com",
+    "phone": "3456789012",
+    "encryptedPassword": "$2b$16$jpWz5HAOWpLHb/MeCUHj6uVPPzr3KuAKi0wEqKJhFlS7qLFscDH0y",
+    "dateOfBirth": {
+      "$date": "1997-11-20T05:00:00.000Z"
+    },
+    "gender": "Female",
+    "role": "user",
+
+    "bio": "I'm a grad student from Hoboken, NJ. I like to read and travel in my free time.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": false,
+      "pets": true,
+      "genders": ["Male", "Female", "Non-Binary"]
+    }
+  },
+  {
+    "firstName": "Andrew",
+    "lastName": "Ng",
+    "email": "andrew.ng@example.com",
+    "phone": "5551234567",
+    "encryptedPassword": "$2b$16$TC0gAb0vY.ey1P4tEjnszuP1hSpfc6j5fabggl.LpkOPoHQvv6D6u",
+    "dateOfBirth": {
+      "$date": "1991-07-12T04:00:00.000Z"
+    },
+    "gender": "Male",
+    "role": "user",
+
+    "bio": "I'm a young professional working in finance. I'm clean, organized, and respectful of others' personal space. In my free time, I enjoy playing basketball and going to the gym.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": true,
+      "drinking": true,
+      "pets": true,
+      "rent": {
+        "min": 0,
+        "max": 507500
+      },
+      "age": {
+        "min": 18,
+        "max": 35
+      },
+      "genders": ["Male", "Female"]
+    }
+  },
+  {
+    "firstName": "Michelle",
+    "lastName": "Williams",
+    "email": "michelle.williams@example.com",
+    "phone": "2015551145",
+    "encryptedPassword": "$2b$16$amcG/BqIuHDJ7yyiIGWR.OZ7kWFsqtsjENkWHEgH0AW3WSnPnny9K",
+    "dateOfBirth": {
+      "$date": "1992-04-15T04:00:00.000Z"
+    },
+    "gender": "Female",
+    "role": "user",
+
+    "bio": "I'm a young professional working in marketing. I'm neat and organized, and I enjoy keeping my living space clean. In my free time, I enjoy reading and trying new restaurants.",
+    "location": {
+      "city": "Manhattan",
+      "state": "NY"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": true,
+      "pets": false,
+      "age": {
+        "min": 25,
+        "max": 35
+      },
+      "genders": ["Female"]
+    }
+  },
+  {
+    "firstName": "Ethan",
+    "lastName": "Nguyen",
+    "email": "ethan.nguyen@example.com",
+    "phone": "2014446767",
+    "encryptedPassword": "$2b$16$vYvwPp0.UcEg4en36jISKOk5Y6XNbafcD28Cr5kI89P8eJlsZIVFO",
+    "dateOfBirth": {
+      "$date": "1990-11-23T05:00:00.000Z"
+    },
+    "gender": "Non-Binary",
+    "role": "user",
+
+    "bio": "I'm a software engineer and I work from home most of the time. I'm clean, quiet, and respectful of other people's space. In my free time, I enjoy hiking and exploring new cities.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": false,
+      "pets": false,
+      "rent": {
+        "min": 0,
+        "max": 350000
+      },
+      "age": {
+        "min": 24,
+        "max": 32
+      },
+      "genders": ["Non-Binary", "Female", "Male"]
+    }
+  },
+  {
+    "firstName": "Brandon",
+    "lastName": "Wilson",
+    "email": "brandon.wilson@example.com",
+    "phone": "9827484364",
+    "encryptedPassword": "$2b$16$r2kcVYClhVQJvj4BmOzreOrdfeFsap3EZH41ym6ZZHsfToXrRgnWe",
+    "dateOfBirth": {
+      "$date": "1992-07-15T04:00:00.000Z"
+    },
+    "gender": "Male",
+    "role": "user",
+
+    "bio": "Hi, I'm Brandon! I'm a recent college graduate who loves all things sports. I'm an avid runner and enjoy playing basketball with my friends. In my free time, I like to read books on history and science.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": true,
+      "pets": true,
+      "rent": {
+        "min": 40000,
+        "max": 120000
+      },
+      "age": {
+        "min": 22,
+        "max": 30
+      },
+      "genders": ["Male", "Female", "Non-Binary"]
+    }
+  },
+  {
+    "firstName": "Vanessa",
+    "lastName": "Peace",
+    "email": "vanessa.peace@example.com",
+    "phone": "2014691100",
+    "encryptedPassword": "$2b$16$SWL6aI57kK.BfbQMxEoklub4WFVOJfPBrLeNlqPCL9bgv0f3rNVKm",
+    "dateOfBirth": {
+      "$date": "1995-11-22T05:00:00.000Z"
+    },
+    "gender": "Female",
+    "role": "user",
+
+    "bio": "Hey there, I'm Vanessa! I love yoga ❤️",
+    "location": {
+      "city": "Manhattan",
+      "state": "NY"
+    },
+    "preferences": {
+      "smoking": false,
+      "drinking": false,
+      "pets": true,
+      "rent": {
+        "min": 0,
+        "max": 1000000
+      },
+      "age": {
+        "min": 25,
+        "max": 35
+      },
+      "genders": ["Female"]
+    }
+  },
+  {
+    "firstName": "David",
+    "lastName": "Kim",
+    "email": "david.kim@example.com",
+    "phone": "2014445511",
+    "encryptedPassword": "$2b$16$0JR2YUu6D8Kd4EGEgqdxJeSzttXMa7oPZ9TXanTvSjJ.EaZF587Ga",
+    "dateOfBirth": {
+      "$date": "1990-04-04T04:00:00.000Z"
+    },
+    "gender": "Non-Binary",
+    "role": "user",
+
+    "bio": "I'm a graphic designer who enjoys playing guitar and writing music in my free time. I'm a big fan of classic rock and love going to concerts. I also enjoy watching sports, especially basketball and soccer.",
+    "location": {
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    "preferences": {
+      "smoking": true,
+      "drinking": true,
+      "pets": true,
+      "genders": ["Male", "Female", "Non-Binary"]
+    }
+  },
+  {
+    "firstName": "Samantha",
+    "lastName": "Rodriguez",
+    "email": "samantha.rodriguez@example.com",
+    "phone": "2014691122",
+    "encryptedPassword": "$2b$16$Y/yr5Tm.oxeKeOyiO/DsfeBpQvyHeuEbpVLFVr/VEaGtDbAfBvz7q",
+    "dateOfBirth": {
+      "$date": "1993-06-01T04:00:00.000Z"
+    },
+    "gender": "Female",
+    "role": "user",
+
+    "bio": "I'm a nurse who loves to travel and try new foods. I'm always planning my next adventure and love to explore new cultures. I also enjoy reading and watching movies in my downtime. I'm looking for a roommate who is tidy and respectful.",
+    "location": {
+      "city": "Manhattan",
+      "state": "NY"
+    },
+    "preferences": {
+      "smoking": true,
+      "drinking": true,
+      "pets": true,
+      "rent": {
+        "min": 0,
+        "max": 405000
+      },
+      "genders": ["Male", "Female", "Non-Binary"]
+    }
+  }
+]
