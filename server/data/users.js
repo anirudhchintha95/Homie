@@ -48,25 +48,31 @@ export const updatePassword = async (
 ) => {
   if (!currentUser) throw { status: 401, message: "Unauthorized" };
 
-  const passwordsAfterValidation = updatePasswordValidator({
-    currentPassword,
-    newPassword,
-  });
-  currentPassword = passwordsAfterValidation.currentPassword;
-  newPassword = passwordsAfterValidation.newPassword;
+  const cleanCurrentPassword = xss(currentPassword);
+  const cleanNewPassword = xss(newPassword);
 
-  if (!(await currentUser.verifyPassword(currentPassword))) {
+  const passwordsAfterValidation = updatePasswordValidator({
+    currentPassword: cleanCurrentPassword,
+    newPassword: cleanNewPassword,
+  });
+
+  const validatedCurrentPassword = passwordsAfterValidation.currentPassword;
+  const validatedNewPassword = passwordsAfterValidation.newPassword;
+
+  if (!(await currentUser.verifyPassword(validatedCurrentPassword))) {
     throw { status: 400, message: "Incorrect password" };
   }
 
-  if (currentPassword === newPassword) {
+  if (validatedCurrentPassword === validatedNewPassword) {
     throw {
       status: 400,
       message: "New password cannot be same as old password",
     };
   }
 
-  const encryptedPassword = await new PasswordService(newPassword).encrypt();
+  const encryptedPassword = await new PasswordService(
+    validatedNewPassword
+  ).encrypt();
 
   const result = await User.updateOne(
     { _id: currentUser._id },
