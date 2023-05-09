@@ -5,7 +5,7 @@ export const bioValidator = (req, res, next) => {
   const { bio } = req.body;
   const { id } = req.currentUser;
 
-  if (!id || !bio) {
+  if (!id || typeof bio !== "string") {
     return res.status(400).json({ error: "Error: Invalid request" });
   }
 
@@ -19,9 +19,9 @@ export const bioValidator = (req, res, next) => {
 
   const trimmedBio = bio.trim();
 
-  if (trimmedBio.length === 0) {
-    return res.status(400).json({ error: "Bio is required" });
-  }
+  // if (trimmedBio.length === 0) {
+  //   return res.status(400).json({ error: "Bio is required" });
+  // }
 
   if (trimmedBio.length > 250) {
     return res

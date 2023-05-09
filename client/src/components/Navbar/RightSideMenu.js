@@ -93,12 +93,12 @@ const RightSideMenu = () => {
               <Link
                 to={setting.path}
                 onClick={handleCloseUserMenu}
-                style={{ display: "flex", alignItems: "center" }}
+                style={{ display: "flex", alignItems: "center", width: "100%" }}
               >
                 <ListItemIcon>
                   <setting.Icon fontSize="small" />
                 </ListItemIcon>
-                {setting.name}
+                <Typography width="100%">{setting.name}</Typography>
               </Link>
             </MenuItem>
           ) : (

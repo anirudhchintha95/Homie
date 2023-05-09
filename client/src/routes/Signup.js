@@ -254,7 +254,7 @@ const Signup = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="First Name"
+              label="First Name*"
               value={firstName.value}
               onChange={(e) => {
                 const value = e.target.value;
@@ -277,7 +277,7 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              label="Last Name"
+              label="Last Name*"
               value={lastName.value}
               onChange={(e) => {
                 const value = e.target.value;
@@ -300,7 +300,7 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              label="Email"
+              label="Email*"
               value={email.value}
               onChange={(e) => {
                 const value = e.target.value;
@@ -324,7 +324,7 @@ const Signup = () => {
           <Grid item xs={12}>
             <TextField
               type="password"
-              label="Password"
+              label="Password*"
               value={password.value}
               onChange={(e) => {
                 const value = e.target.value;
@@ -348,7 +348,7 @@ const Signup = () => {
           <Grid item xs={12}>
             <TextField
               type="password"
-              label="Confirm Password"
+              label="Confirm Password*"
               value={confirmPassword.value}
               onChange={(e) => {
                 const value = e.target.value;
@@ -371,7 +371,7 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <DatePicker
-              label="Date of Birth"
+              label="Date of Birth*"
               value={dob.value}
               onChange={(date) =>
                 setDob({
@@ -385,7 +385,7 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <TextField
-              label="Phone Number"
+              label="Phone Number*"
               value={phoneNumber.value}
               onChange={(e) =>
                 setPhoneNumber({
@@ -407,7 +407,7 @@ const Signup = () => {
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel>Gender</InputLabel>
+              <InputLabel>Gender*</InputLabel>
               <Select
                 value={gender.value}
                 label="Gender"

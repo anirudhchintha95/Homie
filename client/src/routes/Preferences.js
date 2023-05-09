@@ -1,6 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import UpdatePreferencesForm from "../components/UpdatePreferencesForm";
@@ -12,6 +12,7 @@ const Preferences = () => {
         Preferences
       </Typography>
       <UpdatePreferencesForm />
+      <Stack direction="row" gap={2}>
       <Button
         variant="contained"
         component={Link}
@@ -22,6 +23,17 @@ const Preferences = () => {
       >
         Home
       </Button>
+      <Button
+          variant="contained"
+          component={Link}
+          to="/homies"
+          sx={{ mt: 2 }}
+          color="secondary"
+          fullWidth
+        >
+          Find Homies
+        </Button>
+      </Stack>
     </Box>
   );
 };

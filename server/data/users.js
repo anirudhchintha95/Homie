@@ -177,15 +177,15 @@ export const updateBio = async (userId, bio) => {
     throw { status: 404, message: "User not found" };
   }
 
-  if (!sanitizedBio) {
-    throw { status: 400, message: "Bio is required" };
-  }
+  // if (!sanitizedBio) {
+  //   throw { status: 400, message: "Bio is required" };
+  // }
 
   if (sanitizedBio.length > 250) {
     throw { status: 400, message: "Bio must be less than 250 characters" };
   }
 
-  if (sanitizedBio === user.bio) {
+  if (sanitizedBio.length && sanitizedBio === user.bio) {
     throw {
       status: 400,
       message: "New bio cannot be the same as the current one",

@@ -15,17 +15,24 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
       <Grid item xs={12}>
         <FormControl fullWidth>
           <Autocomplete
-            value={statesMap.find(
-              ({ isoCode, name }) =>
-                isoCode === state.value || name === state.value
-            )}
+            value={
+              statesMap.find(
+                ({ isoCode, name }) =>
+                  isoCode === state.value || name === state.value
+              ) || ""
+            }
             onChange={(_, newValue) => {
               onStateChange({ error: "", value: newValue?.isoCode || "" });
               if (!newValue) onCityChange({ error: "", value: "" });
             }}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => {
+              return !option ? "" : option?.name || "";
+            }}
+            isOptionEqualToValue={(option, value) => {
+              return option.isoCode === value.isoCode || value === "";
+            }}
             options={statesMap}
-            renderInput={(params) => <TextField {...params} label="State" />}
+            renderInput={(params) => <TextField {...params} label="State*" />}
           />
         </FormControl>
       </Grid>
@@ -41,9 +48,14 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
             onChange={(_, newValue) => {
               onCityChange({ error: "", value: newValue?.name || "" });
             }}
-            getOptionLabel={(option) => option?.name || ""}
+            getOptionLabel={(option) => {
+              return !option ? "" : option?.name || "";
+            }}
+            isOptionEqualToValue={(option, value) => {
+              return option.name === value.name || value === "";
+            }}
             options={citiesMap}
-            renderInput={(params) => <TextField {...params} label="City" />}
+            renderInput={(params) => <TextField {...params} label="City*" />}
             disabled={!state.value}
           />
         </FormControl>

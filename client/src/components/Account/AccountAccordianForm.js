@@ -181,7 +181,7 @@ const AccountAccordianForm = ({
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="First Name"
+                label="First Name*"
                 value={firstName.value}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -204,7 +204,7 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <TextField
-                label="Last Name"
+                label="Last Name*"
                 value={lastName.value}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -236,7 +236,7 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <DatePicker
-                label="Date of Birth"
+                label="Date of Birth*"
                 value={dob.value}
                 onChange={(date) =>
                   setDob({
@@ -256,7 +256,7 @@ const AccountAccordianForm = ({
 
             <Grid item xs={12}>
               <TextField
-                label="Phone Number"
+                label="Phone Number*"
                 value={phoneNumber.value}
                 onChange={(e) =>
                   setPhoneNumber({
@@ -278,7 +278,7 @@ const AccountAccordianForm = ({
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Gender</InputLabel>
+                <InputLabel>Gender*</InputLabel>
                 <Select
                   value={gender.value}
                   label="Gender"
