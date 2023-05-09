@@ -26,7 +26,11 @@
 .description:hover:after {
   content: "✅";
   font-size: 1.5rem;
-  position: fixed;
+}
+
+.title:hover:after {
+  content: "🏠";
+  font-size: 3rem;
 }
 
 .first-paragraph {
@@ -41,7 +45,6 @@
 .first-paragraph:hover:after {
   content: "🤝";
   font-size: 1.5rem;
-  position: fixed;
 }
 
 .second-paragraph {
@@ -56,7 +59,6 @@
 .second-paragraph:hover:after {
   content: "🔍";
   font-size: 1.5rem;
-  position: fixed;
 }
 
 .third-paragraph {
@@ -71,7 +73,6 @@
 .third-paragraph:hover:after {
   content: "🚪";
   font-size: 1.5rem;
-  position: fixed;
 }
 
 .fourth-paragraph {
@@ -88,72 +89,22 @@
   font-size: 1.5rem;
 }
 
+.footer {
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  margin-top: 2.5rem;
+}
+
+.footer:hover:after {
+  content: "❤️";
+  font-size: 0.75rem;
+}
+
 .button-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 2rem;
-}
-
-.signup-button {
-  font-size: 1.25rem;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: #a2f8a2;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.signup-button:active {
-  background-color: #f29f05;
-  transform: translateY(5px);
-}
-
-.signup-button:hover {
-  background-color: #f2b705;
-}
-
-.login-button {
-  font-size: 1.25rem;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: #3d9970;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.login-button:active {
-  background-color: #f29f05;
-  transform: translateY(5px);
-}
-
-.login-button:hover {
-  background-color: #f2b705;
-}
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: #fff;
-  padding: 2rem;
-}
-
-.footer-text {
-  font-size: 1.25rem;
-}
-
-.footer-link {
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.2s ease-in-out;
-}
-
-.footer-link:hover {
-  color: #f2b705;
+  gap: 1rem;
 }
