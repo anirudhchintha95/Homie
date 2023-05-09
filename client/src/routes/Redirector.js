@@ -13,7 +13,7 @@ const Redirector = () => {
       />
     );
   }
-  return <Navigate to="/login" />;
+  return <Navigate to="/home" />;
 };
 
 export default Redirector;

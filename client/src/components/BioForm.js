@@ -35,9 +35,11 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
       await updateBioApi({ bio: bio.value.trim().slice(0, 250) });
       await onBioUpdate();
       setLoading(false);
-    } catch {
+    } catch (err) {
       setLoading(false);
-      setError("Error: Bio update failed");
+      setError(
+        err?.response?.data?.error || err?.message || "Error: Bio update failed"
+      );
     }
   };
 
@@ -75,7 +77,10 @@ const BioForm = ({ loading, setLoading, onBioUpdate }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>
+          <Typography
+            variant="caption"
+            sx={{ color: "text.secondary", fontWeight: 500 }}
+          >
             {bio.value?.length}/250
           </Typography>
         </Grid>
