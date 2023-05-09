@@ -98,6 +98,11 @@ export const updateUserProfile = async (
     gender: gender,
   };
 
+  const phoneExists = await User.findOne({ phone: phoneNumber });
+  if (phoneExists) {
+    throw { status: 400, message: "User with the phone number already exists" };
+  }
+
   const modifiedUser = await User.findOneAndUpdate(
     { email: email },
     updatedUser,

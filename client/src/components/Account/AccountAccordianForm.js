@@ -63,7 +63,6 @@ const AccountAccordianForm = ({
 
   const validateForm = () => {
     const errorFields = [];
-
     const firstNameValidator = validateName(
       firstName.value?.trim(),
       "First Name"
@@ -80,9 +79,7 @@ const AccountAccordianForm = ({
     }
 
     const dobValidator = validateDOB(dob.value, "Date of Birth");
-    if (dobValidator.isValid) {
-      setDob((prev) => ({ ...prev, error: "" }));
-    } else {
+    if (!dobValidator.isValid) {
       errorFields.push("dob");
       setDob((prev) => ({ ...prev, error: dobValidator.error }));
     }
@@ -198,7 +195,7 @@ const AccountAccordianForm = ({
                     value: firstName.value.trim(),
                   });
                 }}
-                error={firstName.error}
+                error={firstName.error && true}
                 helperText={firstName.error}
                 fullWidth
               />
@@ -221,7 +218,7 @@ const AccountAccordianForm = ({
                     value: lastName.value.trim(),
                   });
                 }}
-                error={lastName.error}
+                error={lastName.error && true}
                 helperText={lastName.error}
                 fullWidth
               />
@@ -252,7 +249,7 @@ const AccountAccordianForm = ({
                     new Date().setFullYear(new Date().getFullYear() - 18)
                   )
                 }
-                error={dob.error}
+                error={dob.error && true}
               />
             </Grid>
 
@@ -272,7 +269,7 @@ const AccountAccordianForm = ({
                     value: phoneNumber.value?.trim(),
                   });
                 }}
-                error={phoneNumber.error}
+                error={phoneNumber.error && true}
                 helperText={phoneNumber.error}
                 type="tel"
                 fullWidth
@@ -291,7 +288,6 @@ const AccountAccordianForm = ({
                     })
                   }
                   error={gender.error}
-                  helperText={gender.error}
                 >
                   <MenuItem value={"Male"}>Male</MenuItem>
                   <MenuItem value={"Female"}>Female</MenuItem>

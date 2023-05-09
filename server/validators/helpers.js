@@ -220,7 +220,7 @@ const validatePhone = (value, name) => {
   value = value.trim();
   if (isNaN(value))
     throw { status: 400, message: `${name} must only contain numbers` };
-  if (!/^[1-9]\d{9}$/.test(phoneNumber)) {
+  if (!/^[1-9]\d{9}$/.test(value)) {
     throw {
       status: 400,
       message: `${name} must contain only 10 digits and not begin with 0`,
