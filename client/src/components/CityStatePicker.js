@@ -32,7 +32,7 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
               return option.isoCode === value.isoCode || value === "";
             }}
             options={statesMap}
-            renderInput={(params) => <TextField {...params} label="State" />}
+            renderInput={(params) => <TextField {...params} label="State*" />}
           />
         </FormControl>
       </Grid>
@@ -55,7 +55,7 @@ const CityStatePicker = ({ city, state, onCityChange, onStateChange }) => {
               return option.name === value.name || value === "";
             }}
             options={citiesMap}
-            renderInput={(params) => <TextField {...params} label="City" />}
+            renderInput={(params) => <TextField {...params} label="City*" />}
             disabled={!state.value}
           />
         </FormControl>

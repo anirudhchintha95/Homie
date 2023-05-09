@@ -190,7 +190,7 @@ const PasswordAccordionForm = ({
             <Grid item xs={12}>
               <TextField
                 type="password"
-                label="Current Password"
+                label="Current Password*"
                 value={currentPassword.value}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -214,7 +214,7 @@ const PasswordAccordionForm = ({
             <Grid item xs={12}>
               <TextField
                 type="password"
-                label="New Password"
+                label="New Password*"
                 value={newPassword.value}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -238,7 +238,7 @@ const PasswordAccordionForm = ({
             <Grid item xs={12}>
               <TextField
                 type="password"
-                label="Confirm New Password"
+                label="Confirm New Password*"
                 value={confirmNewPassword.value}
                 onChange={(e) => {
                   const value = e.target.value;
