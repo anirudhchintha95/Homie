@@ -12,6 +12,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  validateDOB,
+  validateGender,
+  validateName,
+  validatePhoneNumber,
+} from "../../helpers";
 import React, { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -22,7 +28,6 @@ import useToast from "../../useToast";
 
 import DatePicker from "../DatePicker";
 import SubmitButton from "../SubmitButton";
-import { validateDOB } from "../../helpers";
 
 const AccountAccordianForm = ({
   expanded,
@@ -58,36 +63,40 @@ const AccountAccordianForm = ({
 
   const validateForm = () => {
     const errorFields = [];
-    if (!firstName.value) {
+    const firstNameValidator = validateName(
+      firstName.value?.trim(),
+      "First Name"
+    );
+    if (!firstNameValidator.isValid) {
       errorFields.push("firstName");
-      setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
+      setFirstName((prev) => ({ ...prev, error: firstNameValidator.error }));
     }
 
-    if (!lastName.value) {
+    const lastNameValidator = validateName(lastName.value?.trim(), "Last Name");
+    if (!lastNameValidator.isValid) {
       errorFields.push("lastName");
-      setLastName((prev) => ({ ...prev, error: "Last Name is required" }));
+      setLastName((prev) => ({ ...prev, error: lastNameValidator.error }));
     }
 
     const dobValidator = validateDOB(dob.value, "Date of Birth");
-
-    if (dobValidator.isValid) {
-      setDob((prev) => ({ ...prev, error: "" }));
-    } else {
+    if (!dobValidator.isValid) {
       errorFields.push("dob");
       setDob((prev) => ({ ...prev, error: dobValidator.error }));
     }
 
-    if (!phoneNumber.value) {
+    const phoneValidator = validatePhoneNumber(phoneNumber.value?.trim());
+    if (!phoneValidator.isValid) {
       errorFields.push("phoneNumber");
       setPhoneNumber((prev) => ({
         ...prev,
-        error: "Phone Number is required",
+        error: phoneValidator.error,
       }));
     }
 
-    if (!gender.value) {
+    const genderValidator = validateGender(gender.value);
+    if (!genderValidator.isValid) {
       errorFields.push("gender");
-      setGender((prev) => ({ ...prev, error: "Gender is require" }));
+      setGender((prev) => ({ ...prev, error: genderValidator.error }));
     }
 
     return !errorFields.length;
@@ -95,6 +104,7 @@ const AccountAccordianForm = ({
 
   const handleAccountFormSubmit = async (e) => {
     e.preventDefault();
+    setAccountFormError("");
     try {
       const isFormValid = validateForm();
 
@@ -186,7 +196,7 @@ const AccountAccordianForm = ({
                     value: firstName.value.trim(),
                   });
                 }}
-                error={firstName.error}
+                error={firstName.error && true}
                 helperText={firstName.error}
                 fullWidth
               />
@@ -209,7 +219,8 @@ const AccountAccordianForm = ({
                     value: lastName.value.trim(),
                   });
                 }}
-                error={lastName.error}
+                error={lastName.error && true}
+                helperText={lastName.error}
                 fullWidth
               />
             </Grid>
@@ -239,7 +250,7 @@ const AccountAccordianForm = ({
                     new Date().setFullYear(new Date().getFullYear() - 18)
                   )
                 }
-                error={dob.error}
+                error={dob.error && true}
               />
             </Grid>
 
@@ -259,7 +270,8 @@ const AccountAccordianForm = ({
                     value: phoneNumber.value?.trim(),
                   });
                 }}
-                error={phoneNumber.error}
+                error={phoneNumber.error && true}
+                helperText={phoneNumber.error}
                 type="tel"
                 fullWidth
               />

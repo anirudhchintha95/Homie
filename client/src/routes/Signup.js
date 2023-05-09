@@ -71,45 +71,45 @@ const Signup = () => {
   });
 
   const validateForm = () => {
-    if (!firstName.value) {
-      setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
-      return;
-    }
-    if (!lastName.value) {
-      setLastName((prev) => ({ ...prev, error: "Last Name is required" }));
-      return;
-    }
-    if (!email.value) {
-      setEmail((prev) => ({ ...prev, error: "Email is required" }));
-      return;
-    }
-    if (!password.value) {
-      setPassword((prev) => ({ ...prev, error: "Password is required" }));
-      return;
-    }
-    if (!confirmPassword.value) {
-      setConfirmPassword((prev) => ({
-        ...prev,
-        error: "Confirm Password is required",
-      }));
-      return;
-    }
-    if (!dob.value) {
-      setDob((prev) => ({ ...prev, error: true }));
-      setError("Date of Birth is required");
-      return;
-    }
-    if (!phoneNumber.value) {
-      setPhoneNumber((prev) => ({
-        ...prev,
-        error: "Phone Number is required",
-      }));
-      return;
-    }
-    if (!gender.value) {
-      setGender((prev) => ({ ...prev, error: "Gender is required" }));
-      return;
-    }
+    // if (!firstName.value) {
+    //   setFirstName((prev) => ({ ...prev, error: "First Name is required" }));
+    //   return;
+    // }
+    // if (!lastName.value) {
+    //   setLastName((prev) => ({ ...prev, error: "Last Name is required" }));
+    //   return;
+    // }
+    // if (!email.value) {
+    //   setEmail((prev) => ({ ...prev, error: "Email is required" }));
+    //   return;
+    // }
+    // if (!password.value) {
+    //   setPassword((prev) => ({ ...prev, error: "Password is required" }));
+    //   return;
+    // }
+    // if (!confirmPassword.value) {
+    //   setConfirmPassword((prev) => ({
+    //     ...prev,
+    //     error: "Confirm Password is required",
+    //   }));
+    //   return;
+    // }
+    // if (!dob.value) {
+    //   setDob((prev) => ({ ...prev, error: true }));
+    //   setError("Date of Birth is required");
+    //   return;
+    // }
+    // if (!phoneNumber.value) {
+    //   setPhoneNumber((prev) => ({
+    //     ...prev,
+    //     error: "Phone Number is required",
+    //   }));
+    //   return;
+    // }
+    // if (!gender.value) {
+    //   setGender((prev) => ({ ...prev, error: "Gender is required" }));
+    //   return;
+    // }
 
     if (
       !firstName.value ||
@@ -122,68 +122,78 @@ const Signup = () => {
     ) {
       setError("Please fill in all fields");
       return;
+    } else {
+      setError("");
     }
 
+    const errorFields = [];
     const firstNameValidator = validateName(
       firstName.value?.trim(),
       "First Name"
     );
     if (!firstNameValidator.isValid) {
+      errorFields.push("firstName");
       setFirstName((prev) => ({ ...prev, error: firstNameValidator.error }));
-      return;
+      //return;
     }
 
     const lastNameValidaor = validateName(lastName.value?.trim(), "Last Name");
     if (!lastNameValidaor.isValid) {
+      errorFields.push("lastName");
       setLastName((prev) => ({ ...prev, error: lastNameValidaor.error }));
-      return;
+      //return;
     }
 
     const emailValidator = validateEmail(email.value?.trim());
     if (!emailValidator.isValid) {
+      errorFields.push("email");
       setEmail((prev) => ({ ...prev, error: emailValidator.error }));
-      return;
+      //return;
     }
 
     const passwordValidator = validatePassword(password.value);
     if (!passwordValidator.isValid) {
+      errorFields.push("password");
       setPassword((prev) => ({ ...prev, error: passwordValidator.error }));
-      return;
+      //return;
     }
 
     if (password.value !== confirmPassword.value) {
-      setPassword((prev) => ({ ...prev, error: "Passwords do not match" }));
+      errorFields.push("confirmPassword");
+      // setPassword((prev) => ({ ...prev, error: "Passwords do not match" }));
       setConfirmPassword((prev) => ({
         ...prev,
         error: "Passwords do not match",
       }));
-      return;
+      //return;
     }
 
     const dateValid = validateDOB(dob.value);
     if (!dateValid.isValid) {
-      setDob((prev) => ({ ...prev, error: true }));
-      setError(dateValid.error);
-      return;
+      errorFields.push("dob");
+      setDob((prev) => ({ ...prev, error: dateValid.error }));
+      //return;
     }
 
     const phoneValidator = validatePhoneNumber(phoneNumber.value?.trim());
     if (!phoneValidator.isValid) {
+      errorFields.push("phoneNumber");
       setPhoneNumber((prev) => ({
         ...prev,
         error: phoneValidator.error,
       }));
-      return;
+      //return;
     }
 
     const genderValidator = validateGender(gender.value);
     if (!genderValidator.isValid) {
+      errorFields.push("gender");
       setGender((prev) => ({ ...prev, error: genderValidator.error }));
-      return;
+      //return;
     }
-
-    setError("");
-    return true;
+    return !errorFields.length;
+    // setError("");
+    // return true;
   };
 
   const handleSubmit = async (e) => {
@@ -370,8 +380,6 @@ const Signup = () => {
                 })
               }
               {...getMinAndMaxDatesForDOB()}
-              error={!!dob.error}
-              helperText={dob.error}
             />
           </Grid>
 
@@ -412,7 +420,9 @@ const Signup = () => {
                 error={!!gender.error}
               >
                 {Object.values(GENDERS).map((gender) => (
-                  <MenuItem value={gender} key={gender}>{gender}</MenuItem>
+                  <MenuItem value={gender} key={gender}>
+                    {gender}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>

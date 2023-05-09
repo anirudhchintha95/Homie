@@ -77,7 +77,11 @@ router
         gender
       );
       return res.status(200).json({ user: userUpdated });
-    } catch (e) {}
+    } catch (e) {
+      return e.status
+        ? res.status(e.status).json({ error: e.message })
+        : res.status(500).json({ error: "Internal server error" });
+    }
   })
   .delete(async (req, res) => {
     const userId = req.currentUser._id;
