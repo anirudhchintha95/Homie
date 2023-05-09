@@ -33,14 +33,25 @@ const Home = () => {
         </Button>
       ) : (
         <div className="button-container">
-          <Button LinkComponent={Link} to="/signup" className="signup-button">
+          <Button
+            variant="outlined"
+            LinkComponent={Link}
+            to="/signup"
+            className="signup-button"
+          >
             Sign up
           </Button>
-          <Button LinkComponent={Link} to="/login" className="signup-button">
-            Sign up
+          <Button
+            variant="contained"
+            LinkComponent={Link}
+            to="/login"
+            className="login-button"
+          >
+            Login
           </Button>
         </div>
       )}
+      <p className="footer">A project by CS546 Group 31</p>
     </div>
   );
 };
