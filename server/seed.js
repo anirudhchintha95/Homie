@@ -162,6 +162,27 @@ const generateRentPreference = () => {
   }
 };
 
+const generateAgePreference = () => {
+  const rand = Math.random();
+  if (rand < 0.66) {
+    return {};
+  } else {
+    // age should be between 18 and 100
+    let first = null;
+    let second = null;
+    while (first === second) {
+      first = Math.floor(Math.random() * 82 + 18);
+      second = Math.floor(Math.random() * 82 + 18);
+    }
+    return {
+      age: {
+        min: Math.min(first, second),
+        max: Math.max(first, second),
+      },
+    };
+  }
+};
+
 const generateUser = async () => {
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
@@ -189,10 +210,13 @@ const generateUser = async () => {
       ...generateBooleanPreference("drinking"),
       ...generateBooleanPreference("pets"),
       ...generateRentPreference(),
+      ...generateAgePreference(),
       ...generateGenders(),
     },
   };
 };
+
+console.log("Creating other users for testing...");
 
 let users = [];
 let count = 0;
