@@ -45,7 +45,7 @@ const DeleteUserConfirmationDialog = ({
         });
         return;
       }
-      if (email.value !== auth?.user?.email) {
+      if (email.value?.trim()?.toLowerCase() !== auth?.user?.email) {
         setEmail({
           error: "Email does not match",
           value: "",
