@@ -1,14 +1,14 @@
 {
   "name": "homie",
   "version": "1.0.0",
-  "description": "",
+  "description": "A project by CS546 Group 31",
   "main": "app.js",
   "type": "module",
   "scripts": {
     "start": "nodemon app.js",
     "seed": "node seed.js"
   },
-  "author": "",
+  "author": "CS546 Group 31",
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.319.0",

@@ -405,7 +405,7 @@ const HomieInfo = () => {
         </Box> */}
         <Divider sx={{ width: "100%" }} />
         <Typography variant="p" color="primary" marginTop={4} marginBottom={4}>
-          {user.bio || "No description provided"}
+          {user.bio || "Bio not provided"}
         </Typography>
         <Divider sx={{ width: "100%" }} />
         <Box

@@ -1,4 +1,5 @@
 import { CONNECTION_TYPES } from "../constants.js";
+import xss from "xss";
 
 export const validateLinkedHomiesBody = ({ connectionType, search }) => {
   if (!connectionType) {
@@ -8,8 +9,8 @@ export const validateLinkedHomiesBody = ({ connectionType, search }) => {
     };
   }
 
-  connectionType = connectionType?.trim() || "";
-  search = search?.trim() || "";
+  connectionType = xss(connectionType?.trim()) || "";
+  search = xss(search?.trim()) || "";
 
   if (!connectionType) {
     throw {
@@ -35,7 +36,7 @@ const linkedHomiesRouteValidator = (req, res, next) => {
     req.body.search = search;
     next();
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 };
 

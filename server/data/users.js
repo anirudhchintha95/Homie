@@ -12,6 +12,7 @@ import {
   validateDOB,
   validatePhone,
   validateGender,
+  validateName,
 } from "../validators/helpers.js";
 import { updatePasswordValidator } from "../validators/updatePasswordValidator.js";
 import { isValidObjectId } from "mongoose";
@@ -97,8 +98,8 @@ export const updateUserProfile = async (
   phoneNumber = xss(phoneNumber);
   gender = xss(gender);
 
-  firstName = validateString(firstName, "firstName");
-  lastName = validateString(lastName, "lastName");
+  firstName = validateName(firstName, "firstName");
+  lastName = validateName(lastName, "lastName");
   dob = validateDOB(dob, "dob");
   phoneNumber = validatePhone(phoneNumber, "phoneNumber");
   gender = validateGender(gender, "gender");

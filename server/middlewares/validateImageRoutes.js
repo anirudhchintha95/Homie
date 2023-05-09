@@ -54,7 +54,7 @@ const validateImageRoutes = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error?.message });
   }
 };
 
@@ -100,7 +100,7 @@ export const downloadImageRoutes = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error?.message });
   }
 };
 

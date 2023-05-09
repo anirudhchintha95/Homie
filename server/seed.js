@@ -221,7 +221,7 @@ console.log("Creating other users for testing...");
 let users = [];
 let count = 0;
 
-var email_list = [];
+let email_list = [];
 while (count < 10) {
   try {
     const obj = await generateUser();
@@ -242,7 +242,7 @@ while (count < 10) {
   }
 }
 
-var image_list = await readdir("./uploads/");
+let image_list = await readdir("./uploads/");
 image_list = image_list.filter((word) => word.startsWith("pexels"));
 
 const IMAGE_MAP = {

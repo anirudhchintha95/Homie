@@ -28,7 +28,7 @@ export const login = async (email, password) => {
 
     return user;
   } catch (error) {
-    throw { status: 401, message: error.message };
+    throw { status: 401, message: error?.message };
   }
 };
 
@@ -59,6 +59,6 @@ export const signup = async (signupBody) => {
 
     return user;
   } catch (error) {
-    throw { status: 400, message: error.message };
+    throw { status: 400, message: error?.message };
   }
 };

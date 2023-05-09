@@ -46,13 +46,13 @@ router.route("/").post(async (req, res) => {
     );
     return res.status(200).json({ user });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
 router.route("/").patch(async (req, res) => {
   try {
-    var cleanReqBody = {};
+    let cleanReqBody = {};
     for (const key in req.body) {
       if (key == "city" || key == "state")
         cleanReqBody[key] = xss(req.body[key]);
@@ -69,7 +69,7 @@ router.route("/").patch(async (req, res) => {
     );
     return res.status(200).json({ user });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 

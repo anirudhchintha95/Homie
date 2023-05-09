@@ -83,7 +83,7 @@ export const createPreferences = async (preferences, email) => {
 export const updatePreferences = async (preferences, email) => {
   const validatedPref = validatePreferencesBE(preferences);
 
-  var {
+  let {
     city,
     state,
     smoking,
