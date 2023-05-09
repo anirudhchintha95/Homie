@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
+
 import "../homepage.css";
 import useAuth from "../useAuth";
 
@@ -26,17 +28,17 @@ const Home = () => {
         a cozy place to call home!
       </p>
       {auth?.isLoggedIn ? (
-        <Link to="/homies">
-          <button className="signup-button">Start Hunting</button>
-        </Link>
+        <Button LinkComponent={Link} to="/homies" className="signup-button">
+          Start Hunting
+        </Button>
       ) : (
         <div className="button-container">
-          <Link to="/signup">
-            <button className="signup-button">Sign up</button>
-          </Link>
-          <Link to="/login">
-            <button className="login-button">Log in</button>
-          </Link>
+          <Button LinkComponent={Link} to="/signup" className="signup-button">
+            Sign up
+          </Button>
+          <Button LinkComponent={Link} to="/login" className="signup-button">
+            Sign up
+          </Button>
         </div>
       )}
     </div>
