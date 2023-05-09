@@ -220,6 +220,7 @@ const getUserDetails = async (currentUser, homieId) => {
         homes: 1,
         images: 1,
         connection: 1,
+        bio: 1,
       },
     },
   ]).exec();
