@@ -354,6 +354,16 @@ const validatePreferencesBE = (preferences) => {
       message: "Error: Maximum Rent should be greater than Minimum Rent",
     };
   }
+
+  let rentDiff = rentMax - rentMin;
+  if (rentDiff > 500 * 100) {
+    throw {
+      status: 400,
+      message:
+        "Error: Maximum Rent should be less than 500 more than Minimum Rent",
+    };
+  }
+
   if (
     typeof rentMin === "number" &&
     typeof rentMax === "number" &&
