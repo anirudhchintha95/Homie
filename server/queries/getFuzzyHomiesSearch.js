@@ -245,11 +245,33 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
     {
       $addFields: {
         age: {
-          $dateDiff: {
-            startDate: "$dateOfBirth",
-            endDate: "$$NOW",
-            unit: "year",
-          },
+          $subtract: [
+            {
+              $dateDiff: {
+                startDate: "$dateOfBirth",
+                endDate: "$$NOW",
+                unit: "year",
+              },
+            },
+            {
+              $cond: {
+                if: {
+                  $gte: [
+                    {
+                      $dateFromParts: {
+                        year: { $year: "$$NOW" },
+                        month: { $month: "$dateOfBirth" },
+                        day: { $dayOfMonth: "$dateOfBirth" },
+                      },
+                    },
+                    "$$NOW",
+                  ],
+                },
+                then: 1,
+                else: 0,
+              },
+            },
+          ],
         },
       },
     },
