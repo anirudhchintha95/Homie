@@ -340,10 +340,10 @@ const validatePreferencesBE = (preferences) => {
       };
     }
 
-    if (rentMax > 1000 * 100) {
+    if (rentMax > 10000 * 100) {
       throw {
         status: 400,
-        message: "Error: Maximum Rent should be a number less than 1000",
+        message: "Error: Maximum Rent should be a number less than 10000",
       };
     }
   }
