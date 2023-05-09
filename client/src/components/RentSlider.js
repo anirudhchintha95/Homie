@@ -39,6 +39,12 @@ const RentSlider = ({ minRent, maxRent, onMinRentChange, onMaxRentChange }) => {
         getAriaValueText={valuetext}
         valueLabelFormat={valuetext}
         disableSwap
+        slotProps={{
+          input: {
+            "aria-valuemax": null,
+            "aria-valuemin": null,
+          },
+        }}
       />
     </Box>
   );

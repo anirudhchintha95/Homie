@@ -38,6 +38,12 @@ const AgeSlider = ({ minAge, maxAge, onMinAgeChange, onMaxAgeChange }) => {
         valueLabelDisplay="auto"
         getAriaValueText={valuetext}
         disableSwap
+        slotProps={{
+          input: {
+            "aria-valuemax": null,
+            "aria-valuemin": null,
+          },
+        }}
       />
     </Box>
   );
