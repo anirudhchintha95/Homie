@@ -1,4 +1,5 @@
 import { isValidObjectId } from "mongoose";
+import xss from "xss";
 
 export const bioValidator = (req, res, next) => {
   const { bio } = req.body;
@@ -28,7 +29,9 @@ export const bioValidator = (req, res, next) => {
       .json({ error: "Bio must be less than 250 characters" });
   }
 
-  req.body.bio = trimmedBio;
+  const sanitizedBio = xss(trimmedBio);
+
+  req.body.bio = sanitizedBio;
 
   next();
 };

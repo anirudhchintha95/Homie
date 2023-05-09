@@ -5,8 +5,12 @@ import {
   validatePassword,
   validateSignUp,
 } from "../validators/helpers.js";
+import xss from "xss";
 
 export const login = async (email, password) => {
+  email = xss(email);
+  password = xss(password);
+
   email = validateEmail(email);
   password = validatePassword(password);
 
@@ -41,16 +45,16 @@ export const signup = async (signupBody) => {
   }
   try {
     const encryptedPassword = await new PasswordService(
-      userSignup.password
+      xss(userSignup.password)
     ).encrypt();
     const user = await User.create({
-      firstName: userSignup.firstName,
-      lastName: userSignup.lastName,
-      email: userSignup.email,
+      firstName: xss(userSignup.firstName),
+      lastName: xss(userSignup.lastName),
+      email: xss(userSignup.email),
       encryptedPassword: encryptedPassword,
-      dateOfBirth: new Date(userSignup.dateOfBirth),
-      phone: userSignup.phone,
-      gender: userSignup.gender,
+      dateOfBirth: new Date(xss(userSignup.dateOfBirth)),
+      phone: xss(userSignup.phone),
+      gender: xss(userSignup.gender),
     });
 
     return user;
