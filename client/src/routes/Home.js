@@ -28,7 +28,12 @@ const Home = () => {
         a cozy place to call home!
       </p>
       {auth?.isLoggedIn ? (
-        <Button LinkComponent={Link} to="/homies" className="signup-button">
+        <Button
+          variant="contained"
+          LinkComponent={Link}
+          to="/homies"
+          className="signup-button"
+        >
           Start Hunting
         </Button>
       ) : (
