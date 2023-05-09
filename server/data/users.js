@@ -84,6 +84,13 @@ export const updateUserProfile = async (
   phoneNumber,
   gender
 ) => {
+  firstName = xss(firstName);
+  lastName = xss(lastName);
+  email = xss(email);
+  dob = xss(dob);
+  phoneNumber = xss(phoneNumber);
+  gender = xss(gender);
+
   firstName = validateString(firstName, "firstName");
   lastName = validateString(lastName, "lastName");
   dob = validateDOB(dob, "dob");
