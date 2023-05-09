@@ -319,6 +319,23 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
         as: "images",
       },
     },
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        lastName: 1,
+        age: 1,
+        images: 1,
+        gender: 1,
+        score: 1,
+        genderScore: 1,
+        ageScore: 1,
+        rentScore: 1,
+        petsScore: 1,
+        smokingScore: 1,
+        drinkingScore: 1,
+      },
+    },
   ]);
 };
 

@@ -340,7 +340,12 @@ const validatePreferencesBE = (preferences) => {
       };
     }
 
-    //TODO: Check the max value for rentMax
+    if (rentMax > 1000 * 100) {
+      throw {
+        status: 400,
+        message: "Error: Maximum Rent should be a number less than 1000",
+      };
+    }
   }
 
   if (rentMin !== undefined && rentMax !== undefined && rentMin > rentMax) {
