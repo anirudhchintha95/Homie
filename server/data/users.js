@@ -15,6 +15,7 @@ import {
 } from "../validators/helpers.js";
 import { updatePasswordValidator } from "../validators/updatePasswordValidator.js";
 import { isValidObjectId } from "mongoose";
+import xss from "xss";
 
 export const getUserProfile = async (email) => {
   if (!isValidEmail(email))
@@ -47,25 +48,31 @@ export const updatePassword = async (
 ) => {
   if (!currentUser) throw { status: 401, message: "Unauthorized" };
 
-  const passwordsAfterValidation = updatePasswordValidator({
-    currentPassword,
-    newPassword,
-  });
-  currentPassword = passwordsAfterValidation.currentPassword;
-  newPassword = passwordsAfterValidation.newPassword;
+  const cleanCurrentPassword = xss(currentPassword);
+  const cleanNewPassword = xss(newPassword);
 
-  if (!(await currentUser.verifyPassword(currentPassword))) {
+  const passwordsAfterValidation = updatePasswordValidator({
+    currentPassword: cleanCurrentPassword,
+    newPassword: cleanNewPassword,
+  });
+
+  const validatedCurrentPassword = passwordsAfterValidation.currentPassword;
+  const validatedNewPassword = passwordsAfterValidation.newPassword;
+
+  if (!(await currentUser.verifyPassword(validatedCurrentPassword))) {
     throw { status: 400, message: "Incorrect password" };
   }
 
-  if (currentPassword === newPassword) {
+  if (validatedCurrentPassword === validatedNewPassword) {
     throw {
       status: 400,
       message: "New password cannot be same as old password",
     };
   }
 
-  const encryptedPassword = await new PasswordService(newPassword).encrypt();
+  const encryptedPassword = await new PasswordService(
+    validatedNewPassword
+  ).encrypt();
 
   const result = await User.updateOne(
     { _id: currentUser._id },
@@ -83,6 +90,13 @@ export const updateUserProfile = async (
   phoneNumber,
   gender
 ) => {
+  firstName = xss(firstName);
+  lastName = xss(lastName);
+  email = xss(email);
+  dob = xss(dob);
+  phoneNumber = xss(phoneNumber);
+  gender = xss(gender);
+
   firstName = validateString(firstName, "firstName");
   lastName = validateString(lastName, "lastName");
   dob = validateDOB(dob, "dob");
@@ -136,7 +150,7 @@ export const deleteUser = async (userId) => {
 
 export const updateBio = async (userId, bio) => {
   if (!isValidObjectId(userId))
-    throw { status: 400, message: "Error: Invaild User Id" };
+    throw { status: 400, message: "Error: Invalid User Id" };
 
   const user = await User.findById(userId);
 
@@ -144,28 +158,28 @@ export const updateBio = async (userId, bio) => {
     throw { status: 400, message: "Bio must be a string" };
   }
 
-  bio = bio.trim();
+  const sanitizedBio = xss(bio.trim());
 
   if (!user) {
     throw { status: 404, message: "User not found" };
   }
 
-  if (!bio) {
+  if (!sanitizedBio) {
     throw { status: 400, message: "Bio is required" };
   }
 
-  if (bio.length > 250) {
+  if (sanitizedBio.length > 250) {
     throw { status: 400, message: "Bio must be less than 250 characters" };
   }
 
-  if (bio === user.bio) {
+  if (sanitizedBio === user.bio) {
     throw {
       status: 400,
       message: "New bio cannot be the same as the current one",
     };
   }
 
-  user.bio = bio;
+  user.bio = sanitizedBio;
   await user.save();
   return user;
 };
