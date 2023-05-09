@@ -8,6 +8,9 @@ import {
 import xss from "xss";
 
 export const login = async (email, password) => {
+  email = xss(email);
+  password = xss(password);
+
   email = validateEmail(email);
   password = validatePassword(password);
 
