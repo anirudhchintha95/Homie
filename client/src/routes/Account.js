@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import { SubmitButton } from "../components";
@@ -71,17 +71,30 @@ const Account = () => {
         setLoading={setLoading}
         scrollToTop={scrollToTop}
       />
-      <Button
-        variant="contained"
-        component={Link}
-        to="/home"
-        sx={{ mt: 2 }}
-        color="secondary"
-        fullWidth
-        disabled={loading}
-      >
-        Home
-      </Button>
+      <Stack direction="row" gap={2}>
+        <Button
+          variant="contained"
+          component={Link}
+          to="/home"
+          sx={{ mt: 2 }}
+          color="secondary"
+          fullWidth
+          disabled={loading}
+        >
+          Home
+        </Button>
+        <Button
+          variant="contained"
+          component={Link}
+          to="/homies"
+          sx={{ mt: 2 }}
+          color="secondary"
+          fullWidth
+          disabled={loading}
+        >
+          Find Homies
+        </Button>
+      </Stack>
       <SubmitButton
         sx={{ marginTop: 2 }}
         loading={loading}
