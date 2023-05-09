@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import { userData } from "../data/index.js";
 import { validatePreferencesBE } from "../validators/helpers.js";
+import xss from "xss";
 
 export const createPreferences = async (preferences, email) => {
   const validatedPref = validatePreferencesBE(preferences);
@@ -19,8 +20,8 @@ export const createPreferences = async (preferences, email) => {
   } = validatedPref;
 
   const userLocation = {
-    city: city,
-    state: state,
+    city: xss(city),
+    state: xss(state),
   };
 
   const newPref = {};
@@ -55,7 +56,8 @@ export const createPreferences = async (preferences, email) => {
   }
 
   if (genders !== undefined) {
-    newPref.genders = genders;
+    const cleanGenders = genders.map((gender) => xss(gender));
+    newPref.genders = cleanGenders;
   }
 
   try {
