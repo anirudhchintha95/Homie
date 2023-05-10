@@ -32,11 +32,9 @@ function isValidEmail(email) {
 }
 
 function isValidPassword(password) {
-  if (
-    !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/.test(
-      password
-    )
-  ) {
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$/;
+  if (!password || !passwordRegex.test(password)) {
     return false;
   }
   return true;
