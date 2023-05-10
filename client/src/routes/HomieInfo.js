@@ -431,7 +431,11 @@ const HomieInfo = () => {
               Smoking:
             </Typography>
             <Typography variant="h3" color="primary" marginLeft={0.5}>
-              {user.preferences.smoking ? "Yes" : "No"}
+              {typeof user.preferences.smoking === "boolean"
+                ? user.preferences.smoking
+                  ? "Yes"
+                  : "No"
+                : "N/A"}
             </Typography>
           </Box>
 
@@ -450,7 +454,11 @@ const HomieInfo = () => {
               Drinking:
             </Typography>
             <Typography variant="h3" color="primary" marginLeft={0.5}>
-              {user.preferences.drinking ? "Yes" : "No"}
+              {typeof user.preferences.drinking === "boolean"
+                ? user.preferences.drinking
+                  ? "Yes"
+                  : "No"
+                : "N/A"}
             </Typography>
           </Box>
 
@@ -469,7 +477,11 @@ const HomieInfo = () => {
               Pets:
             </Typography>
             <Typography variant="h3" color="primary" marginLeft={0.5}>
-              {user.preferences.pets ? "Yes" : "No"}
+              {typeof user.preferences.pets === "boolean"
+                ? user.preferences.pets
+                  ? "Yes"
+                  : "No"
+                : "N/A"}
             </Typography>
           </Box>
         </Box>
