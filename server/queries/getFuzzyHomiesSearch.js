@@ -113,7 +113,7 @@ const buildScoreColumns = (preference) => {
     newColumns.genderScore = {
       $cond: {
         if: {
-          $in: ["gender", preference.genders || []],
+          $in: ["$gender", preference.genders || []],
         },
         then: 1,
         else: 0,
