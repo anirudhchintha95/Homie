@@ -27,13 +27,17 @@ const getMatchedPreferences = (user) => {
     matched.push("Pets");
   }
 
+  if (user.rentsScore) {
+    matched.push("Rent");
+  }
+
   if (user.ageScore) {
     matched.push("Age");
   }
 
-  if (user.genderScore) {
-    matched.push("Gender");
-  }
+  // if (user.genderScore) {
+  //   matched.push("Gender");
+  // }
 
   return matched;
 };

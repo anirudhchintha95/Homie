@@ -109,19 +109,19 @@ const buildScoreColumns = (preference) => {
   } else {
     newColumns.ageScore = 1;
   }
-  if (preference.genders !== undefined && preference.genders?.length) {
-    newColumns.genderScore = {
-      $cond: {
-        if: {
-          $in: ["$gender", preference.genders || []],
-        },
-        then: 1,
-        else: 0,
-      },
-    };
-  } else {
-    newColumns.genderScore = 1;
-  }
+  // if (preference.genders !== undefined && preference.genders?.length) {
+  //   newColumns.genderScore = {
+  //     $cond: {
+  //       if: {
+  //         $in: ["$gender", preference.genders || []],
+  //       },
+  //       then: 1,
+  //       else: 0,
+  //     },
+  //   };
+  // } else {
+  //   newColumns.genderScore = 1;
+  // }
 
   return newColumns;
 };
@@ -132,6 +132,9 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
       $match: {
         "location.city": currentUser.location.city,
         "location.state": currentUser.location.state,
+        ...(preferences.genders?.length
+          ? { gender: { $in: preferences.genders } }
+          : {}),
         _id: { $ne: currentUser._id },
       },
     },
@@ -284,7 +287,7 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
       $addFields: {
         score: {
           $add: [
-            "$genderScore",
+            // "$genderScore",
             "$ageScore",
             "$rentScore",
             "$petsScore",
@@ -328,7 +331,7 @@ const getFuzzyHomiesSearch = async (currentUser, preferences) => {
         images: 1,
         gender: 1,
         score: 1,
-        genderScore: 1,
+        // genderScore: 1,
         ageScore: 1,
         rentScore: 1,
         petsScore: 1,
