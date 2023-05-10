@@ -13,6 +13,7 @@ import {
   validateDOB,
   validatePhone,
   validateGender,
+  validatePassword,
   validateName,
 } from "../validators/helpers.js";
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
@@ -47,21 +48,41 @@ router
         .status(400)
         .json({ error: "There are no fields in the request body" });
     }
-    let { firstName, lastName, dob, phoneNumber, gender } = req.body;
-    dob = xss(dob);
-    dob = new Date(dob);
-    const sessionEmail = req.currentUser.email;
-    try {
-      firstName = xss(firstName);
-      lastName = xss(lastName);
-      phoneNumber = xss(phoneNumber);
-      gender = xss(gender);
 
-      firstName = validateName(firstName, "firstName");
-      lastName = validateName(lastName, "lastName");
-      dob = validateDOB(dob, "dob");
-      phoneNumber = validatePhone(phoneNumber, "phoneNumber");
-      gender = validateGender(gender, "gender");
+    let updatedUser = {};
+    try {
+      if (req.body.firstName) {
+        let firstName = xss(req.body.firstName);
+        firstName = validateString(firstName, "firstName");
+        updatedUser.firstName = firstName;
+      }
+
+      if (req.body.lastName) {
+        let lastName = xss(req.body.lastName);
+        lastName = validateString(lastName, "lastName");
+        updatedUser.lastName = lastName;
+      }
+
+      if (req.body.dob) {
+        let dob = xss(req.body.dob);
+        dob = new Date(dob);
+        dob = validateDOB(dob, "dob");
+        updatedUser.dob = dob;
+      }
+
+      if (req.body.phoneNumber) {
+        let phoneNumber = xss(req.body.phoneNumber);
+        phoneNumber = validatePhone(phoneNumber, "phoneNumber");
+        updatedUser.phoneNumber = phoneNumber;
+      }
+
+      if (req.body.gender) {
+        let gender = xss(req.body.gender);
+        gender = validateGender(gender, "gender");
+        updatedUser.gender = gender;
+      }
+
+      updatedUser.email = req.currentUser.email;
 
       // if (sessionEmail != email)
       //   throw { status: 400, message: 'Email mismatch' };
@@ -69,14 +90,7 @@ router
       return res.status(e.status).json({ error: e.message });
     }
     try {
-      const userUpdated = await userData.updateUserProfile(
-        firstName,
-        lastName,
-        sessionEmail,
-        dob,
-        phoneNumber,
-        gender
-      );
+      const userUpdated = await userData.updateUserProfile(updatedUser);
       return res.status(200).json({ user: userUpdated });
     } catch (e) {
       return e.status
@@ -104,9 +118,24 @@ router
   .route("/update-password")
   .patch(updatePasswordRouteValidator, async (req, res) => {
     try {
-      const { currentPassword, newPassword } = req.body;
-      const cleanCurrentPassword = xss(currentPassword);
-      const cleanNewPassword = xss(newPassword);
+      let { currentPassword, newPassword, confirmNewPassword } = req.body;
+      let cleanCurrentPassword = xss(currentPassword);
+      let cleanNewPassword = xss(newPassword);
+      let cleanConfirmNewPassword = xss(confirmNewPassword);
+
+      cleanCurrentPassword = validatePassword(
+        currentPassword,
+        "Current Password"
+      );
+      cleanNewPassword = validatePassword(newPassword, "New Password");
+
+      if (cleanCurrentPassword === cleanNewPassword) {
+        throw { status: 400, message: "New Password same as Current Password" };
+      }
+
+      if (cleanConfirmNewPassword !== cleanNewPassword) {
+        throw { status: 400, message: "Passwords do not match" };
+      }
 
       const passwordUpdated = await userData.updatePassword(
         req.currentUser,

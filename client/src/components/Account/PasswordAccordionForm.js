@@ -108,6 +108,14 @@ const PasswordAccordionForm = ({
       errorFields.push("confirmNewPassword");
     }
 
+    if (currentPassword.value === newPassword.value && !errorFields.length) {
+      setNewPassword({
+        ...newPassword,
+        error: "New Password same as Current Password",
+      });
+      errorFields.push("newPassword");
+    }
+
     return !errorFields.length;
   };
 
@@ -127,6 +135,7 @@ const PasswordAccordionForm = ({
       await updatePasswordApi({
         currentPassword: currentPassword.value,
         newPassword: newPassword.value,
+        confirmNewPassword: confirmNewPassword.value,
       });
 
       await auth.refreshCurrentUser();

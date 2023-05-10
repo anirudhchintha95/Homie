@@ -83,51 +83,51 @@ export const updatePassword = async (
   return result.acknowledged && result.modifiedCount !== 0;
 };
 
-export const updateUserProfile = async (
-  firstName,
-  lastName,
-  email,
-  dob,
-  phoneNumber,
-  gender
-) => {
-  firstName = xss(firstName);
-  lastName = xss(lastName);
-  email = xss(email);
-  dob = xss(dob);
-  phoneNumber = xss(phoneNumber);
-  gender = xss(gender);
-
-  firstName = validateName(firstName, "firstName");
-  lastName = validateName(lastName, "lastName");
-  dob = validateDOB(dob, "dob");
-  phoneNumber = validatePhone(phoneNumber, "phoneNumber");
-  gender = validateGender(gender, "gender");
+export const updateUserProfile = async (data) => {
 
   let updatedUser = {};
 
-  const phoneExists = await User.findOne({ phone: phoneNumber });
-  if (phoneExists && phoneExists.email !== email) {
-    throw { status: 400, message: "User with the phone number already exists" };
-  } else if (phoneExists && phoneExists.email === email) {
-    updatedUser = {
-      firstName: firstName,
-      lastName: lastName,
-      dateOfBirth: dob,
-      gender: gender,
-    };
-  } else {
-    updatedUser = {
-      firstName: firstName,
-      lastName: lastName,
-      dateOfBirth: dob,
-      phone: phoneNumber,
-      gender: gender,
-    };
+  if (data.firstName) {
+    data.firstName = xss(data.firstName);
+    data.firstName = validateString(data.firstName, "firstName");
+    updatedUser.firstName = data.firstName;
+  }
+
+  if (data.lastName) {
+    data.lastName = xss(data.lastName);
+    data.lastName = validateString(data.lastName, "lastName");
+    updatedUser.lastName = data.lastName;
+  }
+
+  if (data.dob) {
+    data.dob = xss(data.dob);
+    data.dob = validateDOB(data.dob, "dob");
+    updatedUser.dateOfBirth = data.dob;
+  }
+
+  if (data.phoneNumber) {
+    data.phoneNumber = xss(data.phoneNumber);
+    data.phoneNumber = validatePhone(data.phoneNumber, "phoneNumber");
+    const phoneExists = await User.findOne({ phone: data.phoneNumber });
+    if (!phoneExists) {
+      updatedUser.phone = data.phoneNumber;
+    }
+    if (phoneExists && phoneExists.email !== data.email) {
+      throw {
+        status: 400,
+        message: "User with the phone number already exists",
+      };
+    }
+  }
+
+  if (data.gender) {
+    data.gender = xss(data.gender);
+    data.gender = validateGender(data.gender, "gender");
+    updatedUser.gender = data.gender;
   }
 
   const modifiedUser = await User.findOneAndUpdate(
-    { email: email },
+    { email: data.email },
     updatedUser,
     {
       projection: {
