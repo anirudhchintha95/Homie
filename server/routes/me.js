@@ -46,21 +46,41 @@ router
         .status(400)
         .json({ error: "There are no fields in the request body" });
     }
-    let { firstName, lastName, dob, phoneNumber, gender } = req.body;
-    dob = xss(dob);
-    dob = new Date(dob);
-    const sessionEmail = req.currentUser.email;
-    try {
-      firstName = xss(firstName);
-      lastName = xss(lastName);
-      phoneNumber = xss(phoneNumber);
-      gender = xss(gender);
 
-      firstName = validateString(firstName, "firstName");
-      lastName = validateString(lastName, "lastName");
-      dob = validateDOB(dob, "dob");
-      phoneNumber = validatePhone(phoneNumber, "phoneNumber");
-      gender = validateGender(gender, "gender");
+    let updatedUser = {};
+    try {
+      if (req.body.firstName) {
+        let firstName = xss(req.body.firstName);
+        firstName = validateString(firstName, "firstName");
+        updatedUser.firstName = firstName;
+      }
+
+      if (req.body.lastName) {
+        let lastName = xss(req.body.lastName);
+        lastName = validateString(lastName, "lastName");
+        updatedUser.lastName = lastName;
+      }
+
+      if (req.body.dob) {
+        let dob = xss(req.body.dob);
+        dob = new Date(dob);
+        dob = validateDOB(dob, "dob");
+        updatedUser.dob = dob;
+      }
+
+      if (req.body.phoneNumber) {
+        let phoneNumber = xss(req.body.phoneNumber);
+        phoneNumber = validatePhone(phoneNumber, "phoneNumber");
+        updatedUser.phoneNumber = phoneNumber;
+      }
+
+      if (req.body.gender) {
+        let gender = xss(req.body.gender);
+        gender = validateGender(gender, "gender");
+        updatedUser.gender = gender;
+      }
+
+      updatedUser.email = req.currentUser.email;
 
       // if (sessionEmail != email)
       //   throw { status: 400, message: 'Email mismatch' };
@@ -68,14 +88,7 @@ router
       return res.status(e.status).json({ error: e.message });
     }
     try {
-      const userUpdated = await userData.updateUserProfile(
-        firstName,
-        lastName,
-        sessionEmail,
-        dob,
-        phoneNumber,
-        gender
-      );
+      const userUpdated = await userData.updateUserProfile(updatedUser);
       return res.status(200).json({ user: userUpdated });
     } catch (e) {
       return e.status
