@@ -366,7 +366,7 @@ const validatePreferencesBE = (preferences) => {
 
     let rentDiff = rentMax - rentMin;
 
-    if (rentDiff > 500 * 100) {
+    if (rentDiff < 500 * 100) {
       throw {
         status: 400,
         message:
