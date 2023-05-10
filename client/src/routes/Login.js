@@ -23,7 +23,7 @@ const Login = () => {
         const emailInput = e.target.email.value.trim().toLowerCase();
         const passwordInput = e.target.password.value.trim();
 
-        var hasError = false;
+        let hasError = false;
         setEmailError("");
         setPasswordError("");
 

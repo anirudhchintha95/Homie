@@ -88,10 +88,10 @@ export const validateName = (name, varName = "Name") => {
     return { isValid: false, error: `${varName} is required.` };
   }
 
-  if (!/^[a-zA-Z\s]{2,25}$/.test(name)) {
+  if (!/^[a-zA-Z\s]{1,25}$/.test(name)) {
     return {
       isValid: false,
-      error: `${varName} must be between 2 and 25 characters long and contain only letters.`,
+      error: `${varName} must be between 1 and 25 characters long and contain only letters.`,
     };
   }
 

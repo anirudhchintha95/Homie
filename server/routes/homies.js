@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { homiesData } from "../data/index.js";
+import xss from "xss";
 
 import { addFavoriteValidator } from "../validators/addFavoriteValidator.js";
 import { removeFavoriteValidator } from "../validators/removeFavoriteValidator.js";
@@ -24,7 +25,7 @@ homiesRouter.route("/").post(async (req, res) => {
     const homies = await homiesData.getHomiesFuzzy(req.currentUser);
     res.json({ homies: await formatUserListResponse(req, homies) });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
@@ -40,7 +41,7 @@ homiesRouter
       );
       res.json({ homies: await formatUserListResponse(req, homies) });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      return res.status(error?.status || 500).json({ error: error?.message });
     }
   });
 
@@ -51,7 +52,7 @@ homiesRouter.route("/:id").get(async (req, res) => {
     const user = await homiesData.getHomie(req.currentUser, id);
     res.json({ user: await formatUserToResponse(req, user) });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
@@ -61,6 +62,7 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
     let { message } = req.body;
 
     id = validateId(id, "homieId");
+    message = xss(message);
     message = validateString(message, "message", { maxLength: 250 });
 
     const connection = await homiesData.sendMessage(
@@ -70,7 +72,7 @@ homiesRouter.route("/:id/send-message").post(async (req, res) => {
     );
     res.json({ connection });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
@@ -89,7 +91,7 @@ homiesRouter
       );
       res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      return res.status(error?.status || 500).json({ error: error?.message });
     }
   });
 
@@ -108,7 +110,7 @@ homiesRouter
       );
       res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      return res.status(error?.status || 500).json({ error: error?.message });
     }
   });
 
@@ -127,7 +129,7 @@ homiesRouter
       );
       res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      return res.status(error?.status || 500).json({ error: error?.message });
     }
   });
 homiesRouter.route("/:id/block").post(blockUserValidator, async (req, res) => {
@@ -143,7 +145,7 @@ homiesRouter.route("/:id/block").post(blockUserValidator, async (req, res) => {
     );
     res.json({ user: await formatUserToResponse(req, updatedUser) });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
@@ -161,7 +163,7 @@ homiesRouter
       );
       res.json({ user: await formatUserToResponse(req, updatedUser) });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      return res.status(error?.status || 500).json({ error: error?.message });
     }
   });
 
@@ -174,7 +176,7 @@ homiesRouter.route("/:id/mark-read").post(async (req, res) => {
     const connection = await homiesData.markMessageAsRead(req.currentUser, id);
     res.json({ connection });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 

@@ -243,6 +243,10 @@ const validateGender = (value, name) => {
   return value;
 };
 
+const isNull = (val) => {
+  return [null, undefined].includes(val);
+};
+
 const validatePreferencesBE = (preferences) => {
   let {
     city,
@@ -292,16 +296,16 @@ const validatePreferencesBE = (preferences) => {
   }
 
   if (
-    (rentMin !== undefined && rentMax === undefined) ||
-    (rentMin !== undefined && rentMax === undefined)
+    (!isNull(rentMin) && isNull(rentMax)) ||
+    (!isNull(rentMax) && isNull(rentMin))
   ) {
-    if (rentMin === undefined) {
+    if (isNull(rentMin)) {
       throw {
         status: 400,
         message: "Error: Both Minimum and Maximum Rent should be specified",
       };
     }
-    if (rentMax === undefined) {
+    if (isNull(rentMax)) {
       throw {
         status: 400,
         message: "Error: Both Minimum and Maximum Rent should be specified",
@@ -309,8 +313,8 @@ const validatePreferencesBE = (preferences) => {
     }
   }
 
-  if (rentMin !== undefined && typeof rentMin === "number") {
-    if (!/^\d+$/.test(rentMin)) {
+  if (!isNull(rentMin)) {
+    if (typeof rentMin !== "number") {
       throw {
         status: 400,
         message: "Error: Minimum Rent should be a number greater than 0",
@@ -324,8 +328,8 @@ const validatePreferencesBE = (preferences) => {
     }
   }
 
-  if (rentMax !== undefined && typeof rentMin === "number") {
-    if (!/^\d+$/.test(rentMax)) {
+  if (!isNull(rentMax)) {
+    if (typeof rentMax !== "number") {
       throw {
         status: 400,
         message: "Error: Maximum Rent should be a number greater than 0",
@@ -346,31 +350,31 @@ const validatePreferencesBE = (preferences) => {
     }
   }
 
-  if (rentMin !== undefined && rentMax !== undefined && rentMin > rentMax) {
+  if (!isNull(rentMin) && !isNull(rentMax) && rentMin > rentMax) {
     throw {
       status: 400,
       message: "Error: Maximum Rent should be greater than Minimum Rent",
     };
   }
 
-  let rentDiff = rentMax - rentMin;
-  if (rentDiff > 500 * 100) {
-    throw {
-      status: 400,
-      message:
-        "Error: Maximum Rent should be less than 500 more than Minimum Rent",
-    };
-  }
+  if (typeof rentMin === "number" && typeof rentMax === "number") {
+    if (rentMin === rentMax) {
+      throw {
+        status: 400,
+        message:
+          "Error: Minimum Rent and Maximum Rent cannot be the same values",
+      };
+    }
 
-  if (
-    typeof rentMin === "number" &&
-    typeof rentMax === "number" &&
-    rentMin === rentMax
-  ) {
-    throw {
-      status: 400,
-      message: "Error: Minimum Rent and Maximum Rent cannot be the same values",
-    };
+    let rentDiff = rentMax - rentMin;
+
+    if (rentDiff < 500 * 100) {
+      throw {
+        status: 400,
+        message:
+          "Error: Maximum Rent should be less than 500 more than Minimum Rent",
+      };
+    }
   }
 
   if ((ageMin && !ageMax) || (!ageMin && ageMax)) {
@@ -389,7 +393,7 @@ const validatePreferencesBE = (preferences) => {
   }
 
   if (ageMin) {
-    if (!/^\d+$/.test(ageMin)) {
+    if (typeof ageMin !== "number") {
       throw {
         status: 400,
         message: "Error: Minimum Age should be a number between 18 and 100",
@@ -410,7 +414,7 @@ const validatePreferencesBE = (preferences) => {
   }
 
   if (ageMax) {
-    if (!/^\d+$/.test(ageMax)) {
+    if (typeof ageMax !== "number") {
       throw {
         status: 400,
         message: "Error: Maximum Age should be a number between 18 and 100",
@@ -495,10 +499,10 @@ const validateSignUp = (preferences) => {
 const validateName = (name, varName = "Name") => {
   name = validateString(name, varName);
 
-  if (!/^[a-zA-Z\s]{2,25}$/.test(name)) {
+  if (!/^[a-zA-Z\s]{1,25}$/.test(name)) {
     throw {
       status: 400,
-      message: `${varName} must be between 2 and 25 characters long and contain only letters.`,
+      message: `${varName} must be between 1 and 25 characters long and contain only letters.`,
     };
   }
 

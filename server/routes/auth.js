@@ -23,7 +23,7 @@ router.route("/login").post(async (req, res) => {
 
     res.json({ message: "Login successful", accesstoken });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 
@@ -49,7 +49,7 @@ router.route("/signup").post(async (req, res) => {
     const accesstoken = user.generateToken();
     res.json({ accesstoken });
   } catch (error) {
-    return res.status(error.status || 500).json({ error: error.message });
+    return res.status(error?.status || 500).json({ error: error?.message });
   }
 });
 

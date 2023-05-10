@@ -2,9 +2,90 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { Connection, Home, User } from "./models/index.js";
-import { CONNECTION_STATUSES, GENDERS } from "./constants.js";
+import { addFavorite, removeFavorite } from "./data/connections.js";
+import { GENDERS } from "./constants.js";
 import PasswordService from "./services/password-service.js";
+
+import { User, Image } from "./models/index.js";
+import { readdir, cp } from "node:fs/promises";
+
+import { DateTime } from "luxon";
+
+// import usersData from "./users.json" assert { type: "json" };
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const usersData = require("./users.json");
+
+const srcDir = "./seedImages/";
+const destDir = "./uploads";
+let filesAvailable = false;
+
+console.log("Copying images");
+try {
+  await cp(srcDir, destDir, { recursive: true });
+  filesAvailable = true;
+} catch (e) {
+  console.log(e);
+}
+console.log("Copied Images", filesAvailable);
+
+const generateDob = () => {
+  const minAge = 19;
+  const maxAge = 100;
+  const minDate = DateTime.local().minus({ years: maxAge }).toJSDate();
+  const maxDate = DateTime.local().minus({ years: minAge }).toJSDate();
+  return new Date(
+    minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime())
+  );
+};
+
+await mongoose
+  .connect(process.env.DB_URL)
+  .then(() => console.log(`Database connected successfully`))
+  .catch((err) => console.log(err));
+
+for (let i = 0; i < usersData.length; i++) {
+  usersData[i].dateOfBirth = new Date(usersData[i].dateOfBirth.$date).getTime();
+}
+
+try {
+  console.log("Creating Users");
+  await User.insertMany(usersData);
+  console.log("Users Created");
+} catch (e) {
+  console.log(e);
+}
+
+// create connections
+const firstUserEmail = "emma.johnson@example.com";
+const secondUserEmail = "andrew.ng@example.com";
+const thirdUserEmail = "samantha.lee@example.com";
+const fourthUserEmail = "ethan.nguyen@example.com";
+
+const firstUser = await User.findOne({ email: firstUserEmail });
+const secondUser = await User.findOne({ email: secondUserEmail });
+const thirdUser = await User.findOne({ email: thirdUserEmail });
+const fourthUser = await User.findOne({ email: fourthUserEmail });
+
+try {
+  console.log("Adding Connections");
+  console.log("Creating matched connection");
+  await addFavorite(firstUser._id.toString(), secondUser._id.toString());
+  await addFavorite(secondUser._id.toString(), firstUser._id.toString());
+
+  console.log("Creating favorite connection");
+  await addFavorite(firstUser._id.toString(), thirdUser._id.toString());
+
+  console.log("Creating ignored connection");
+  await removeFavorite(firstUser._id.toString(), fourthUser._id.toString());
+
+  console.log("Creating admired connection");
+  await addFavorite(fourthUser._id.toString(), firstUser._id.toString());
+
+  console.log("Connections Added");
+} catch (e) {
+  console.log("Could not create connections");
+}
 
 const firstNames = [
   { value: "John", gender: "Male" },
@@ -81,10 +162,30 @@ const generateRentPreference = () => {
   }
 };
 
+const generateAgePreference = () => {
+  const rand = Math.random();
+  if (rand < 0.66) {
+    return {};
+  } else {
+    // age should be between 18 and 100
+    let first = null;
+    let second = null;
+    while (first === second) {
+      first = Math.floor(Math.random() * 82 + 18);
+      second = Math.floor(Math.random() * 82 + 18);
+    }
+    return {
+      age: {
+        min: Math.min(first, second),
+        max: Math.max(first, second),
+      },
+    };
+  }
+};
+
 const generateUser = async () => {
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-
   return {
     firstName: firstName.value,
     lastName: lastName,
@@ -92,36 +193,39 @@ const generateUser = async () => {
     email: `${firstName.value.toLowerCase()}.${lastName.toLowerCase()}@gmail.com`,
     phone: generatePhoneNumber(),
     encryptedPassword: await new PasswordService("Password@123").encrypt(),
-    dateOfBirth: new Date(
-      Date.now(new Date(Date.now() - 60 * 60 * 24 * 365 * 13 * 1000)) -
-        Math.floor(Math.random() * 60 * 60 * 24 * 365 * 80 * 1000)
-    ),
+    dateOfBirth: generateDob(),
     role: "user",
-    location: {
-      city: "San Francisco",
-      state: "CA",
-    },
+    location:
+      Math.random() < 0.5
+        ? {
+            city: "Hoboken",
+            state: "NJ",
+          }
+        : {
+            city: "Manhattan",
+            state: "NY",
+          },
     preferences: {
       ...generateBooleanPreference("smoking"),
       ...generateBooleanPreference("drinking"),
       ...generateBooleanPreference("pets"),
       ...generateRentPreference(),
+      ...generateAgePreference(),
       ...generateGenders(),
     },
   };
 };
 
-await mongoose
-  .connect(process.env.DB_URL)
-  .then(() => console.log(`Database connected successfully`))
-  .catch((err) => console.log(err));
+console.log("Creating other users for testing...");
 
 let users = [];
 let count = 0;
 
+let email_list = [];
 while (count < 10) {
   try {
     const obj = await generateUser();
+    email_list.push(obj.email);
     if (
       users.find((user) => user.email === obj.email || user.phone === obj.phone)
     ) {
@@ -138,83 +242,49 @@ while (count < 10) {
   }
 }
 
-// Create homes for 3 random users
+let image_list = await readdir("./uploads/");
+image_list = image_list.filter((word) => word.startsWith("pexels"));
 
-const generateHome = (user) => {
-  return {
-    userId: user._id,
-    description: "This is a description",
-    // address1 make it unique
-    address1: `${Math.floor(Math.random() * 1000 + 1)} Main St`,
-    // address2 make it unique
-    address2: `Apt ${Math.floor(Math.random() * 1000 + 1)}`,
-    city: "San Francisco",
-    state: "CA",
-    zip: "94103",
-    listed: Math.random() > 0.5,
-    rent: Math.floor(Math.random() * 1000 + 500) * 100,
-    numberOfRoomsAvailable: Math.floor(Math.random() * 5 + 1),
-  };
+const IMAGE_MAP = {
+  "emma.johnson@example.com":
+    "1683609104906-pexels-andrea-piacquadio-774909.jpg",
+  "michael.brown@example.com":
+    "1683609471012-pexels-cottonbro-studio-6626903.jpg",
+  "samantha.lee@example.com":
+    "1683609921611-pexels-ike-louie-natividad-2709388.jpg",
+  "andrew.ng@example.com": "1683610202551-pexels-andrea-piacquadio-3778876.jpg",
+  "michelle.williams@example.com":
+    "1683610448752-pexels-guilherme-almeida-1858175.jpg",
+  "ethan.nguyen@example.com": "1683610642320-pexels-david-florin-2553653.jpg",
+  "brandon.wilson@example.com": "1683610901948-pexels-pixabay-220453.jpg",
+  "vanessa.peace@example.com":
+    "1683611107471-pexels-valeria-ushakova-3094215.jpg",
+  "david.kim@example.com": "1683611290907-pexels-cottonbro-studio-4067753.jpg",
+  "samantha.rodriguez@example.com":
+    "1683611604908-pexels-vlada-karpovich-4050356.jpg",
 };
 
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 10; i++) {
+  IMAGE_MAP[email_list[i]] = image_list[i];
+}
+
+if (filesAvailable) {
   try {
-    const user = users[Math.floor(Math.random() * users.length)];
-    const home = await Home.create(generateHome(user));
-    console.log("Home created", home.address1, home.address2);
-  } catch (error) {
-    console.log(error.toString());
+    console.log("Mapping Images");
+    for (const [email, filename] of Object.entries(IMAGE_MAP)) {
+      const user = await User.findOne({ email });
+      await Image.create({
+        name: filename,
+        filename,
+        type: "image/jpg",
+        imageableId: user._id.toString(),
+        imageableType: "User",
+      });
+    }
+    console.log("Images Mapped");
+  } catch (e) {
+    console.log(e);
   }
 }
 
-// generate 3 connections for a user and 3 connections for other users
-
-const generateConnection = (user, otherUser) => {
-  return {
-    users: [
-      {
-        userId: user._id,
-        status:
-          Object.values(CONNECTION_STATUSES)[
-            Math.floor(Math.random() * 3)
-          ].toLowerCase(),
-        showUserData: Math.random() > 0.5,
-      },
-      {
-        userId: otherUser._id,
-        status:
-          Object.values(CONNECTION_STATUSES)[
-            Math.floor(Math.random() * 3)
-          ].toLowerCase(),
-        showUserData: Math.random() > 0.5,
-      },
-    ],
-  };
-};
-
-let connLen = 0;
-const connections = [];
-
-while (connLen < 3) {
-  try {
-    const randomUser = users[Math.floor(Math.random() * users.length)];
-    const otherUser = users[Math.floor(Math.random() * users.length)];
-    if (otherUser._id.toString() === randomUser._id.toString()) continue;
-    if (
-      connections.find((conn) =>
-        conn.users.every(({ userId }) =>
-          [otherUser._id, randomUser._id].includes(userId)
-        )
-      )
-    )
-      continue;
-    const connection = await Connection.create(
-      generateConnection(randomUser, otherUser)
-    );
-    console.log("Connection created", connection);
-    connLen++;
-  } catch (error) {
-    console.log(error.toString());
-    connLen++;
-  }
-}
+console.log("Seed data generated. Press Ctrl + C to exit.");

@@ -180,6 +180,17 @@ const getLinkedUsersQuery = async (currentUser, connectionType, search) => {
       as: "images",
     },
   });
+  pipeline.push({
+    $project: {
+      _id: 1,
+      firstName: 1,
+      lastName: 1,
+      age: 1,
+      images: 1,
+      gender: 1,
+      connection: 1,
+    },
+  });
 
   return User.aggregate(pipeline);
 };

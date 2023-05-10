@@ -14,6 +14,7 @@ import {
   validatePhone,
   validateGender,
   validatePassword,
+  validateName,
 } from "../validators/helpers.js";
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
 import { bioValidator } from "../validators/bioValidator.js";

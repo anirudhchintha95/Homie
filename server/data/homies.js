@@ -1,3 +1,4 @@
+import xss from "xss";
 import { CONNECTION_STATUSES } from "../constants.js";
 import Connection from "../models/connection.js";
 import User from "../models/user.js";
@@ -29,7 +30,6 @@ export const getHomiesFuzzy = async (currentUser) => {
   return feed;
 };
 
-// TODO: Needs Pagination
 export const getLinkedHomies = async (currentUser, connectionType, search) => {
   if (!currentUser) {
     throw { status: 401, message: "Unauthorised request" };
@@ -64,6 +64,7 @@ export const sendMessage = async (currentUser, homieId, message) => {
   }
 
   homieId = validateId(homieId, "homieId");
+  message = xss(message);
   message = validateString(message, "message", { maxLength: 250 });
 
   const homie = await User.findById(homieId);
