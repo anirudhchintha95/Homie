@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 import Tabs from "@mui/material/Tabs";
@@ -22,6 +22,7 @@ import {
 const connectionTypes = Object.values(CONNECTION_TYPES);
 
 const MyHomies = () => {
+  const mounted = useRef(false);
   const [myHomies, setMyHomies] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState();
@@ -31,15 +32,17 @@ const MyHomies = () => {
 
   const handleChange = (_e, index) => {
     setConnectionTypeIdx(index);
+    setSearch("");
+    fetchMyHomies(connectionTypes[index], "");
   };
 
-  const fetchMyHomies = useCallback(async () => {
+  const fetchMyHomies = useCallback(async (connectionType, searchText) => {
     try {
       setLoading(true);
       setError();
       const users = await fetchMyHomiesApi({
-        connectionType: connectionTypes[connectionTypeIdx],
-        search,
+        connectionType,
+        search: searchText,
       });
       setMyHomies(users);
     } catch (error) {
@@ -51,11 +54,20 @@ const MyHomies = () => {
     } finally {
       setLoading(false);
     }
-  }, [connectionTypeIdx, search]);
+  }, []);
 
   useEffect(() => {
-    fetchMyHomies();
-  }, [fetchMyHomies]);
+    if (!mounted.current) {
+      fetchMyHomies(connectionTypes[connectionTypeIdx], search);
+    }
+  }, [fetchMyHomies, connectionTypeIdx, search]);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   return (
     <Box sx={{ width: "100%" }} marginTop={2}>
@@ -78,7 +90,13 @@ const MyHomies = () => {
           display="flex"
           sx={{ justifyContent: { xs: "center", md: "flex-end" } }}
         >
-          <SearchInputForm onSubmit={(searchTxt) => setSearch(searchTxt)} />
+          <SearchInputForm
+            searchText={search}
+            setSearchText={setSearch}
+            onSubmit={() => {
+              fetchMyHomies(connectionTypes[connectionTypeIdx], search);
+            }}
+          />
         </Grid>
       </Grid>
       <br />
@@ -92,7 +110,13 @@ const MyHomies = () => {
           </Grid>
         </Grid>
       ) : error ? (
-        <PageError onRefresh={fetchMyHomies}>{error}</PageError>
+        <PageError
+          onRefresh={() => {
+            fetchMyHomies(connectionTypes[connectionTypeIdx], search);
+          }}
+        >
+          {error}
+        </PageError>
       ) : (
         <Grid
           container
@@ -103,7 +127,9 @@ const MyHomies = () => {
             myHomies.map((user) => (
               <Grid xs={12} sm={6} md={4} lg={3} key={user._id}>
                 <HomieCard
-                  onActionsClick={fetchMyHomies}
+                  onActionsClick={() => {
+                    fetchMyHomies(connectionTypes[connectionTypeIdx], search);
+                  }}
                   user={user}
                   variant="small"
                 />

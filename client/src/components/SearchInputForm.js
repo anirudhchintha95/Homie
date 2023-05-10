@@ -6,9 +6,7 @@ import Divider from "@mui/material/Divider";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 
-const SearchInputForm = ({ onSubmit }) => {
-  const [searchText, setSearchText] = React.useState("");
-
+const SearchInputForm = ({ searchText, setSearchText, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(searchText);
