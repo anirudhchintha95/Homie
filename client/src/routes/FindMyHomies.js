@@ -27,7 +27,7 @@ const getMatchedPreferences = (user) => {
     matched.push("Pets");
   }
 
-  if (user.rentsScore) {
+  if (user.rentScore) {
     matched.push("Rent");
   }
 
