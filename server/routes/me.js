@@ -13,6 +13,7 @@ import {
   validateDOB,
   validatePhone,
   validateGender,
+  validatePassword,
 } from "../validators/helpers.js";
 import updatePasswordRouteValidator from "../validators/updatePasswordValidator.js";
 import { bioValidator } from "../validators/bioValidator.js";
@@ -116,9 +117,24 @@ router
   .route("/update-password")
   .patch(updatePasswordRouteValidator, async (req, res) => {
     try {
-      const { currentPassword, newPassword } = req.body;
-      const cleanCurrentPassword = xss(currentPassword);
-      const cleanNewPassword = xss(newPassword);
+      let { currentPassword, newPassword, confirmNewPassword } = req.body;
+      let cleanCurrentPassword = xss(currentPassword);
+      let cleanNewPassword = xss(newPassword);
+      let cleanConfirmNewPassword = xss(confirmNewPassword);
+
+      cleanCurrentPassword = validatePassword(
+        currentPassword,
+        "Current Password"
+      );
+      cleanNewPassword = validatePassword(newPassword, "New Password");
+
+      if (cleanCurrentPassword === cleanNewPassword) {
+        throw { status: 400, message: "New Password same as Current Password" };
+      }
+
+      if (cleanConfirmNewPassword !== cleanNewPassword) {
+        throw { status: 400, message: "Passwords do not match" };
+      }
 
       const passwordUpdated = await userData.updatePassword(
         req.currentUser,
